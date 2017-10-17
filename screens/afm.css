@@ -1,0 +1,101 @@
+#bannerFarm
+{
+	overflow: scroll;
+	max-height: 600px;
+}
+
+.banner_col_1,.banner_col_2,.banner_col_3
+{
+	width: calc(33% - 10px);
+	display: block;
+	vertical-align: top;
+	box-sizing: content-box;
+	float: left;
+	margin-right: 6px;
+}
+
+.banner_box
+{
+	position: relative;
+	display: block;
+	width: 100%;
+	border:solid 2px #e0e0e0;
+	vertical-align: middle;
+	text-align: center;
+	min-height: 100px;
+	background: white;
+	margin-bottom: 5px;
+	margin-right:6px;
+	padding:4px;
+	box-sizing: border-box;
+	max-height: 300px;
+}
+
+.banner_box .middle_helper
+{
+	display: inline-block;
+	height: 100%;
+	vertical-align: middle;
+}
+
+.banner_box img
+{
+	vertical-align: middle;
+	max-height: 280px;
+}
+
+div.hover_shade
+{
+	background-color:rgba(240,240,240,0.5);
+	width:100%;
+	height:100%;
+	position:absolute;
+	top:0;
+	left:0;
+	z-index: 1000;
+}
+
+div.hover_shade .download_image:hover
+{
+	background-color: #c5c5c5;
+}
+
+div.hover_shade .download_image
+{
+	position:absolute;
+	bottom:4px;
+	right:4px;
+	border:solid 1px gray;
+	width:32px;
+	height:32px;
+	padding:4px;
+	background-color: #d5d5d5;
+	border-radius: 3px;
+	cursor: pointer;
+}
+
+input[type=submit].button-small
+{
+	font-size:0.8rem;
+}
+
+div.form-group .field-title
+{
+	font-weight: bold;
+}
+
+div.form-group
+{
+	padding:10px;
+}
+
+div.form-group.half-width
+{
+	display: inline-block;
+	width:calc( 50% - 20 );
+}
+
+div.form-group.pull-right
+{
+	text-align: right;
+}

@@ -1,0 +1,127 @@
+.remodal-bg
+{
+    display: none;
+    justify-content: center;
+    position:fixed;
+    height:100%;
+    width:100%;
+    top:0;
+    left:0;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.remodal
+{
+    align-self:center;
+    position:relative;
+    max-width: 800px;
+    min-width:500px;
+    background: white;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.remodal .remodal-confirm,
+.remodal .remodal-cancel
+{
+    float: right;
+    margin-left:10px;
+    width:160px;
+}
+
+.remodal h2
+{
+    text-align:center;
+    margin-top:10px;
+}
+
+.remodal p
+{
+    margin:25px 0;
+}
+
+.remodal p[data-remodal-message] a {
+    text-decoration: underline;
+}
+
+.remodal-close, .remodal-close:before {
+    display: block;
+    font-size: 25px;
+    width: 35px;
+    line-height: 35px;
+    text-align: center;
+    top: 0;
+    left: 0;
+    position: absolute;
+    background:transparent;
+    cursor: pointer;
+    transition: color 0.2s;
+    color:#95979c;
+    padding:0;
+    margin:0;
+}
+
+.remodal-close:hover
+{
+    color:black;
+}
+
+
+.remodal-confirm {
+    color: #fff;
+    background: #81c784;
+}
+
+.remodal-cancel {
+    color: #fff;
+    background: #e57373;
+}
+.remodal-cancel, .remodal-confirm {
+    font: inherit;
+    min-width: 110px;
+    padding: 12px 0;
+    -webkit-transition: background .2s;
+    transition: background .2s;
+    text-align: center;
+}
+
+.page__centre, .page__container:after, .remodal-cancel, .remodal-confirm {
+    display: inline-block;
+    vertical-align: middle;
+}
+.remodal-cancel, .remodal-close, .remodal-confirm {
+    overflow: visible;
+    margin: 0;
+    cursor: pointer;
+    text-decoration: none;
+    outline: 0;
+    border: 0;
+}
+
+@media only screen and (max-width: 500px)
+{
+    .remodal
+    {
+        padding:15px;
+        min-width:320px;
+        width:100%;
+    }
+
+    .remodal p
+    {
+        margin:10px 0;
+    }
+
+    .remodal .remodal-confirm,
+    .remodal .remodal-cancel
+    {
+        width:130px;
+        font-size:0.85em;
+        margin-left:4px;
+    }
+
+}
