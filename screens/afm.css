@@ -79,9 +79,17 @@ input[type=submit].button-small
 	font-size:0.8rem;
 }
 
-div.form-group .field-title
+.tab-view div.form-group label.form-field
 {
 	font-weight: bold;
+	width:220px;
+	display: inline-block;
+}
+
+.tab-view div.form-group input.form-control
+{
+	width: 400px;
+	display: inline-block;
 }
 
 div.form-group
@@ -98,4 +106,92 @@ div.form-group.half-width
 div.form-group.pull-right
 {
 	text-align: right;
+}
+
+
+/* page view tabs */
+.tabs-wrapper .nav-tab-wrapper
+{
+	border-bottom: 1px solid #ccc;
+	margin: 0;
+	padding-top: 9px;
+	padding-bottom: 0;
+	line-height: inherit;
+	height: 35px;
+	margin-bottom:10px;
+	box-sizing: content-box;
+}
+
+.tabs-wrapper .nav-tab-wrapper .nav-tab
+{
+	box-shadow: none;
+	outline: none;
+	float: left;
+	border: 1px solid #ccc;
+	border-bottom: none;
+	margin-left: .5em;
+	padding: 5px 10px;
+	font-size: 14px;
+	line-height: 24px;
+	background: #f1f1f1;
+	color: #555;
+}
+
+.tabs-wrapper .nav-tab-wrapper .nav-tab.nav-tab-active
+{
+	border-bottom: 1px solid #f1f1f1;
+	background: white;
+	color: #000;
+	margin-bottom: -1px;
+}
+
+.tabs-wrapper .tab-view
+{
+	display: none;
+	min-height:300px;
+}
+
+.tabs-wrapper .tab-view .standard-table thead th
+{
+	padding:3px;
+}
+
+.tabs-wrapper .tab-view .standard-table tbody tr td
+{
+	text-align: center;
+}
+.tabs-wrapper .tab-view .standard-table tbody tr td.left
+{
+	text-align: left;
+}
+
+.tabs-wrapper .tab-view.active
+{
+	display: block;
+}
+
+/* page view tabs - end */
+
+.tab-view.active {
+	display: block;
+}
+.tab-view {
+	display: none;
+	margin-top: 15px;
+}
+
+.tab-view .actions-bar
+{
+	padding:15px 0;
+}
+
+.pull-right
+{
+	float:right;
+}
+
+.affiliate-heading > *
+{
+	line-height: 40px;
+	padding:0;
 }

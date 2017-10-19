@@ -1,5 +1,5 @@
 <form method="POST" action="">
-	<div>
+	<div class="actions-bar">
 		<input type="hidden" name="affiliate_action" value="">
 		<input type="hidden" name="link_id" value="">
 		<input type="submit" id="btnNewLink" class="button-small" value="New link">
@@ -23,7 +23,7 @@
 		foreach($links as $link) { ?>
 			<tr>
 				<td><?php echo $link["id"]; ?></td>
-				<td style="text-align: left"><?php echo $link["url"]."?uid=".$link["aff_id"]."&sid=".$link["id"]; ?></td>
+				<td class="left"><?php echo $link["url"]."?uid=".$link["aff_id"]."&sid=".$link["id"]; ?></td>
 				<td><?php echo $link["created"]; ?></td>
 				<td><?php echo $link["click"]; ?></td>
 				<td><?php echo $link["register"]; ?></td>

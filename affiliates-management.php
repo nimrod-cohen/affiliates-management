@@ -53,6 +53,7 @@ class AffiliatesManagement
 		add_shortcode("affiliates_management",[$this,'showAffiliatesApp']);
 
 		add_action("init",[$this,"checkAffiliateActions"]);
+		add_action( 'init', [$this,'addAttachmentTaxonomies'] );
 
 		add_action( 'wp_ajax_afm_log', [$this, 'logEvent' ]);
 		add_action( 'wp_ajax_nopriv_afm_log', [$this, 'logEvent' ]);
@@ -514,6 +515,12 @@ class AffiliatesManagement
 				require_once("screens" . DIRECTORY_SEPARATOR . "login.php");
 				break;
 		}
+	}
+
+	function addAttachmentTaxonomies()
+	{
+		if(!is_object_in_taxonomy('attachment','category'))
+			register_taxonomy_for_object_type( 'category', 'attachment' );
 	}
 
 	function checkAffiliateActions()

@@ -19,7 +19,7 @@ class AFMCreatives
 			'paged'	=> $page,
 			'tax_query' => [
 				[
-					'taxonomy' => 'attachment_category',
+					'taxonomy' => 'category',
 					'field' => 'slug',
 					'terms' => 'banner-farm'
 				]
