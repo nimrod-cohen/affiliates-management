@@ -379,7 +379,7 @@ class AffiliatesManagement
 		wp_localize_script( 'afm-tracker', 'afm_server_info', [
 			'ajax_url' => admin_url('admin-ajax.php'),
 			'nonce' => wp_create_nonce('afm-nonce'),
-			'keep_days' => AffiliatesManagement::AFM_KEEP_DAYS
+			'keep_days' => get_option("afm-keep-days",AffiliatesManagement::AFM_KEEP_DAYS)
 		] );
 	}
 
@@ -480,6 +480,7 @@ class AffiliatesManagement
 				"REVSHARE" => isset($_POST["revshare"]) ? $_POST["revshare"] : "",
 				"REVSHARE_PERIOD" => isset($_POST["revshare_period"]) ? $_POST["revshare_period"] : ""
 		],true);
+		update_option("afm-keep-days",$_POST["keep_days"],true);
 		return true;
 	}
 

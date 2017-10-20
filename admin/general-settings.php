@@ -13,6 +13,12 @@
 				</select>
 			</td>
 		</tr>
+		<tr>
+			<th scope="row"><label for="keep_days">Tracking keep days</label></th>
+			<td>
+				<input type="text" name="keep_days" id="keep_days" value="<?php echo $keepDays; ?>" class="regular-text code">
+			</td>
+		</tr>
 		<tr scope="row">
 			<th scope="row"><label for="locking_event">Lock user attribution on</label></th>
 			<td>

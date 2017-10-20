@@ -3,6 +3,8 @@
 	$lockingEvent = AffiliatesManagement::lockingEvent();
 	$activePage = isset($_POST["active_page"]) ? $_POST["active_page"] : "affiliates";
 
+	$keepDays = get_option("afm-keep-days",AffiliatesManagement::AFM_KEEP_DAYS);
+
 	$deal = AffiliatesManagement::defaultDeal();
 ?>
 <div class="wrap">
