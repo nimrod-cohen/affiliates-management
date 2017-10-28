@@ -1,3 +1,15 @@
+<?php
+	$total = 0;
+	$rowsPerPage = 20;
+	$page = isset($_GET["paged"]) ? $_GET["paged"] : 1;
+	$rows = AFMAccounting::byAffiliate($aff->ID(),$page-1,$rowsPerPage,$total);
+?>
+<form action="<?php echo $_SERVER["REQUEST_URI"]; ?>" method="get">
+	<input type="hidden" name="id" value="<?php echo $_GET["id"]; ?>">
+	<input type="hidden" name="subpage" value="edit-affiliate">
+	<input type="hidden" name="page" value="affiliates-management">
+	<?php 	echo AFMHelper::tablePaging($total,$page,$rowsPerPage); ?>
+</form>
 <table class="wp-list-table widefat striped posts">
 	<thead>
 	<tr>
@@ -11,13 +23,10 @@
 		<th scope="col" id="p_total" class="manage-column column-total">Total</th>
 		<th scope="col" id="p_paid" class="manage-column column-paid">Paid</th>
 		<th scope="col" id="p_balance" class="manage-column column-balance">Month Balance</th>
-		<th scope="col" id="p_comment" class="manage-column column-comment">Comment</th>
 	</tr>
 	</thead>
 	<tbody>
 	<?php
-	$rows = AFMAccounting::byAffiliate($aff->ID(),0);
-
 	foreach( $rows as $row )
 	{
 		$ftd = $row["ftd_revenue"];
@@ -33,7 +42,6 @@
 			<td><?php echo AffiliatesManagement::moneyFormat($ftd + $retention); ?></td>
 			<td><?php echo AffiliatesManagement::moneyFormat($paid); ?></td>
 			<td><?php echo AffiliatesManagement::moneyFormat($ftd + $retention - $paid); ?></td>
-			<td><?php echo nl2br($row["comment"]); ?></td>
 		</tr>
 	<?php } ?>
 </tbody>

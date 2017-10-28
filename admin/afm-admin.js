@@ -27,11 +27,13 @@
 		});
 	});
 
-	$('div.tablenav-pages a.paging-button').click(function()
-	{
-		var page = $(this).data('page');
-		$('input#current-page-selector').val(page);
-		$(this).closest('form').submit();
+	$(document).ready(function(){
+		$('div.tablenav-pages a.paging-button').click(function()
+		{
+			var page = $(this).data('page');
+			$('input#current-page-selector').val(page);
+			$(this).closest('form').submit();
+		});
 	});
 
 })(jQuery);

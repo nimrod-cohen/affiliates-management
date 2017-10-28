@@ -21,9 +21,10 @@
 <?php } ?>
 
 <div class="wrap" id="profile-page">
-	<p><a href="<?php echo admin_url("admin.php?page=affiliates-management"); ?>">← Back to Affiliates</a></p>
 	<div class="affiliate-heading">
-		<h1>Affiliate <?php echo $aff->fullname(); ?></h1>
+		<p><a href="<?php echo admin_url("admin.php?page=affiliates-management"); ?>">← Back to Affiliates</a></p>
+		<h1 STYLE="display: inline-block"><?php echo $aff->fullname(); ?> - details</h1>
+		<a href="<?php echo admin_url("admin.php?page=affiliates-management&subpage=pay-affiliate&id=".$aff->ID()); ?>" class="page-title-action">New Payment</a>
 		<span class="pull-right">Current Balance: <?php echo AffiliatesManagement::moneyFormat($aff->balance()); ?></span>
 	</div>
 	<div class="aff_content_cell" id="aff_content_top">

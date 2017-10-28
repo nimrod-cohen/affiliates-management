@@ -116,47 +116,61 @@ class AffiliatesManagement
 
 		$charset_collate = $wpdb->get_charset_collate();
 
-		$sql = "CREATE TABLE afm_links (
-			id BIGINT(20) NOT NULL AUTO_INCREMENT,
-			aff_id BIGINT(20) NOT NULL,
-			created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-			url VARCHAR(1000) NOT NULL,
-			is_deleted BINARY(1) NOT NULL DEFAULT 0,
-			PRIMARY KEY  (id)
+		$sql = "CREATE TABLE `afm_links` (
+			`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+			`aff_id` BIGINT(20) NOT NULL,
+			`created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			`url` VARCHAR(1000) NOT NULL,
+			`is_deleted` BINARY(1) NOT NULL DEFAULT 0,
+			PRIMARY KEY  (`id`)
 		) ".$charset_collate;
 
 		dbDelta( $sql );
 
-		$sql = "CREATE TABLE afm_events (
-			id BIGINT(20) NOT NULL AUTO_INCREMENT,
-			link_id BIGINT(20) NOT NULL,
-			aff_id BIGINT(20) NOT NULL,
-			tracked_id VARCHAR(100) NOT NULL,
-			user_id BIGINT(20) NULL,
-			event VARCHAR(100) NOT NULL,
-			ts TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-			source VARCHAR(100) NULL,
-			medium VARCHAR(100) NULL,
-			campaign VARCHAR(100) NULL,
-			content VARCHAR(100) NULL,
-			term VARCHAR(100) NULL,
-			amount DECIMAL (10,2) NULL,
-			PRIMARY KEY  (id, link_id, tracked_id),
+		$sql = "CREATE TABLE `afm_events` (
+			`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+			`link_id` BIGINT(20) NOT NULL,
+			`aff_id` BIGINT(20) NOT NULL,
+			`tracked_id` VARCHAR(100) NOT NULL,
+			`user_id` BIGINT(20) NULL,
+			`event` VARCHAR(100) NOT NULL,
+			`ts` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			`source` VARCHAR(100) NULL,
+			`medium` VARCHAR(100) NULL,
+			`campaign` VARCHAR(100) NULL,
+			`content` VARCHAR(100) NULL,
+			`term` VARCHAR(100) NULL,
+			`amount` DECIMAL (10,2) NULL,
+			PRIMARY KEY  (`id`, `link_id`, `tracked_id`),
 			INDEX `SECONDARY` (`user_id` ASC),
 			INDEX `EVENT_BY_TS` (`ts` ASC)
 		) ". $charset_collate;
 
 		dbDelta($sql);
 
-		$sql = "CREATE TABLE afm_accounting (
-			aff_id BIGINT(20),
-			month Date NOT NULL,
-			ftd_revenue Decimal(10,2) NOT NULL DEFAULT '0',
-			retention_revenue Decimal(10,2) NOT NULL DEFAULT '0',
-			paid Decimal(10,2) NOT NULL DEFAULT '0',
-			comment VarChar(1000) NOT NULL,
-			PRIMARY KEY(aff_id,month)
-			) ".$charset_collate;
+		$sql = "CREATE TABLE `afm_accounting` (
+			`aff_id` BIGINT(20),
+			`month` DATE NOT NULL,
+			`ftd_revenue` DECIMAL(10,2) NOT NULL DEFAULT 0,
+			`retention_revenue` DECIMAL(10,2) NOT NULL DEFAULT 0,
+			`paid` DECIMAL(10,2) NOT NULL DEFAULT 0,
+			PRIMARY KEY (`aff_id`,`month`)
+		) ". $charset_collate;
+
+		dbDelta( $sql );
+
+		$sql = "CREATE TABLE `afm_accounting_log` (
+			`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+			`aff_id` BIGINT(20),
+			`action_date` TIMESTAMP NOT NULL,
+			`ftd_revenue` DECIMAL(10,2) NULL,
+			`retention_revenue` DECIMAL(10,2) NULL,
+			`paid` DECIMAL(10,2) NULL,
+			`order_id` BIGINT(20) NULL,
+			`comment` VARCHAR(1000) NULL,
+			`is_deleted` BINARY(1) NOT NULL DEFAULT 0,
+			PRIMARY KEY (`id`)
+		) ". $charset_collate;
 
 		dbDelta( $sql );
 
@@ -205,7 +219,7 @@ class AffiliatesManagement
 		AFMStats::event($stats["link_id"],$affiliate->ID(),"",$userId,$isFirst ? "first_deposit" : "deposit","","","","","",$amount);
 
 		//add to accounting
-		$affiliate->compensate($userId, $amount,$isFirst,$order);
+		$affiliate->compensate($userId, $amount,$isFirst,$orderId,$order);
 	}
 
 	/*
@@ -225,7 +239,7 @@ class AffiliatesManagement
 			AFMStats::event($stats["link_id"],$affiliate->ID(),"",$args["user_id"],$args["is_first"] ? "first_deposit" : "deposit","","","","","",$amount);
 
 			//add to accounting
-			$affiliate->compensate($args["user_id"], $amount,$args["is_first"],$args);
+			$affiliate->compensate($args["user_id"], $amount,$args["is_first"],$args["charge_id"],$args);
 		}
 	}
 

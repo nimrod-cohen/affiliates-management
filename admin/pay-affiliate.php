@@ -15,11 +15,9 @@
 <?php } ?>
 
 <div class="wrap" id="profile-page">
-	<p><a href="<?php echo admin_url("admin.php?page=affiliates-management"); ?>">← Back to Affiliates</a></p>
+	<p><a href="<?php echo admin_url("admin.php?page=affiliates-management&subpage=edit-affiliate&id=".$aff->ID()); ?>">← Back to Edit Affiliate</a></p>
 	<h1 class="wp-heading-inline">Pay <?php echo $aff->fullname(); ?>	</h1>
-
 	<hr class="wp-header-end">
-
 	<form id="your-profile" action="" method="POST" novalidate="novalidate">
 		<input type="hidden" id="wp_nonce" name="wp_nonce" value="<?php echo wp_create_nonce("save_affiliate_details"); ?>">
 		<input type="hidden" name="action" value="pay_affilate">

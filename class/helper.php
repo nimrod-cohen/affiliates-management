@@ -12,13 +12,14 @@ class AFMHelper
 		if ($targetPage < 1 || $targetPage > $total || $targetPage == $currentPage)
 			return "<span class='tablenav-pages-navspan' aria-hidden='true'>" . $title . "</span> ";
 		else
-			return "<a class='paging-button' href='javascript:void(null);' data-page='" . $targetPage . "'><span aria-hidden='true'>" . $title . "</span></a>";
+			return "<a class='paging-button' href='javascript:void(null);' data-page='" . $targetPage . "'><span  aria-hidden='true'>" . $title . "</span></a>";
 	}
 
 	static function tablePaging($total, $currentPage, $pageSize)
 	{
 		$maxPages = ceil($total / $pageSize);
-		return "<div class='tablenav-pages' style='float: right;padding: 10px'>
+		return "<div class='tablenav'>
+					<div class='tablenav-pages' style='float: right;padding: 10px'>
 						<span class='displaying-num'>" . $total . " rows.</span>
 						<span class='pagination-links'>" .
 		self::pagingButton($maxPages, $currentPage, 1, "«") .
@@ -33,6 +34,7 @@ class AFMHelper
 		self::pagingButton($maxPages, $currentPage, $currentPage + 1, "›") .
 		self::pagingButton($maxPages, $currentPage, $maxPages, "»") .
 		"</span>
+		</div>
 		</div>";
 	}
 

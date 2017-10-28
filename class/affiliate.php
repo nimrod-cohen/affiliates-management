@@ -163,10 +163,10 @@ class AFMAffiliate
 	public function pay($amount,$comment)
 	{
 		$thisMonth = strtotime( 'first day of ' . date( 'F Y'));
-		AFMAccounting::apply($this->ID(),$thisMonth,0,0,$amount,$comment);
+		AFMAccounting::apply($this->ID(),$thisMonth,0,0,$amount,null,$comment);
 	}
 
-	public function compensate($userId,$amount,$isFirst,$orderDetails)
+	public function compensate($userId,$amount,$isFirst,$orderId,$orderDetails)
 	{
 		$deal = $this->deal();
 
@@ -209,7 +209,7 @@ class AFMAffiliate
 				break;
 		}
 
-		AFMAccounting::apply($this->ID(),$thisMonth,$cpa,$revShare);
+		AFMAccounting::apply($this->ID(),$thisMonth,$cpa,$revShare,0,$orderId,null);
 	}
 
 	public function balance()
