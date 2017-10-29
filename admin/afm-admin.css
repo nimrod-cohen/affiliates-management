@@ -16,3 +16,17 @@
 	line-height: 40px;
 	padding:0;
 }
+
+table#accounting-table > tbody > tr {
+	cursor: pointer;
+}
+
+td.payment-details-container table
+{
+	border-collapse: collapse;
+}
+
+td.payment-details-container table tr td
+{
+	border:solid 1px lightgray;
+}

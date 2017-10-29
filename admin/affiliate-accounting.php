@@ -10,7 +10,7 @@
 	<input type="hidden" name="page" value="affiliates-management">
 	<?php 	echo AFMHelper::tablePaging($total,$page,$rowsPerPage); ?>
 </form>
-<table class="wp-list-table widefat striped posts">
+<table id="accounting-table" data-affiliate-id="<?php echo $aff->ID();?>" class="wp-list-table widefat striped posts">
 	<thead>
 	<tr>
 		<td id="cb" class="manage-column column-cb check-column">
@@ -34,7 +34,7 @@
 		$paid = $row["paid"];
 		$month = date("M Y",strtotime($row["month"]));
 		?>
-		<tr>
+		<tr data-month="<?php echo $row["month"]; ?>">
 			<td></td>
 			<td><?php echo $month; ?></td>
 			<td><?php echo AffiliatesManagement::moneyFormat($ftd); ?></td>

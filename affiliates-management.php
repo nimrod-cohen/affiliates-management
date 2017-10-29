@@ -74,6 +74,10 @@ class AffiliatesManagement
 
 		//run financial calculations
 		add_action('afm_do_calculations', [$this,'doCalculations']);
+
+		//get payment history ajax calls
+		add_action( 'wp_ajax_payment_history', [$this, 'paymentHistory' ]);
+		add_action( 'wp_ajax_delete_payment_history', [$this, 'delPayment' ]);
 	}
 
 	function doCalculations()
@@ -410,13 +414,18 @@ class AffiliatesManagement
 		if (!strstr($hook, "affiliates-management") )
 			return;
 
+		wp_enqueue_style('font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
+
 		wp_register_style( 'afm-admin-css', plugin_dir_url(__FILE__).'admin/afm-admin.css');
 		wp_register_script( 'afm-admin-js', plugin_dir_url(__FILE__).'admin/afm-admin.js');
 
 		wp_enqueue_style( 'afm-admin-css');
 		wp_enqueue_script( 'afm-admin-js');
 
-		wp_localize_script( 'afm-admin-js', 'afm_admin', ['MIXED_CPA_REVSHARE' => AFM_DealType::MIXED_CPA_AND_REVEUE_SHARE] );
+		wp_localize_script( 'afm-admin-js', 'afm_admin',
+			['MIXED_CPA_REVSHARE' => AFM_DealType::MIXED_CPA_AND_REVEUE_SHARE,
+			'ajax_url' => admin_url('admin-ajax.php'),
+			'nonce' => wp_create_nonce('afm-nonce')] );
 	}
 
 	function showMenu()
@@ -598,6 +607,47 @@ class AffiliatesManagement
 
 		wp_redirect($link);
 	}
+
+	function paymentHistory()
+	{
+		check_ajax_referer( 'afm-nonce', 'security' );
+
+		$affId = $_POST["aff_id"];
+		$month = $_POST["month"];
+
+		$result = AFMAccounting::paymentLog($affId,$month);
+
+		foreach($result as &$row)
+		{
+			$row["paid"] = AffiliatesManagement::moneyFormat($row["paid"]);
+		}
+
+		echo json_encode($result);
+		die;
+	}
+
+	function delPayment()
+	{
+		check_ajax_referer( 'afm-nonce', 'security' );
+
+		$affId = $_POST["aff_id"];
+		$month = $_POST["month"];
+		$paymentId = $_POST["payment_id"];
+
+		AFMAccounting::deletePayment($affId,$month,$paymentId);
+
+		$result = AFMAccounting::paymentLog($affId,$month);
+
+		foreach($result as &$row)
+		{
+			$row["paid"] = AffiliatesManagement::moneyFormat($row["paid"]);
+		}
+
+		echo json_encode($result);
+		die;
+	}
+
+
 }
 
 include_once "class".DIRECTORY_SEPARATOR."affiliate.php";

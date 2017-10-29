@@ -8,7 +8,7 @@
 
 class AFMAccounting
 {
-	static function apply($affId,$month,$ftd = 0,$retention = 0,$paid = 0,$order_id = null,$comment = null)
+	static function apply($affId,$month,$ftd = 0,$retention = 0,$paid = 0,$orderId = null,$comment = null, $noLog = false)
 	{
 		global $wpdb;
 
@@ -22,12 +22,14 @@ class AFMAccounting
 
 		$wpdb->query($sql);
 
-		$sql = "INSERT INTO afm_accounting_log (aff_id,action_date,ftd_revenue,retention_revenue,paid,order_id,comment,is_deleted )
+		if(!$noLog) {
+			$sql = "INSERT INTO afm_accounting_log (aff_id,action_date,ftd_revenue,retention_revenue,paid,order_id,comment,is_deleted )
 				VALUES ( %d, CURRENT_TIMESTAMP, %f, %f, %f, %d, %s, 0 )";
 
-		$sql = $wpdb->prepare($sql,$affId,$ftd,$retention,$paid,$order_id,$comment);
+			$sql = $wpdb->prepare($sql, $affId, $ftd, $retention, $paid, $orderId, $comment);
 
-		$wpdb->query($sql);
+			$wpdb->query($sql);
+		}
 	}
 
 	static function byAffiliate($affId,$page,$pageSize = null, &$count = null)
@@ -47,5 +49,40 @@ class AFMAccounting
 			$count = $wpdb->get_var("SELECT FOUND_ROWS();");
 
 		return $results;
+	}
+
+	static function paymentLog($affId,$month)
+	{
+		global $wpdb;
+
+		$sql = "SELECT * FROM afm_accounting_log WHERE is_deleted = 0 and aff_id = %d and year(action_date) = year(%s) and month(action_date) = month(%s) ORDER BY id ASC";
+
+		$sql = $wpdb->prepare($sql,$affId,$month,$month);
+
+		return $wpdb->get_results($sql,ARRAY_A);
+	}
+
+	static function deletePayment($affId,$month,$paymentId)
+	{
+		global $wpdb;
+
+		$sql = "SELECT * FROM afm_accounting_log WHERE id = %d";
+
+		$sql = $wpdb->prepare($sql,$paymentId);
+
+		$result = $wpdb->get_row($sql,ARRAY_A);
+
+		if($result["is_deleted"] == 1)
+			return;
+
+		$sql = "UPDATE afm_accounting_log
+			SET is_deleted = 1
+			WHERE id = %d";
+
+		$sql = $wpdb->prepare($sql,$paymentId);
+
+		$wpdb->query($sql);
+
+		self::apply($affId,strtotime($month),0,0,$result["paid"]*-1,null,null,true);
 	}
 }
