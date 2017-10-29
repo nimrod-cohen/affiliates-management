@@ -65,7 +65,9 @@
 			success: function (response) {
 				var res = JSON.parse(response);
 
-				if(res.length == 0)
+				$("#current_balance").html(res.balance);
+
+				if(res.rows.length == 0)
 				{
 					row.find('td.payment-details-container').html("no results");
 					return;
@@ -74,9 +76,9 @@
 				var html = "<table>" +
 					"<thead><tr><th>Payment date</th><th>Sum</th><th>Comment</th><th></th></tr></thead>" +
 					"<tbody>";
-				for(var i = 0; i < res.length; i++)
+				for(var i = 0; i < res.rows.length; i++)
 				{
-					html += "<tr data-row-id='"+res[i].id+"'><td>"+res[i].action_date+"</td><td>"+res[i].paid+"</td><td>"+res[i].comment+"</td>" +
+					html += "<tr data-row-id='"+res.rows[i].id+"'><td>"+res.rows[i].action_date+"</td><td>"+res.rows[i].paid+"</td><td>"+res.rows[i].comment+"</td>" +
 						"<td><button class='delete-row'>Delete</button></td>"
 				}
 				html += "</tbody></table>";
@@ -109,7 +111,9 @@
 			success: function (response) {
 				var res = JSON.parse(response);
 
-				if(res.length == 0)
+				$("#current_balance").html(res.balance);
+
+				if(res.rows.length == 0)
 				{
 					masterRow.find('td.payment-details-container').html("no results");
 					return;
@@ -118,9 +122,9 @@
 				var html = "<table>" +
 					"<thead><tr><th>Payment date</th><th>Sum</th><th>Comment</th><th></th></tr></thead>" +
 					"<tbody>";
-				for(var i = 0; i < res.length; i++)
+				for(var i = 0; i < res.rows.length; i++)
 				{
-					html += "<tr data-row-id='"+res[i].id+"'><td>"+res[i].action_date+"</td><td>"+res[i].paid+"</td><td>"+res[i].comment+"</td>" +
+					html += "<tr data-row-id='"+res.rows[i].id+"'><td>"+res.rows[i].action_date+"</td><td>"+res.rows[i].paid+"</td><td>"+res.rows[i].comment+"</td>" +
 						"<td><button class='delete-row'>Delete</button></td>"
 				}
 				html += "</tbody></table>";

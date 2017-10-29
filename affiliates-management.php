@@ -622,6 +622,11 @@ class AffiliatesManagement
 			$row["paid"] = AffiliatesManagement::moneyFormat($row["paid"]);
 		}
 
+		$result = ["rows"=>$result];
+
+		$aff = AFMAffiliate::fromAffiliateId($affId);
+		$result["balance"] = AffiliatesManagement::moneyFormat($aff->balance());
+
 		echo json_encode($result);
 		die;
 	}
@@ -642,6 +647,11 @@ class AffiliatesManagement
 		{
 			$row["paid"] = AffiliatesManagement::moneyFormat($row["paid"]);
 		}
+
+		$result = ["rows" => $result];
+
+		$aff = AFMAffiliate::fromAffiliateId($affId);
+		$result["balance"] = AffiliatesManagement::moneyFormat($aff->balance());
 
 		echo json_encode($result);
 		die;
