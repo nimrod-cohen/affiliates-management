@@ -587,7 +587,7 @@ class AffiliatesManagement
 
 	function doAffiliateLogin($args)
 	{
-		if(!isset($args["log"]) || strlen($args["log"]) == 0 || !isset($args["pwd"]) || strlen($args["pwd"] == 0))
+		if(!isset($args["log"]) || strlen($args["log"]) == 0 || !isset($args["pwd"]) || strlen($args["pwd"]) == 0)
 			throw new Exception("Invalid email or password");
 
 		$user = get_user_by("email",$args["log"]);
