@@ -36,48 +36,49 @@ class AffiliatesManagement
 
 	function __construct()
 	{
-		register_activation_hook( __FILE__, [$this,"activate"] );
-		register_deactivation_hook( __FILE__, [$this,"deactivate"] );
+		register_activation_hook(__FILE__, [$this, "activate"]);
+		register_deactivation_hook(__FILE__, [$this, "deactivate"]);
 
-		$location = get_option("afm-tracker-script-location","header");
-		if($location == "header")
-			add_action("wp_head",[$this,"injectTracker"]);
+		$location = get_option("afm-tracker-script-location", "header");
+		if ($location == "header")
+			add_action("wp_head", [$this, "injectTracker"]);
 		else
-			add_action("wp_footer",[$this,"injectTracker"]);
+			add_action("wp_footer", [$this, "injectTracker"]);
 
-		add_action( 'admin_menu', [$this,'addSettingsMenu']);
+		add_action('admin_menu', [$this, 'addSettingsMenu']);
 
 		//add affiliate scripts/css
-		add_action( 'wp_enqueue_scripts', [$this, 'addAFMAssets' ]);
+		add_action('wp_enqueue_scripts', [$this, 'addAFMAssets']);
 
-		add_shortcode("affiliates_management",[$this,'showAffiliatesApp']);
+		add_shortcode("affiliates_management", [$this, 'showAffiliatesApp']);
 
-		add_action("init",[$this,"checkAffiliateActions"]);
-		add_action( 'init', [$this,'addAttachmentTaxonomies'] );
+		add_action("init", [$this, "checkAffiliateActions"]);
+		add_action('init', [$this, 'addAttachmentTaxonomies']);
+		add_action('admin_init', [$this, 'addBannerFarmCategory']);
 
-		add_action( 'wp_ajax_afm_log', [$this, 'logEvent' ]);
-		add_action( 'wp_ajax_nopriv_afm_log', [$this, 'logEvent' ]);
+		add_action('wp_ajax_afm_log', [$this, 'logEvent']);
+		add_action('wp_ajax_nopriv_afm_log', [$this, 'logEvent']);
 
-		add_action( 'wp_ajax_afm_get_creatives', [$this, 'getCreatives' ]);
+		add_action('wp_ajax_afm_get_creatives', [$this, 'getCreatives']);
 
 		//subscribe to WPSC payment notifications
-		add_action('wpsc/user_payment',[$this,"logPayments_WPSC"]);
+		add_action('wpsc/user_payment', [$this, "logPayments_WPSC"]);
 		//subscribe to WooCommerce payment notifications
-		add_action('woocommerce_payment_complete',[$this,"logPayments_WC"]);
+		add_action('woocommerce_payment_complete', [$this, "logPayments_WC"]);
 
 		//susbcribe to user registrations, bind visitor to user id.
-		add_action("user_register",[$this,"logRegistration"]);
-		add_action("wpsc/user_authenticated",[$this,"logEmailAuthentication"]);
+		add_action("user_register", [$this, "logRegistration"]);
+		add_action("wpsc/user_authenticated", [$this, "logEmailAuthentication"]);
 
 		//enqueue css/js to admin
-		add_action('admin_enqueue_scripts',[$this,'registerAdminAssets']);
+		add_action('admin_enqueue_scripts', [$this, 'registerAdminAssets']);
 
 		//run financial calculations
-		add_action('afm_do_calculations', [$this,'doCalculations']);
+		add_action('afm_do_calculations', [$this, 'doCalculations']);
 
 		//get payment history ajax calls
-		add_action( 'wp_ajax_payment_history', [$this, 'paymentHistory' ]);
-		add_action( 'wp_ajax_delete_payment_history', [$this, 'delPayment' ]);
+		add_action('wp_ajax_payment_history', [$this, 'paymentHistory']);
+		add_action('wp_ajax_delete_payment_history', [$this, 'delPayment']);
 	}
 
 	function doCalculations()
@@ -86,15 +87,14 @@ class AffiliatesManagement
 
 	function deactivate()
 	{
-		wp_clear_scheduled_hook('afm_do_calculations' );
+		wp_clear_scheduled_hook('afm_do_calculations');
 	}
 
 	function activate()
 	{
 		$affPage = self::getAffiliatesPage();
 
-		if(count($affPage) == 0)
-		{
+		if (count($affPage) == 0) {
 			$page = array(
 				'post_type' => 'page',
 				'post_title' => "Affiliates",
@@ -109,12 +109,11 @@ class AffiliatesManagement
 			wp_insert_post($page);
 		}
 
-		if(!get_role(self::AFM_ROLE_NAME))
-		{
-			add_role(self::AFM_ROLE_NAME, 'AFM Affiliate',array());
+		if (!get_role(self::AFM_ROLE_NAME)) {
+			add_role(self::AFM_ROLE_NAME, 'AFM Affiliate', array());
 		}
 
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
 		global $wpdb;
 
@@ -127,9 +126,9 @@ class AffiliatesManagement
 			`url` VARCHAR(1000) NOT NULL,
 			`is_deleted` BINARY(1) NOT NULL DEFAULT 0,
 			PRIMARY KEY  (`id`)
-		) ".$charset_collate;
+		) " . $charset_collate;
 
-		dbDelta( $sql );
+		dbDelta($sql);
 
 		$sql = "CREATE TABLE `afm_events` (
 			`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
@@ -148,7 +147,7 @@ class AffiliatesManagement
 			PRIMARY KEY  (`id`, `link_id`, `tracked_id`),
 			INDEX `SECONDARY` (`user_id` ASC),
 			INDEX `EVENT_BY_TS` (`ts` ASC)
-		) ". $charset_collate;
+		) " . $charset_collate;
 
 		dbDelta($sql);
 
@@ -159,9 +158,9 @@ class AffiliatesManagement
 			`retention_revenue` DECIMAL(10,2) NOT NULL DEFAULT 0,
 			`paid` DECIMAL(10,2) NOT NULL DEFAULT 0,
 			PRIMARY KEY (`aff_id`,`month`)
-		) ". $charset_collate;
+		) " . $charset_collate;
 
-		dbDelta( $sql );
+		dbDelta($sql);
 
 		$sql = "CREATE TABLE `afm_accounting_log` (
 			`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
@@ -174,22 +173,22 @@ class AffiliatesManagement
 			`comment` VARCHAR(1000) NULL,
 			`is_deleted` BINARY(1) NOT NULL DEFAULT 0,
 			PRIMARY KEY (`id`)
-		) ". $charset_collate;
+		) " . $charset_collate;
 
-		dbDelta( $sql );
+		dbDelta($sql);
 
-		if (! wp_next_scheduled ( 'afm_do_calculations' )) {
-			wp_schedule_event( time(), 'hourly', 'afm_do_calculations' );
+		if (!wp_next_scheduled('afm_do_calculations')) {
+			wp_schedule_event(time(), 'hourly', 'afm_do_calculations');
 		}
 	}
 
 	function getCreatives()
 	{
-		check_ajax_referer( 'afm-nonce', 'security' );
+		check_ajax_referer('afm-nonce', 'security');
 
 		$page = $_POST["page"];
 
-		$creatives = AFMCreatives::all($page,AFMCreatives::PAGE_SIZE);
+		$creatives = AFMCreatives::all($page, AFMCreatives::PAGE_SIZE);
 
 		echo json_encode($creatives);
 		die;
@@ -200,30 +199,30 @@ class AffiliatesManagement
 	 */
 	function logPayments_WC($orderId)
 	{
-		$order = new WC_Order( $orderId );
+		$order = new WC_Order($orderId);
 
 		$userId = $order->get_user_id();
 
-		if(!$userId)
+		if (!$userId)
 			return;
 
 		$stats = AFMStats::byUser($userId);
 
 		$isFirst = AFMStats::firstPayment($userId) == false;
 
-		if(!$stats)
+		if (!$stats)
 			return;
 
 		$affiliate = AFMAffiliate::fromAffiliateId($stats["aff_id"]);
 
 		$amount = $order->get_total();
 
-		$amount = apply_filters("afm_post_charged_amount",$amount,$affiliate,$order);
+		$amount = apply_filters("afm_post_charged_amount", $amount, $affiliate, $order);
 
-		AFMStats::event($stats["link_id"],$affiliate->ID(),"",$userId,$isFirst ? "first_deposit" : "deposit","","","","","",$amount);
+		AFMStats::event($stats["link_id"], $affiliate->ID(), "", $userId, $isFirst ? "first_deposit" : "deposit", "", "", "", "", "", $amount);
 
 		//add to accounting
-		$affiliate->compensate($userId, $amount,$isFirst,$orderId,$order);
+		$affiliate->compensate($userId, $amount, $isFirst, $orderId, $order);
 	}
 
 	/*
@@ -234,29 +233,28 @@ class AffiliatesManagement
 
 		$stats = AFMStats::byUser($args["user_id"]);
 
-		if($stats)
-		{
+		if ($stats) {
 			$affiliate = AFMAffiliate::fromAffiliateId($stats["aff_id"]);
 
-			$amount = apply_filters("afm_post_charged_amount",$args["amount"],$affiliate,$args);
+			$amount = apply_filters("afm_post_charged_amount", $args["amount"], $affiliate, $args);
 
-			AFMStats::event($stats["link_id"],$affiliate->ID(),"",$args["user_id"],$args["is_first"] ? "first_deposit" : "deposit","","","","","",$amount);
+			AFMStats::event($stats["link_id"], $affiliate->ID(), "", $args["user_id"], $args["is_first"] ? "first_deposit" : "deposit", "", "", "", "", "", $amount);
 
 			//add to accounting
-			$affiliate->compensate($args["user_id"], $amount,$args["is_first"],$args["charge_id"],$args);
+			$affiliate->compensate($args["user_id"], $amount, $args["is_first"], $args["charge_id"], $args);
 		}
 	}
 
 	function logEmailAuthentication($user)
 	{
 		$stats = AFMStats::byUser($user->ID);
-		if($stats)
-			AFMStats::event($stats["link_id"],$stats["aff_id"],"",$user->ID,"authenticate");
+		if ($stats)
+			AFMStats::event($stats["link_id"], $stats["aff_id"], "", $user->ID, "authenticate");
 	}
 
 	function logRegistration($userId)
 	{
-		if(!isset($_COOKIE["afm_usrid"]))
+		if (!isset($_COOKIE["afm_usrid"]))
 			return;
 
 		$trackedId = $_COOKIE["afm_usrid"];
@@ -266,21 +264,16 @@ class AffiliatesManagement
 
 		$aff = AFMStats::whoLocks($userId);
 
-		if($aff)
-		{
+		if ($aff) {
 			$affId = $aff["aff_id"];
 			$linkId = $aff["link_id"];
-		}
-		else if(!isset($_COOKIE["afm_link_id"]) || !isset($_COOKIE["afm_aff_id"]))
-		{
+		} else if (!isset($_COOKIE["afm_link_id"]) || !isset($_COOKIE["afm_aff_id"])) {
 			//try finding the user by his tracking code
 			$event = AFMStats::byTracker($trackedId);
 
 			$affId = $event["aff_id"];
 			$linkId = $event["link_id"];
-		}
-		else
-		{
+		} else {
 			$linkId = $_COOKIE["afm_link_id"];
 			$affId = $_COOKIE["afm_aff_id"];
 		}
@@ -304,9 +297,10 @@ class AffiliatesManagement
 		setlocale(LC_MONETARY, 'en_US');
 		return money_format('%.2n', $number);
 	}
+
 	function logEvent()
 	{
-		check_ajax_referer( 'afm-nonce', 'security' );
+		check_ajax_referer('afm-nonce', 'security');
 
 		$event = $_POST["event"];
 		$utm = $_POST["utm"];
@@ -322,9 +316,9 @@ class AffiliatesManagement
 			$utm["campaign"],
 			$utm["term"],
 			$utm["content"],
-			isset($_POST["amount"])? $_POST["amount"]: 0);
+			isset($_POST["amount"]) ? $_POST["amount"] : 0);
 
-		echo json_encode(["success"=>true]);
+		echo json_encode(["success" => true]);
 		die;
 	}
 
@@ -336,7 +330,7 @@ class AffiliatesManagement
 			'meta_value' => '1'
 		]);
 
-		if(count($posts) > 0)
+		if (count($posts) > 0)
 			return $posts[0];
 		return null;
 	}
@@ -344,30 +338,30 @@ class AffiliatesManagement
 	static function defaultDeal()
 	{
 		return get_option("afm-default-deal",
-		[
-			"type" => AFM_DealType::CPA,
-			"CPA" => 30
-		]);
+			[
+				"type" => AFM_DealType::CPA,
+				"CPA" => 30
+			]);
 	}
 
 	function addAFMAssets()
 	{
-		if(get_the_ID() != self::getAffiliatesPage()->ID)
+		if (get_the_ID() != self::getAffiliatesPage()->ID)
 			return;
 
-		wp_register_style("afm-affiliate-css",plugin_dir_url(__FILE__)."screens".DIRECTORY_SEPARATOR."afm.css");
+		wp_register_style("afm-affiliate-css", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "afm.css");
 		wp_enqueue_style("afm-affiliate-css");
 
-		wp_register_script("afm-affiliate-js",plugin_dir_url(__FILE__)."screens".DIRECTORY_SEPARATOR."afm.js",["jquery"]);
+		wp_register_script("afm-affiliate-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "afm.js", ["jquery"]);
 		wp_enqueue_script("afm-affiliate-js");
 
-		wp_register_script("remodaler-js",plugin_dir_url(__FILE__)."screens".DIRECTORY_SEPARATOR."addons".DIRECTORY_SEPARATOR."remodaler.js",["jquery"]);
+		wp_register_script("remodaler-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "addons" . DIRECTORY_SEPARATOR . "remodaler.js", ["jquery"]);
 		wp_enqueue_script("remodaler-js");
 
-		wp_register_style("remodaler-css",plugin_dir_url(__FILE__)."screens".DIRECTORY_SEPARATOR."addons".DIRECTORY_SEPARATOR."remodaler.css");
+		wp_register_style("remodaler-css", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "addons" . DIRECTORY_SEPARATOR . "remodaler.css");
 		wp_enqueue_style("remodaler-css");
 
-		wp_localize_script( 'afm-affiliate-js',
+		wp_localize_script('afm-affiliate-js',
 			'afm_creatives_info', [
 				'ajax_url' => admin_url('admin-ajax.php'),
 				'nonce' => wp_create_nonce('afm-nonce'),
@@ -388,17 +382,17 @@ class AffiliatesManagement
 	 */
 	function injectTracker()
 	{
-		wp_register_script("afm-tracker",plugin_dir_url(__FILE__)."afm_tracker.js",["jquery"]);
+		wp_register_script("afm-tracker", plugin_dir_url(__FILE__) . "afm_tracker.js", ["jquery"]);
 		wp_enqueue_script("afm-tracker");
 
 
 		//TODO: move keep days to settings.
 
-		wp_localize_script( 'afm-tracker', 'afm_server_info', [
+		wp_localize_script('afm-tracker', 'afm_server_info', [
 			'ajax_url' => admin_url('admin-ajax.php'),
 			'nonce' => wp_create_nonce('afm-nonce'),
-			'keep_days' => get_option("afm-keep-days",AffiliatesManagement::AFM_KEEP_DAYS)
-		] );
+			'keep_days' => get_option("afm-keep-days", AffiliatesManagement::AFM_KEEP_DAYS)
+		]);
 	}
 
 	/*
@@ -406,36 +400,34 @@ class AffiliatesManagement
 	 */
 	function addSettingsMenu()
 	{
-		add_menu_page("Affiliates Management","Affiliates","manage_options","affiliates-management",[$this,"showMenu"],AffiliatesManagement::AFM_ICON,AffiliatesManagement::AFM_MENU_POSITION);
+		add_menu_page("Affiliates Management", "Affiliates", "manage_options", "affiliates-management", [$this, "showMenu"], AffiliatesManagement::AFM_ICON, AffiliatesManagement::AFM_MENU_POSITION);
 	}
 
 	public function registerAdminAssets($hook)
 	{
-		if (!strstr($hook, "affiliates-management") )
+		if (!strstr($hook, "affiliates-management"))
 			return;
 
 		wp_enqueue_style('font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 
-		wp_register_style( 'afm-admin-css', plugin_dir_url(__FILE__).'admin/afm-admin.css');
-		wp_register_script( 'afm-admin-js', plugin_dir_url(__FILE__).'admin/afm-admin.js');
+		wp_register_style('afm-admin-css', plugin_dir_url(__FILE__) . 'admin/afm-admin.css');
+		wp_register_script('afm-admin-js', plugin_dir_url(__FILE__) . 'admin/afm-admin.js');
 
-		wp_enqueue_style( 'afm-admin-css');
-		wp_enqueue_script( 'afm-admin-js');
+		wp_enqueue_style('afm-admin-css');
+		wp_enqueue_script('afm-admin-js');
 
-		wp_localize_script( 'afm-admin-js', 'afm_admin',
+		wp_localize_script('afm-admin-js', 'afm_admin',
 			['MIXED_CPA_REVSHARE' => AFM_DealType::MIXED_CPA_AND_REVEUE_SHARE,
-			'ajax_url' => admin_url('admin-ajax.php'),
-			'nonce' => wp_create_nonce('afm-nonce')] );
+				'ajax_url' => admin_url('admin-ajax.php'),
+				'nonce' => wp_create_nonce('afm-nonce')]);
 	}
 
 	function showMenu()
 	{
 		$showUpdated = false;
 
-		if($_SERVER["REQUEST_METHOD"] == "POST")
-		{
-			switch($_POST["action"])
-			{
+		if ($_SERVER["REQUEST_METHOD"] == "POST") {
+			switch ($_POST["action"]) {
 				case "save_settings":
 					$showUpdated = true;
 					$updateResult = $this->saveSettings();
@@ -447,7 +439,7 @@ class AffiliatesManagement
 				case "pay_affilate":
 					$showUpdated = true;
 					$aff = AFMAffiliate::fromAffiliateId($_POST["affiliate_id"]);
-					$aff->pay($_POST["amount"],$_POST["comment"]);
+					$aff->pay($_POST["amount"], $_POST["comment"]);
 					$updateResult = true;
 					break;
 				default:
@@ -457,12 +449,12 @@ class AffiliatesManagement
 
 		$page = isset($_GET["subpage"]) ? $_GET["subpage"] : "settings";
 
-		require_once "admin".DIRECTORY_SEPARATOR.$page.".php";
+		require_once "admin" . DIRECTORY_SEPARATOR . $page . ".php";
 	}
 
 	function saveAffiliateSettings()
 	{
-		if( !wp_verify_nonce($_POST["wp_nonce"],"save_affiliate_details"))
+		if (!wp_verify_nonce($_POST["wp_nonce"], "save_affiliate_details"))
 			return false;
 
 		$data = [
@@ -480,7 +472,7 @@ class AffiliatesManagement
 			]
 		];
 
-		if(isset($_POST["password"]))
+		if (isset($_POST["password"]))
 			$data["user_pass"] = $_POST["password"];
 
 		AFMAffiliate::adminUpdate($data);
@@ -490,20 +482,20 @@ class AffiliatesManagement
 
 	public static function lockingEvent()
 	{
-		return get_option("afm-locking-event","authenticate");
+		return get_option("afm-locking-event", "authenticate");
 	}
 
 	function saveSettings()
 	{
-		update_option("afm-tracker-script-location",$_POST["script_location"],true);
-		update_option("afm-locking-event",$_POST["locking_event"],true);
-		update_option("afm-default-deal",[
-				"type" => $_POST["deal_type"],
-				"CPA" => isset($_POST["cpa"]) ? $_POST["cpa"] : "",
-				"REVSHARE" => isset($_POST["revshare"]) ? $_POST["revshare"] : "",
-				"REVSHARE_PERIOD" => isset($_POST["revshare_period"]) ? $_POST["revshare_period"] : ""
-		],true);
-		update_option("afm-keep-days",$_POST["keep_days"],true);
+		update_option("afm-tracker-script-location", $_POST["script_location"], true);
+		update_option("afm-locking-event", $_POST["locking_event"], true);
+		update_option("afm-default-deal", [
+			"type" => $_POST["deal_type"],
+			"CPA" => isset($_POST["cpa"]) ? $_POST["cpa"] : "",
+			"REVSHARE" => isset($_POST["revshare"]) ? $_POST["revshare"] : "",
+			"REVSHARE_PERIOD" => isset($_POST["revshare_period"]) ? $_POST["revshare_period"] : ""
+		], true);
+		update_option("afm-keep-days", $_POST["keep_days"], true);
 		return true;
 	}
 
@@ -511,8 +503,7 @@ class AffiliatesManagement
 	{
 		$page = isset($_GET["page"]) ? $_GET["page"] : "";
 
-		switch ($page)
-		{
+		switch ($page) {
 			case "join_us":
 				require_once("screens" . DIRECTORY_SEPARATOR . "join_us.php");
 				break;
@@ -522,16 +513,14 @@ class AffiliatesManagement
 			default:
 				$userId = get_current_user_id();
 
-				if ($userId == 0)
-				{
+				if ($userId == 0) {
 					require_once("screens" . DIRECTORY_SEPARATOR . "login.php");
 					return;
 				}
 
 				$data = get_userdata($userId);
 
-				if (in_array(self::AFM_ROLE_NAME, $data->roles))
-				{
+				if (in_array(self::AFM_ROLE_NAME, $data->roles)) {
 					require_once("screens" . DIRECTORY_SEPARATOR . "home.php");
 					return;
 				}
@@ -543,8 +532,21 @@ class AffiliatesManagement
 
 	function addAttachmentTaxonomies()
 	{
-		if(!is_object_in_taxonomy('attachment','category'))
-			register_taxonomy_for_object_type( 'category', 'attachment' );
+		if (!is_object_in_taxonomy('attachment', 'category')) {
+			register_taxonomy_for_object_type('category', 'attachment');
+		}
+		if (!is_object_in_taxonomy('attachment', 'post_tag')) {
+			register_taxonomy_for_object_type('post_tag', 'attachment');
+		}
+	}
+
+	function addBannerFarmCategory()
+	{
+		if(!term_exists('banner-farm','category',null))
+			wp_insert_category([
+				'cat_name'=>'Banner Farm',
+				'category-slug' => 'banner-farm'
+			]);
 	}
 
 	function checkAffiliateActions()
