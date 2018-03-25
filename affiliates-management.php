@@ -245,11 +245,11 @@ class AffiliatesManagement
 		}
 	}
 
-	function logEmailAuthentication($user)
+	function logEmailAuthentication($args)
 	{
-		$stats = AFMStats::byUser($user->ID);
+		$stats = AFMStats::byUser($args["user_id"]);
 		if ($stats)
-			AFMStats::event($stats["link_id"], $stats["aff_id"], "", $user->ID, "authenticate");
+			AFMStats::event($stats["link_id"], $stats["aff_id"], "", $args["user_id"], "authenticate");
 	}
 
 	function logRegistration($userId)
