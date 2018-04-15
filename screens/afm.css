@@ -137,6 +137,11 @@ div.form-group.pull-right
 	color: #555;
 }
 
+.tabs-wrapper .nav-tab-wrapper .nav-tab.pull-right
+{
+	float:right;
+}
+
 .tabs-wrapper .nav-tab-wrapper .nav-tab.nav-tab-active
 {
 	border-bottom: 1px solid #f1f1f1;
@@ -175,9 +180,19 @@ div.form-group.pull-right
 .tab-view.active {
 	display: block;
 }
-.tab-view {
+.tab-view
+{
 	display: none;
 	margin-top: 15px;
+	position: relative;
+}
+
+.tab-view .form-group label.description
+{
+	position: relative;
+	left: 240px;
+	top: 0px;
+	font-size: 0.7rem;
 }
 
 .tab-view .actions-bar
@@ -194,4 +209,14 @@ div.form-group.pull-right
 {
 	line-height: 40px;
 	padding:0;
+}
+
+@media only screen and (max-width: 715px)
+{
+   .tab-view .form-group label.description
+   {
+	   position: absolute;
+	   left: 10px;
+	   top: 70px;
+   }
 }

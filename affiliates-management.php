@@ -385,13 +385,23 @@ class AffiliatesManagement
 		wp_register_script("afm-tracker", plugin_dir_url(__FILE__) . "afm_tracker.js", ["jquery"]);
 		wp_enqueue_script("afm-tracker");
 
-
-		//TODO: move keep days to settings.
+		//if this is an affiliate related visit, we'll load the pixel.
+		$pixel = "";
+		if(isset($_COOKIE["afm_aff_id"]) && $_COOKIE["afm_aff_id"] != "null")
+		{
+			$aff = new WP_User($_COOKIE["afm_aff_id"]);
+			if(!is_wp_error($aff))
+			{
+				$aff = AFMAffiliate::fromWPUser($aff);
+				$pixel = $aff->pixel();
+			}
+		}
 
 		wp_localize_script('afm-tracker', 'afm_server_info', [
 			'ajax_url' => admin_url('admin-ajax.php'),
 			'nonce' => wp_create_nonce('afm-nonce'),
-			'keep_days' => get_option("afm-keep-days", AffiliatesManagement::AFM_KEEP_DAYS)
+			'keep_days' => get_option("afm-keep-days", AffiliatesManagement::AFM_KEEP_DAYS),
+			'aff_pixel' => $pixel
 		]);
 	}
 
@@ -569,6 +579,9 @@ class AffiliatesManagement
 					break;
 				case "do_save_details":
 					AFMAffiliate::update($_POST);
+					break;
+				case "do_save_pixel":
+					AFMAffiliate::setPixel(isset($_POST["pixel"]) ? trim($_POST["pixel"]) : "");
 					break;
 				case "create_link":
 					$affiliate = AFMAffiliate::fromCurrentUser();

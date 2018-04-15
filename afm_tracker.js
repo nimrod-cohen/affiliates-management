@@ -137,6 +137,25 @@
 					term: this.gc("afm.term"),
 					content: this.gc("afm.content")
 				}
+			},
+
+			report: function(event) {
+				if(typeof(window.afm_server_info) != "object" || typeof(window.afm_server_info.aff_pixel) != "string")
+					return;
+
+				var pixel = window.afm_server_info.aff_pixel;
+
+				if(pixel.length == 0)
+					return;
+
+				var utm = this.utm();
+
+				pixel = pixel.replace("{event}",event);
+				pixel = pixel.replace("{source}",utm.source);
+				pixel = pixel.replace("{medium}",utm.medium);
+				pixel = pixel.replace("{campaign}",utm.campaign);
+				pixel = pixel.replace("{term}",utm.term);
+				pixel = pixel.replace("{content}",utm.content);
 			}
 		};
 	}

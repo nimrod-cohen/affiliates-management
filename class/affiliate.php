@@ -18,6 +18,7 @@ class AFMAffiliate
 	public function email(){ return $this->user->user_email; }
 	public function website(){ return $this->user->user_url; }
 	public function deal() { return get_user_meta($this->ID,"afm_deal",true); }
+	public function pixel() { return get_user_meta($this->ID,"afm_pixel",true); }
 
 	private function __construct()
 	{}
@@ -158,6 +159,13 @@ class AFMAffiliate
 		$arr["skype_user"] = isset($args["skype"]) ? $args["skype"] : "";
 
 		self::adminUpdate($arr);
+	}
+
+	public static function setPixel($pixel)
+	{
+		$userId = get_current_user_id();
+
+		update_user_meta($userId,"afm_pixel",$pixel);
 	}
 
 	public function pay($amount,$comment)
