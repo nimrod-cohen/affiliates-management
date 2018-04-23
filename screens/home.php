@@ -9,7 +9,7 @@
 
 	$user = AFMAffiliate::fromAffiliateId(get_current_user_id());
 ?>
-<div class="tabs-wrapper">
+<div class="afm_page tabs-wrapper">
 	<h2 class="nav-tab-wrapper">
 		<a class="nav-tab <?php echo $activePage == 'links' ? 'nav-tab-active' : ''; ?>" id="links-tab" href="#top#tab_links">Links</a>
 		<a class="nav-tab <?php echo $activePage == 'pixel' ? 'nav-tab-active' : ''; ?>" id="pixel-tab" href="#top#tab_links">Pixel</a>

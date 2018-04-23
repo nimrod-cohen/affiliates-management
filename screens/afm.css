@@ -162,6 +162,13 @@ div.form-group.pull-right
 	margin-bottom: -1px;
 }
 
+.afm_page table td,.afm_page table th
+{
+	border-collapse: collapse;
+	padding:5px 10px;
+	border:solid 1px #a9a9a9;
+}
+
 .tabs-wrapper .tab-view
 {
 	display: none;
