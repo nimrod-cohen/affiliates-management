@@ -4,6 +4,12 @@ div#login.afm_form_container
 	direction: ltr;
 }
 
+div#login.afm_form_container label
+{
+	width: 150px;
+	display: inline-block;
+}
+
 #bannerFarm
 {
 	overflow: scroll;
