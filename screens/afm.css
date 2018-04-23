@@ -169,6 +169,11 @@ div.form-group.pull-right
 	border:solid 1px #a9a9a9;
 }
 
+.afm_page .button-small
+{
+	padding:5px 10px;
+}
+
 .tabs-wrapper .tab-view
 {
 	display: none;
