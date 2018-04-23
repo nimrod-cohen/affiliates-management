@@ -1,3 +1,9 @@
+div#login.afm_form_container
+{
+	text-align: left;
+	direction: ltr;
+}
+
 #bannerFarm
 {
 	overflow: scroll;

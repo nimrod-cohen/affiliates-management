@@ -1,4 +1,4 @@
-<div id="login">
+<div id="login" class="afm_form_container">
 	<?php
 
 	$affPage = AffiliatesManagement::getAffiliatesPage();
