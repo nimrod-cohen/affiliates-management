@@ -166,6 +166,8 @@ div.form-group.pull-right
 {
 	display: none;
 	min-height:300px;
+	direction:ltr;
+	text-align: left;
 }
 
 .tabs-wrapper .tab-view .standard-table thead th
@@ -201,9 +203,10 @@ div.form-group.pull-right
 
 .tab-view .form-group label.description
 {
-	position: relative;
-	left: 240px;
-	top: 0px;
+	display:block;
+	position:relative;
+	left: 230px;
+	max-width:calc(100% - 230px);
 	font-size: 0.7rem;
 }
 
