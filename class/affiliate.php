@@ -63,14 +63,16 @@ class AFMAffiliate
 		update_user_meta($this->ID,"afm_deal",$deal);
 	}
 
-	public function createLink()
+	public function createLink($landingPage)
 	{
 		global $wpdb;
+
+		$url = $landingPage ? get_permalink($landingPage) : home_url();
 
 		$wpdb->insert("afm_links",
 			[
 				"aff_id" => $this->ID,
-				"url" => trailingslashit(home_url())
+				"url" => trailingslashit($url)
 			]);
 	}
 

@@ -2,6 +2,7 @@
 	<div class="actions-bar">
 		<input type="hidden" name="affiliate_action" value="">
 		<input type="hidden" name="link_id" value="">
+		<input type="hidden" name="landing_page_id" value="">
 		<input type="submit" id="btnNewLink" class="button-small" value="New link">
 	</div>
 	<table class="standard-table">

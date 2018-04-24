@@ -1,5 +1,27 @@
 (function($)
 {
+	$(document).ready(function(){
+
+		$("select.page_selection option").click(function()
+		{
+			var parent = $(this).closest("select");
+
+			$(this).prop("selected", false);
+
+			if( parent.attr("id") == "off_pages" )
+				$("#on_pages").append($(this));
+			else
+				$("#off_pages").append($(this));
+		});
+
+		$("#submit_landingpages").click(function(ev){
+			$("select#on_pages option").each(function(){
+				$(this).prop("selected",true);
+			});
+		});
+
+	});
+
 	$(document).ready(function () {
 		$("#deal_type").change(function(){
 			var val = $(this).val();

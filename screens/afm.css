@@ -169,7 +169,7 @@ div.form-group.pull-right
 	border:solid 1px #a9a9a9;
 }
 
-.afm_page .button-small
+.afm_page .button-small,.afm_page .button-small:hover,.afm_page .button-small:focus
 {
 	padding:5px 10px;
 }

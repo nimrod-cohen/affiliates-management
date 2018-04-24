@@ -14,8 +14,29 @@
 			thisTab.addClass("nav-tab-active");
 		});
 
-		$("#btnNewLink").click(function(ev){
-			$(this).closest("form").find("input[name='affiliate_action']").val("create_link");
+		$("#btnNewLink").click(function(ev)
+		{
+			ev.preventDefault();
+
+			var form = $(this).closest("form");
+			form.find("input[name='affiliate_action']").val("create_link");
+
+			if(afm_info.landing_pages.length > 0)
+			{
+				remodaler.show({
+					title: "Landing Page",
+					message: "Choose Landing Page",
+					type: remodaler.types.INPUT,
+					values: afm_info.landing_pages,
+					confirmText: "Create",
+					confirm: function (val) {
+						form.find("input[name='landing_page_id']").val(val);
+						form.submit();
+					}
+				});
+			}
+			else
+				form.submit();
 		});
 
 		$(".delete-link").click(function(ev)
@@ -38,7 +59,6 @@
 				}
 			});
 		});
-
 	});
 
 	window["infinityScroller"] = {
@@ -92,7 +112,7 @@
 
 			console.log("found "+arr.length+" results.");
 
-			if(arr.length < afm_creatives_info.creatives_per_page)
+			if(arr.length < afm_info.creatives_per_page)
 				infinityScroller.isDone = true;
 
 			var currCol = infinityScroller.shortestColumn();
@@ -117,11 +137,11 @@
 			console.log("calling server for page "+infinityScroller.page);
 
 			jQuery.ajax({
-				url: afm_creatives_info.ajax_url,
+				url: afm_info.ajax_url,
 				type: 'post',
 				data: {
 					action: 'afm_get_creatives',
-					security: afm_creatives_info.nonce,
+					security: afm_info.nonce,
 					page: infinityScroller.page
 				},
 				success: this.appendCreatives

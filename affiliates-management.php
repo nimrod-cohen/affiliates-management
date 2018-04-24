@@ -361,11 +361,24 @@ class AffiliatesManagement
 		wp_register_style("remodaler-css", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "addons" . DIRECTORY_SEPARATOR . "remodaler.css");
 		wp_enqueue_style("remodaler-css");
 
+		$landingPages = get_option("afm_landingpages",[]);
+
+		$lps = [];
+		foreach($landingPages as $page)
+		{
+			$lps[] = [
+				"title" => get_the_title($page),
+				"value" => $page
+			];
+
+		}
+
 		wp_localize_script('afm-affiliate-js',
-			'afm_creatives_info', [
+			'afm_info', [
 				'ajax_url' => admin_url('admin-ajax.php'),
 				'nonce' => wp_create_nonce('afm-nonce'),
-				'creatives_per_page' => AFMCreatives::PAGE_SIZE
+				'creatives_per_page' => AFMCreatives::PAGE_SIZE,
+				'landing_pages' => $lps
 			]);
 
 	}
@@ -446,6 +459,10 @@ class AffiliatesManagement
 					$showUpdated = true;
 					$updateResult = $this->saveAffiliateSettings();
 					break;
+				case "save_landingpages":
+					$showUpdated = true;
+					$updateResult = $this->saveLandingPages();
+					break;
 				case "pay_affilate":
 					$showUpdated = true;
 					$aff = AFMAffiliate::fromAffiliateId($_POST["affiliate_id"]);
@@ -460,6 +477,15 @@ class AffiliatesManagement
 		$page = isset($_GET["subpage"]) ? $_GET["subpage"] : "settings";
 
 		require_once "admin" . DIRECTORY_SEPARATOR . $page . ".php";
+	}
+
+	function saveLandingPages()
+	{
+		$onPages = isset($_POST["on_pages"]) ? $_POST["on_pages"] : [];
+
+		update_option("afm_landingpages",$onPages);
+
+		return true;
 	}
 
 	function saveAffiliateSettings()
@@ -585,7 +611,7 @@ class AffiliatesManagement
 					break;
 				case "create_link":
 					$affiliate = AFMAffiliate::fromCurrentUser();
-					$affiliate->createLink();
+					$affiliate->createLink(isset($_POST["landing_page_id"]) ? $_POST["landing_page_id"] : false);
 					break;
 				case "delete_link":
 					$affiliate = AFMAffiliate::fromCurrentUser();
