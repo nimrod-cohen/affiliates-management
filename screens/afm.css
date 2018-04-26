@@ -18,7 +18,7 @@ div#login.afm_form_container label
 
 .banner_col_1,.banner_col_2,.banner_col_3
 {
-	width: calc(33% - 10px);
+	width: calc(33% - 3px);
 	display: block;
 	vertical-align: top;
 	box-sizing: content-box;
@@ -54,6 +54,7 @@ div#login.afm_form_container label
 {
 	vertical-align: middle;
 	max-height: 280px;
+	max-width:100%;
 }
 
 div.hover_shade
