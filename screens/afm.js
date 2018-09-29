@@ -95,7 +95,7 @@
 		addSuggestDownload : function()
 		{
 			var url = $(this).find("img").attr("src");
-			$(this).append("<div class='hover_shade'><a target='_blank' download href='"+url+"'><div class='download_image'><i class='fa fa-download'></i></div></a></div>");
+			$(this).append("<div class='hover_shade'><a target='_blank' download href='"+url+"'><div class='download_image'></div></a></div>");
 		},
 
 		removeSuggestDownload : function()
