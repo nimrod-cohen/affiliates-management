@@ -31,8 +31,14 @@ class AffiliatesManagement
 	private $error = false;
 	const AFM_ROLE_NAME = "AFM Affiliate";
 	const AFM_KEEP_DAYS = 30;
+	const AFM_DEFAULT_CURRENCY = 'USD';
 	const AFM_MENU_POSITION = 74;// put it above tools
 	const AFM_ICON = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB2ZXJzaW9uPSIxLjEiIHg9IjBweCIgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMTAwIDEyNSIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMTAwIDEwMCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PHBhdGggZD0iTTI1LjcsMzUuN3YyLjRDMzIuNiwzNyw0NCwzNC4xLDUyLDI2LjVjMC4xLTEuNCwxLjMtMi41LDIuOC0yLjNjMS4zLDAuMiwyLjIsMS4zLDIuMiwyLjZ2MTQuNWMzLjIsMS4yLDUuNSw0LjMsNS41LDcuOSAgYzAsMy42LTIuMyw2LjctNS41LDcuOXYxNC42YzAsMS4zLTAuOSwyLjUtMi4yLDIuNmMtMS41LDAuMi0yLjctMC45LTIuOC0yLjNjLTgtNy41LTE5LjMtMTAuNS0yNi4yLTExLjZ2Mi40aC01LjlsMi41LDkuOSAgYzAuNCwxLjYsMS45LDIuNywzLjUsMi43YzAuNywwLDEuMywwLjUsMS40LDEuMWwwLjksMy45YzAuMiwwLjctMC4zLDEuMy0xLDEuM2gtMi44aC02LjloLTAuNmMtMC41LDAtMS0wLjQtMS4xLTAuOWwtNC40LTE4SDEwICBjLTMuMSwwLTUuNy0yLjUtNS43LTUuN3YtMi4ySDIuNmMtMSwwLTEuOS0wLjktMS45LTEuOXYtNy4xYzAtMSwwLjktMS45LDEuOS0xLjloMS43di0yLjVjMC0zLjEsMi41LTUuNyw1LjctNS43SDI1Ljd6IE05OS4zLDQ5LjIgIGMwLDQuOC0zLjksOC43LTguNyw4LjdjLTMuNywwLTYuOS0yLjQtOC4xLTUuN0g2Ny4ydi02aDE1LjNjMS4yLTMuMyw0LjQtNS43LDguMS01LjdDOTUuNCw0MC41LDk5LjMsNDQuNCw5OS4zLDQ5LjJ6IE05My4zLDQ5LjIgIGMwLTEuNS0xLjItMi43LTIuNy0yLjdTODgsNDcuNyw4OCw0OS4yYzAsMS41LDEuMiwyLjcsMi43LDIuN1M5My4zLDUwLjcsOTMuMyw0OS4yeiBNOTAuNywxOC40YzQuOCwwLDguNywzLjksOC43LDguNyAgYzAsNC44LTMuOSw4LjctOC43LDguN2MtMy43LDAtNi45LTIuNC04LjEtNS43aC0zLjFsLTEwLDEwLjJsLTQuMy00LjJsMTEuOC0xMmg1LjZDODMuOCwyMC44LDg2LjksMTguNCw5MC43LDE4LjR6IE05MC43LDI0LjQgIGMtMS41LDAtMi43LDEuMi0yLjcsMi43YzAsMS41LDEuMiwyLjcsMi43LDIuN3MyLjctMS4yLDIuNy0yLjdDOTMuMywyNS42LDkyLjEsMjQuNCw5MC43LDI0LjR6IE05OS4zLDcxLjNjMCw0LjgtMy45LDguNy04LjcsOC43ICBjLTMuNywwLTYuOS0yLjQtOC4xLTUuN2gtNS42bC0xMS44LTEybDQuMy00LjJsMTAsMTAuMmgzLjFjMS4yLTMuMyw0LjQtNS43LDguMS01LjdDOTUuNCw2Mi43LDk5LjMsNjYuNiw5OS4zLDcxLjN6IE05My4zLDcxLjMgIGMwLTEuNS0xLjItMi43LTIuNy0yLjdTODgsNjkuOSw4OCw3MS4zYzAsMS41LDEuMiwyLjcsMi43LDIuN1M5My4zLDcyLjgsOTMuMyw3MS4zeiIgZmlsbD0id2hpdGUiLz48L3N2Zz4=";
+	const AFM_CURRENCIES = [
+		"US Dollars" => 'ISD',
+		"Israel New Shekels" => "ILS",
+		"Euro" => "EUR"
+	];
 
 	function __construct()
 	{
@@ -292,33 +298,32 @@ class AffiliatesManagement
 			0);
 	}
 
-	public static function moneyFormat($number)
+	public static function moneyFormat($sum)
 	{
-		setlocale(LC_MONETARY, 'en_US');
-		return money_format('%.2n', $number);
+		$fmt = new NumberFormatter( 'en_US', NumberFormatter::CURRENCY );
+		return $fmt->formatCurrency($sum, get_option("afm-currency",AffiliatesManagement::AFM_DEFAULT_CURRENCY));
 	}
 
 	function logEvent()
 	{
 		check_ajax_referer('afm-nonce', 'security');
-
-		$event = $_POST["event"];
-		$utm = $_POST["utm"];
+		$data = $_REQUEST["data"];
+		$data = json_decode(stripslashes($data),true);
+		$utm = $data["utm"];
 
 		AFMStats::event(
-			$_POST["link_id"],
-			$_POST["aff_id"],
-			$_POST["tracker_id"],
+			$data["link_id"],
+			$data["aff_id"],
+			$data["tracker_id"],
 			get_current_user_id(),
-			$event,
+			$data["event"],
 			$utm["source"],
 			$utm["medium"],
 			$utm["campaign"],
 			$utm["term"],
 			$utm["content"],
-			isset($_POST["amount"]) ? $_POST["amount"] : 0);
+			isset($data["amount"]) ? $data["amount"] : 0);
 
-		echo json_encode(["success" => true]);
 		die;
 	}
 
@@ -532,6 +537,7 @@ class AffiliatesManagement
 			"REVSHARE_PERIOD" => isset($_POST["revshare_period"]) ? $_POST["revshare_period"] : ""
 		], true);
 		update_option("afm-keep-days", $_POST["keep_days"], true);
+		update_option("afm-currency", $_POST["currency"], true);
 		return true;
 	}
 

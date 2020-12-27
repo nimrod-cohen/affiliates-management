@@ -20,6 +20,17 @@
 			</td>
 		</tr>
 		<tr scope="row">
+			<th scope="row"><label for="currency">Currency</label></th>
+			<td>
+				<select type="text" name="currency" id="currency" class="regular-text code">
+				<?php 
+					foreach(AffiliatesManagement::AFM_CURRENCIES as $name => $val) { ?>
+						<option value="<?php echo $val;?>" <?php echo $val === $currency ? 'selected': ''?>><?php echo $name; ?></option>
+					<?php } ?> 
+				</select>
+			</td>
+		</tr>
+		<tr scope="row">
 			<th scope="row"><label for="locking_event">Lock user attribution on</label></th>
 			<td>
 				<select name="locking_event" id="locking_event">

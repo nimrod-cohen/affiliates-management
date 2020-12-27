@@ -4,6 +4,7 @@
 	$activePage = isset($_POST["active_page"]) ? $_POST["active_page"] : "affiliates";
 
 	$keepDays = get_option("afm-keep-days",AffiliatesManagement::AFM_KEEP_DAYS);
+	$currency = get_option("afm-currency",AffiliatesManagement::AFM_DEFAULT_CURRENCY);
 
 	$deal = AffiliatesManagement::defaultDeal();
 ?>
