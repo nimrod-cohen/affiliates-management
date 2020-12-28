@@ -27,7 +27,7 @@
 			<tbody>
 				<tr>
 					<th><label>Current balance</label></th>
-					<td><label><?php echo AffiliatesManagement::moneyFormat($aff->balance()); ?></label></td>
+					<td><label><?php echo AFMHelper::formatMoney($aff->balance()); ?></label></td>
 				</tr>
 				<tr>
 					<th><label for="amount">Amount <span class="amount">(required)</span></label></th>

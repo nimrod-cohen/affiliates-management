@@ -54,6 +54,12 @@ class AFMHelper
 
 		throw new Exception("Unknown constant requested ".$value);
 	}
+
+	public static function formatMoney($sum)
+	{
+		$fmt = new NumberFormatter( 'en_US', NumberFormatter::CURRENCY );
+		return $fmt->formatCurrency($sum, get_option("afm-currency",AffiliatesManagement::AFM_DEFAULT_CURRENCY));
+	}
 }
 
 class AFM_DealType
@@ -77,7 +83,7 @@ class AFM_DealType
 		switch($deal["type"])
 		{
 			case AFM_DealType::CPA:
-				return "CPA of $".$deal["CPA"];
+				return "CPA of ".AFMHelper::formatMoney($deal["CPA"]);
 			case AFM_DealType::REVENUE_SHARE:
 				$period = $deal["REVSHARE_PERIOD"];
 				if($period == 0)
@@ -91,7 +97,7 @@ class AFM_DealType
 					$period = "Lifetime";
 				else
 					$period .= " months";
-				return "CPA of $".$deal["CPA"].", and ".$period." revenue share of %".$deal["REVSHARE"];
+				return "CPA of ".AFMHelper::formatMoney($deal["CPA"]).", and ".$period." revenue share of %".$deal["REVSHARE"];
 			default:
 				throw new Exception("unknown deal type");
 		}

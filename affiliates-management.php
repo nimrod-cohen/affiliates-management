@@ -298,12 +298,6 @@ class AffiliatesManagement
 			0);
 	}
 
-	public static function moneyFormat($sum)
-	{
-		$fmt = new NumberFormatter( 'en_US', NumberFormatter::CURRENCY );
-		return $fmt->formatCurrency($sum, get_option("afm-currency",AffiliatesManagement::AFM_DEFAULT_CURRENCY));
-	}
-
 	function logEvent()
 	{
 		check_ajax_referer('afm-nonce', 'security');
@@ -666,13 +660,13 @@ class AffiliatesManagement
 
 		foreach($result as &$row)
 		{
-			$row["paid"] = AffiliatesManagement::moneyFormat($row["paid"]);
+			$row["paid"] = AFMHelper::formatMoney($row["paid"]);
 		}
 
 		$result = ["rows"=>$result];
 
 		$aff = AFMAffiliate::fromAffiliateId($affId);
-		$result["balance"] = AffiliatesManagement::moneyFormat($aff->balance());
+		$result["balance"] = AFMHelper::formatMoney($aff->balance());
 
 		echo json_encode($result);
 		die;
@@ -692,13 +686,13 @@ class AffiliatesManagement
 
 		foreach($result as &$row)
 		{
-			$row["paid"] = AffiliatesManagement::moneyFormat($row["paid"]);
+			$row["paid"] = AFMHelper::formatMoney($row["paid"]);
 		}
 
 		$result = ["rows" => $result];
 
 		$aff = AFMAffiliate::fromAffiliateId($affId);
-		$result["balance"] = AffiliatesManagement::moneyFormat($aff->balance());
+		$result["balance"] = AFMHelper::formatMoney($aff->balance());
 
 		echo json_encode($result);
 		die;
