@@ -231,6 +231,25 @@ class AffiliatesManagement
 		$affiliate->compensate($userId, $amount, $isFirst, $orderId, $order);
 	}
 
+	static function logPayment($userId, $amount, $orderId, $details)
+	{
+		$stats = AFMStats::byUser($userId);
+
+		if (!$stats)
+			return;
+
+		$isFirst = AFMStats::firstPayment($userId) == false;
+
+		$affiliate = AFMAffiliate::fromAffiliateId($stats["aff_id"]);
+
+		$amount = apply_filters("afm_post_charged_amount", $amount, $affiliate, $orderId);
+
+		AFMStats::event($stats["link_id"], $affiliate->ID(), "", $userId, $isFirst ? "first_deposit" : "deposit", "", "", "", "", "", $amount);
+
+		//add to accounting
+		$affiliate->compensate($userId, $amount, $isFirst, $orderId, $details);
+	}
+
 	/*
 	 * logging payments done by WPSC
 	 */

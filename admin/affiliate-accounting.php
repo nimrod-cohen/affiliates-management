@@ -37,11 +37,11 @@
 		<tr data-month="<?php echo $row["month"]; ?>">
 			<td></td>
 			<td><?php echo $month; ?></td>
-			<td><?php echo AffiliatesManagement::moneyFormat($ftd); ?></td>
-			<td><?php echo AffiliatesManagement::moneyFormat($retention); ?></td>
-			<td><?php echo AffiliatesManagement::moneyFormat($ftd + $retention); ?></td>
-			<td><?php echo AffiliatesManagement::moneyFormat($paid); ?></td>
-			<td><?php echo AffiliatesManagement::moneyFormat($ftd + $retention - $paid); ?></td>
+			<td><?php echo AFMHelper::formatMoney($ftd); ?></td>
+			<td><?php echo AFMHelper::formatMoney($retention); ?></td>
+			<td><?php echo AFMHelper::formatMoney($ftd + $retention); ?></td>
+			<td><?php echo AFMHelper::formatMoney($paid); ?></td>
+			<td><?php echo AFMHelper::formatMoney($ftd + $retention - $paid); ?></td>
 		</tr>
 	<?php } ?>
 </tbody>
