@@ -216,10 +216,11 @@ class AffiliatesManagement
 
 		$isFirst = AFMStats::firstPayment($userId) == false;
 
-		if (!$stats)
-			return;
+		if (!$stats) return;
 
 		$affiliate = AFMAffiliate::fromAffiliateId($stats["aff_id"]);
+
+		if(!$affiliate) return;
 
 		$amount = $order->get_total();
 
@@ -235,12 +236,13 @@ class AffiliatesManagement
 	{
 		$stats = AFMStats::byUser($userId);
 
-		if (!$stats)
-			return;
-
-		$isFirst = AFMStats::firstPayment($userId) == false;
+		if (!$stats) return;
 
 		$affiliate = AFMAffiliate::fromAffiliateId($stats["aff_id"]);
+
+		if(!$affiliate) return;
+
+		$isFirst = AFMStats::firstPayment($userId) == false;
 
 		$amount = apply_filters("afm_post_charged_amount", $amount, $affiliate, $orderId);
 
@@ -258,16 +260,18 @@ class AffiliatesManagement
 
 		$stats = AFMStats::byUser($args["user_id"]);
 
-		if ($stats) {
-			$affiliate = AFMAffiliate::fromAffiliateId($stats["aff_id"]);
+		if (!$stats) return;
 
-			$amount = apply_filters("afm_post_charged_amount", $args["amount"], $affiliate, $args);
+		$affiliate = AFMAffiliate::fromAffiliateId($stats["aff_id"]);
 
-			AFMStats::event($stats["link_id"], $affiliate->ID(), "", $args["user_id"], $args["is_first"] ? "first_deposit" : "deposit", "", "", "", "", "", $amount);
+		if(!$affiliate) return;
 
-			//add to accounting
-			$affiliate->compensate($args["user_id"], $amount, $args["is_first"], $args["charge_id"], $args);
-		}
+		$amount = apply_filters("afm_post_charged_amount", $args["amount"], $affiliate, $args);
+
+		AFMStats::event($stats["link_id"], $affiliate->ID(), "", $args["user_id"], $args["is_first"] ? "first_deposit" : "deposit", "", "", "", "", "", $amount);
+
+		//add to accounting
+		$affiliate->compensate($args["user_id"], $amount, $args["is_first"], $args["charge_id"], $args);
 	}
 
 	function logEmailAuthentication($args)
@@ -421,10 +425,12 @@ class AffiliatesManagement
 		if(isset($_COOKIE["afm_aff_id"]) && $_COOKIE["afm_aff_id"] != "null")
 		{
 			$aff = new WP_User($_COOKIE["afm_aff_id"]);
-			if(!is_wp_error($aff))
+			if($aff != null && $aff != false && !is_wp_error($aff))
 			{
 				$aff = AFMAffiliate::fromWPUser($aff);
-				$pixel = $aff->pixel();
+				if($aff) {
+					$pixel = $aff->pixel();
+				}
 			}
 		}
 

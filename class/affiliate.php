@@ -30,16 +30,20 @@ class AFMAffiliate
 
 		$aff->user = get_user_by("ID",$id);
 
+		if(!$aff->user) return null;
+
 		if(!in_array(AffiliatesManagement::AFM_ROLE_NAME,$aff->user->roles))
-			throw new Exception("User ".$id." is not an affiliate");
+			return null;
 
 		return $aff;
 	}
 
 	public static function fromWPUser($user)
 	{
+		if(!$user) return null;
+		
 		if(!in_array(AffiliatesManagement::AFM_ROLE_NAME,$user->roles))
-			throw new Exception("User ".$user->ID." is not an affiliate");
+			return null;
 
 		$aff = new AFMAffiliate();
 		$aff->ID = $user->ID;
