@@ -1,4 +1,4 @@
-<div class="page-content">
+<div class="page-content raise">
 	<?php
 
 	$affPage = AffiliatesManagement::getAffiliatesPage();

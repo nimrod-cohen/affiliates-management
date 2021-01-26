@@ -371,7 +371,10 @@ class AffiliatesManagement
 		wp_register_style("afm-affiliate-css", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "afm.css");
 		wp_enqueue_style("afm-affiliate-css");
 
-		wp_register_script("afm-affiliate-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "afm.js", ["jquery"]);
+		wp_register_script("afm-utils-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "jsutils.js", []);
+		wp_enqueue_script("afm-utils-js");
+
+		wp_register_script("afm-affiliate-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "afm.js", ["jquery", "afm-utils-js"]);
 		wp_enqueue_script("afm-affiliate-js");
 
 		wp_register_script("remodaler-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "addons" . DIRECTORY_SEPARATOR . "remodaler.js", ["jquery"]);

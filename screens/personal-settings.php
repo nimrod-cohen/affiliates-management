@@ -25,6 +25,6 @@
 		<input type="text" name="user_pass" id="user_pass" class="form-control" placeholder="Leave empty to keep your current password">
 	</div>
 	<div style="margin-top:20px;">
-		<input type="submit" class="form-button" value="Save Details">
+		<input type="submit" class="button primary" value="Save Details">
 	</div>
 </form>

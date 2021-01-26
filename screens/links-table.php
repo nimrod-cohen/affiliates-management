@@ -5,7 +5,7 @@
 		<input type="hidden" name="landing_page_id" value="">
 		<input type="submit" id="btnNewLink" class="button small primary" value="New link">
 	</div>
-	<table class="standard-table">
+	<table class="full-width">
 		<thead>
 		<tr>
 			<th>ID</th>
@@ -21,13 +21,16 @@
 		<?php
 		$page = isset($_POST["paged"]) ? $_POST["paged"] : 0;
 		$links = AFMStats::affLinkStats(get_current_user_id(),$page,20);
-		foreach($links as $link) { ?>
+		foreach($links as $link) { 
+			$linkUrl = $link["url"]."?uid=".$link["aff_id"]."&sid=".$link["id"];
+			?>
+		
 			<tr>
 				<td><?php echo $link["id"]; ?></td>
 				<td>
 					<div class="copiable">
-						<span><?php echo $link["url"]."?uid=".$link["aff_id"]."&sid=".$link["id"]; ?></span>
-						<button class="button primary small">Copy</button>
+						<span title="<?php echo $linkUrl; ?>"><?php echo $linkUrl; ?></span>
+						<button class="button primary small"><i class="fa fa-copy"></i></button>
 					</div>
 				</td>
 				<td><?php echo $link["created"]; ?></td>
@@ -42,4 +45,5 @@
 </form>
 <script>
 	//implement full url on hover + copy to clipboard
+
 </script>

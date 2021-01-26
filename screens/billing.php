@@ -7,16 +7,15 @@
  */
 	$aff = AFMAffiliate::fromCurrentUser();
 ?>
-<div class="form-group half-width">
+<div class="form-group half-width small">
 	<label for="deal_summary" class="field-title">Deal Summary</label>
 	<label id="deal_summary" class="field-text"><?php echo AFM_DealType::parseDeal($aff->deal()); ?></label>
 </div>
-<div class="form-group pull-right half-width">
+<div class="form-group pull-right half-width small">
 	<label for="balance" class="field-title">Current Balance</label>
-	<label id="balance" class="field-text"><?php echo AffiliatesManagement::moneyFormat($aff->balance()); ?></label>
+	<label id="balance" class="field-text"><?php echo AFMHelper::formatMoney($aff->balance()); ?></label>
 </div>
-<hr>
-<table class="standard-table">
+<table class="full-width">
 	<thead>
 	<tr>
 		<th scope="col" class="manage-column column-month">Month</th>
@@ -31,6 +30,9 @@
 	<?php
 	$rows = AFMAccounting::byAffiliate($aff->ID(),0);
 
+	if(count($rows) == 0) { ?>
+		<tr><td colspan='6'>No data found</td></tr>
+	<?php }
 	foreach( $rows as $row )
 	{
 		$ftd = $row["ftd_revenue"];
@@ -40,11 +42,11 @@
 		?>
 		<tr>
 			<td><?php echo $month; ?></td>
-			<td><?php echo AffiliatesManagement::moneyFormat($ftd); ?></td>
-			<td><?php echo AffiliatesManagement::moneyFormat($retention); ?></td>
-			<td><?php echo AffiliatesManagement::moneyFormat($ftd + $retention); ?></td>
-			<td><?php echo AffiliatesManagement::moneyFormat($paid); ?></td>
-			<td><?php echo AffiliatesManagement::moneyFormat($ftd + $retention - $paid); ?></td>
+			<td><?php echo AFMHelper::formatMoney($ftd); ?></td>
+			<td><?php echo AFMHelper::formatMoney($retention); ?></td>
+			<td><?php echo AFMHelper::formatMoney($ftd + $retention); ?></td>
+			<td><?php echo AFMHelper::formatMoney($paid); ?></td>
+			<td><?php echo AFMHelper::formatMoney($ftd + $retention - $paid); ?></td>
 		</tr>
 	<?php } ?>
 	</tbody>

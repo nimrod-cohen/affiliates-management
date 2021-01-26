@@ -1,174 +1,179 @@
-(function($){
+JSUtils.domReady(() => {
+  var tabsContainer = document.querySelector('.nav-tabs');
+  links = tabsContainer.querySelectorAll('a');
+  links.forEach(link =>
+    link.addEventListener('click', e => {
+      var thisTab = e.target;
+      var allTabs = document.querySelectorAll('.tab-body');
+      links.forEach(lk => lk.classList.remove('nav-tab-active'));
+      allTabs.forEach(tb => tb.classList.remove('active'));
+      var id = 'tab-' + thisTab.getAttribute('id').replace('-tab', '');
+      document.querySelector('#' + id).classList.add('active');
+      thisTab.classList.add('nav-tab-active');
+    })
+  );
 
-	$(document).ready(function ()
-	{
-		var tabsContainer = $(".nav-tab-wrapper");
-		tabsContainer.find("a").click(function ()
-		{
-			var thisTab = $(this);
-			var allTabs = $(".tab-view");
-			tabsContainer.find("a").removeClass("nav-tab-active");
-			allTabs.removeClass("active");
-			var id = "tab-"+thisTab.attr("id").replace("-tab", "");
-			$("#" + id).addClass("active");
-			thisTab.addClass("nav-tab-active");
-		});
+  document.querySelector('#btnNewLink').addEventListener('click', ev => {
+    ev.preventDefault();
 
-		$("#btnNewLink").click(function(ev)
-		{
-			ev.preventDefault();
+    var form = ev.target.closest('form');
 
-			var form = $(this).closest("form");
-			form.find("input[name='affiliate_action']").val("create_link");
+    form.querySelector("input[name='affiliate_action']").value = 'create_link';
 
-			if(afm_info.landing_pages.length > 0)
-			{
-				remodaler.show({
-					title: "Landing Page",
-					message: "Choose Landing Page",
-					type: remodaler.types.INPUT,
-					values: afm_info.landing_pages,
-					confirmText: "Create",
-					confirm: function (val) {
-						form.find("input[name='landing_page_id']").val(val);
-						form.submit();
-					}
-				});
-			}
-			else
-				form.submit();
-		});
+    if (afm_info.landing_pages.length > 0) {
+      remodaler.show({
+        title: 'Landing Page',
+        message: 'Choose Landing Page',
+        type: remodaler.types.INPUT,
+        values: afm_info.landing_pages,
+        confirmText: 'Create',
+        confirm: function (val) {
+          form.querySelector("input[name='landing_page_id']").value = val;
+          form.submit();
+        }
+      });
+    } else form.submit();
+  });
 
-		$(".delete-link").click(function(ev)
-		{
-			ev.preventDefault();
+  JSUtils.addGlobalEventListener(document, '.delete-link', 'click', ev => {
+    ev.preventDefault();
 
-			var self = this;
-			var linkId = $(self).attr("link-id");
+    var linkId = ev.target.getAttribute('link-id');
 
-			remodaler.show({
-				title: "Delete Link",
-				message: "Delete link "+linkId + "?",
-				type: remodaler.types.CONFIRM,
-				confirmText : "Yes, delete",
-				confirm: function () {
-					var form = $(self).closest("form");
-					form.find("input[name='link_id']").val(linkId);
-					form.find("input[name='affiliate_action']").val("delete_link");
-					form.submit();
-				}
-			});
-		});
-	});
+    remodaler.show({
+      title: 'Delete Link',
+      message: 'Delete link ' + linkId + '?',
+      type: remodaler.types.CONFIRM,
+      confirmText: 'Yes, delete',
+      confirm: () => {
+        var form = ev.target.closest('form');
+        form.querySelector("input[name='link_id']").value = linkId;
+        form.querySelector("input[name='affiliate_action']").value = 'delete_link';
+        form.submit();
+      }
+    });
+  });
+});
 
-	window["infinityScroller"] = {
+class InfinityScroller {
+  isRetrieving = false;
+  isDone = false;
+  page = 1;
 
-		isRetrieving : false,
-		isDone : false,
-		page : 1,
+  init = () => {
+    let banners = document.querySelectorAll('.banner_box');
+    //remove partially attached events
+    banners.forEach(banner => {
+      banner.removeEventListener('mouseenter', this.addSuggestDownload);
+      banner.removeEventListener('mouseleave', this.removeSuggestDownload);
+    });
 
-		init : function()
-		{
-			$(document).on("mouseenter",".banner_box",this.addSuggestDownload);
-			$(document).on("mouseleave",".banner_box",this.removeSuggestDownload);
-			$("#bannerFarm").on("scroll",this.handleScroll);
+    banners.forEach(banner => {
+      banner.addEventListener('mouseenter', this.addSuggestDownload);
+      banner.addEventListener('mouseleave', this.removeSuggestDownload);
+    });
+    document.querySelector('#bannerFarm').addEventListener('scroll', this.handleScroll);
+  };
 
-		},
+  handleScroll = ev => {
+    if (
+      this.scrollHeight -
+        (window.pageYOffset + document.querySelector('#bannerFarm').offsetHeight) >
+        300 ||
+      this.isRetrieving == true ||
+      this.isDone == true
+    )
+      return;
 
-		handleScroll : function (ev) {
-			console.log("scroll height: "+this.scrollHeight);
-			console.log("scroll top: "+$(this).scrollTop());
-			console.log("box size: "+$("#bannerFarm").height());
-			console.log("is locked: "+infinityScroller.isRetrieving);
+    this.isRetrieving = true;
 
-			if((this.scrollHeight - ($(this).scrollTop() + $("#bannerFarm").height()) > 300)
-				|| infinityScroller.isRetrieving == true
-				|| infinityScroller.isDone == true)
-				return;
+    this.getCreatives();
+  };
 
-			infinityScroller.isRetrieving = true;
-			console.log("adding retrieval indicator");
+  addSuggestDownload = ev => {
+    var url = ev.target.querySelector('img').getAttribute('src');
+    ev.target.insertAdjacentHTML(
+      'beforeend',
+      `<div class='hover_shade'>
+				<a target='_blank' download href='${url}'>
+					<div class='download_image button primary'>
+						<i class='fa fa-download'></i>
+					</div>
+				</a>
+			</div>`
+    );
+  };
 
-			infinityScroller.getCreatives();
-		},
+  removeSuggestDownload = ev => {
+    let shade = ev.target.querySelector('.hover_shade');
+    shade.parentNode.removeChild(shade);
+  };
 
-		addSuggestDownload : function()
-		{
-			var url = $(this).find("img").attr("src");
-			$(this).append("<div class='hover_shade'><a target='_blank' download href='"+url+"'><div class='download_image'></div></a></div>");
-		},
+  appendCreatives = response => {
+    this.page++;
 
-		removeSuggestDownload : function()
-		{
-			$(this).find(".hover_shade").remove();
-		},
+    var arr = JSON.parse(response);
 
-		appendCreatives : function (response) {
-			console.log("page "+infinityScroller.page+" returned.");
+    if (arr.length < afm_info.creatives_per_page) this.isDone = true;
 
-			infinityScroller.page++;
+    var currCol = this.shortestColumn();
 
-			var arr = JSON.parse(response);
+    for (var i = 0; i < arr.length; i++) {
+      var html = `<div class='banner_box'><span class='middle_helper'></span><img src='${arr[i]}'/></div>`;
+      document.querySelector('div.banner_col_' + currCol).insertAdjacentHTML('beforeend', html);
 
-			console.log("found "+arr.length+" results.");
+      currCol++;
+      currCol = currCol == 4 ? 1 : currCol;
+    }
 
-			if(arr.length < afm_info.creatives_per_page)
-				infinityScroller.isDone = true;
+    this.init();
+  };
 
-			var currCol = infinityScroller.shortestColumn();
+  getCreatives = () => {
+    if (this.isDone == true) return;
 
-			for(var i = 0; i < arr.length; i++)
-			{
-				var html = "<div class='banner_box'><span class='middle_helper'></span><img src='"+arr[i]+"'/></div>";
+    jQuery
+      .ajax({
+        url: afm_info.ajax_url,
+        type: 'post',
+        data: {
+          action: 'afm_get_creatives',
+          security: afm_info.nonce,
+          page: this.page
+        },
+        success: this.appendCreatives
+      })
+      .done(() => {
+        this.isRetrieving == false;
+      });
+  };
 
-				$("div.banner_col_"+currCol).append(html);
+  shortestColumn = () => {
+    var c2 = document.querySelector('#bannerFarm .banner_col_2').children.length;
+    var c1 = document.querySelector('#bannerFarm .banner_col_1').children.length;
+    var c3 = document.querySelector('#bannerFarm .banner_col_3').children.length;
 
-				currCol++;
-				currCol = currCol == 4 ? 1 : currCol;
-			}
-		},
+    if (c1 > c2) return 2;
+    else if (c2 > c3) return 3;
+    else return 1;
+  };
+}
 
-		getCreatives : function()
-		{
-			console.log("getting more");
-			if(infinityScroller.isDone == true)
-				return;
+JSUtils.domReady(() => {
+  window.infinityScroller = new InfinityScroller();
+  window.infinityScroller.getCreatives();
+});
 
-			console.log("calling server for page "+infinityScroller.page);
+JSUtils.domReady(() => {
+  let arr = document.querySelectorAll('.copiable .button');
 
-			jQuery.ajax({
-				url: afm_info.ajax_url,
-				type: 'post',
-				data: {
-					action: 'afm_get_creatives',
-					security: afm_info.nonce,
-					page: infinityScroller.page
-				},
-				success: this.appendCreatives
-				}).done(function(){
-				console.log("removing retrieval indicator");
-				infinityScroller.isRetrieving == false;
-			});
-		},
-
-		shortestColumn : function ()
-		{
-			var c1 = $("#bannerFarm .banner_col_1").children().length;
-			var c2 = $("#bannerFarm .banner_col_2").children().length;
-			var c3 = $("#bannerFarm .banner_col_3").children().length;
-
-			if(c1 > c2)
-				return 2;
-			else if(c2 > c3)
-				return 3;
-			else
-				return 1;
-		}
-	}
-
-	$(document).ready(function(){
-		window.infinityScroller.init();
-		window.infinityScroller.getCreatives();
-	});
-
-})(jQuery);
+  arr.forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      let text = e.target.closest('.copiable').querySelector('span:first-child').innerText;
+      JSUtils.copyToClipboard(text);
+      alert('done');
+    });
+  });
+});

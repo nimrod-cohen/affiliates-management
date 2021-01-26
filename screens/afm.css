@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500&display=swap");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css");
 :root {
   --button: #4a4aaf;
   --button-danger: #e61364;
@@ -7,6 +8,8 @@
   --error-bg: #ffefef;
   --success-bg: #f1ffef;
   --main-bg: #f9f9f9;
+  --table-borders: #ddd;
+  --page-borders: #e7e7e7;
 }
 
 * {
@@ -33,27 +36,32 @@
   width: 100%;
 }
 
-input.button,
+.small {
+  font-size: 0.8em;
+}
+
+.button,
 button {
   cursor: pointer;
   color: white;
   border-radius: 4px;
   border: 0;
+  outline: 0;
   line-height: 30px;
   font-weight: 500;
 }
 
-input.button.primary,
+.button.primary,
 button.primary {
   background-color: var(--button);
 }
 
-input.button.danger,
+.button.danger,
 button.danger {
   background-color: var(--button-danger);
 }
 
-input.button.small,
+.button.small,
 button.small {
   line-height: 20px;
   font-size: 0.8em;
@@ -108,37 +116,48 @@ body.affiliates-page .page-content {
   background: white;
   padding: 20px;
   border-radius: 4px;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  border: solid 1px var(--page-borders);
+}
+
+body.affiliates-page .page-content.raise {
   -webkit-box-shadow: 0px 0px 15px 0px #0000005c;
           box-shadow: 0px 0px 15px 0px #0000005c;
-  max-width: 1024px;
+}
+
+body.affiliates-page .page-content.standard-width {
+  width: 1000px;
+  max-width: 100%;
 }
 
 body.affiliates-page .page-content.full-width {
-  max-width: 100%;
+  width: 100%;
   -webkit-box-shadow: none;
           box-shadow: none;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  border: solid 1px #e7e7e7;
 }
 
 body.affiliates-page .page-content table {
   border-collapse: collapse;
 }
 
-body.affiliates-page .page-content table td,
-body.affiliates-page .page-content table th {
-  padding: 5px 10px;
-  border: solid 1px #a9a9a9;
+body.affiliates-page .page-content table tr:nth-child(even) {
+  background-color: #f0f0f0;
 }
 
-body.affiliates-page .page-content table td span.small,
-body.affiliates-page .page-content table th span.small {
+body.affiliates-page .page-content table tr td,
+body.affiliates-page .page-content table tr th {
+  padding: 5px 10px;
+  text-align: left;
+}
+
+body.affiliates-page .page-content table tr td span.small,
+body.affiliates-page .page-content table tr th span.small {
   font-size: 0.8em;
 }
 
-body.affiliates-page .page-content table td .copiable,
-body.affiliates-page .page-content table th .copiable {
+body.affiliates-page .page-content table tr td .copiable,
+body.affiliates-page .page-content table tr th .copiable {
   max-width: 400px;
   overflow: hidden;
   display: -ms-grid;
@@ -146,19 +165,26 @@ body.affiliates-page .page-content table th .copiable {
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
-  -ms-grid-columns: 320px 60px;
-      grid-template-columns: 320px 60px;
+  -ms-grid-columns: 320px 22px;
+      grid-template-columns: 320px 22px;
   gap: 20px;
 }
 
-body.affiliates-page .page-content table td .copiable span,
-body.affiliates-page .page-content table th .copiable span {
+body.affiliates-page .page-content table tr td .copiable span,
+body.affiliates-page .page-content table tr th .copiable span {
   white-space: nowrap;
   text-overflow: ellipsis;
   font-size: 0.8em;
   max-width: 320px;
   overflow: hidden;
   display: inline-block;
+  text-align: left;
+}
+
+body.affiliates-page .page-content table tr th {
+  text-align: left;
+  border-top: solid 1px var(--table-borders);
+  border-bottom: solid 1px var(--table-borders);
 }
 
 body.affiliates-page .page-content .row {
@@ -252,54 +278,21 @@ div.hover_shade .download_image {
   position: absolute;
   bottom: 4px;
   right: 4px;
-  border: solid 1px gray;
   width: 32px;
   height: 32px;
   padding: 4px;
-  background-color: #d5d5d5;
-  border-radius: 3px;
-  cursor: pointer;
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABmJLR0QAAACFAMSCtGS9AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4gkdFTUHHoPLlAAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAACLElEQVR42u2av0rDUBSHv1Y6KIo66RtYl1YUEfc+gF3ayUXB2dXFoU8gODvpqLg5CY4OUiGCVCdX/yAVB0VKGwdTKaFJ0zQ5uUnugQOlOWnO77v33NycBrSl2zJC1xkDdoF5j/HPwAHQTgroV8Ac0l+TIr7sQ3zXN8JOLisAYDqic5UBYEZ0rjIAlDYNQAPQADQADUAD0AA0AA1AA9AANAANICT7iehcT+a3J7gPbALjHmIngFmf12kCXx7ivoFjoCYxa7bw3+IK27ckSqCicElXJADcKwxALDdDwelvSNM20ixeJQhG1HVnpFl8lBAM1VZgI83iJSEoK14CgvLiw4QQG/FhQIid+CAhxFZ8EBBiL34UCIkR7wdC4sQPA0FUvL0lNgfkAvjdT8udIBQcjt0BRYdjk8BMALm1gBf7l9tAJ+D79uqQM8Ft5AsB59axNANQDXHntuIiqt4TVxcU3+tVgIeQ9+7LLuLWLI9CvGlppy3wALPko1YLAnm1EXyELSomvuuiTYySB/El4ZzEOzmnQL6P8Lx1TDSfDAKvo7rcjx+tzwsB7T98bYSiAqCExfnv8SvgaUBMG7gE3t2CzJj5BzDVk/+eQ1zDpvNElUVwVN/pM4jvfeLWvQx2HEug33R+8xiXiBK4tuW/6BB3ZIurJKUETODWKoXagLgL/l6aOFRxH6DMbbCZYv3NLHCWYgD/2hsxXQtG8Ya9J1i22li5hI96C7gBztGmjV9MWVIU0NyalAAAAABJRU5ErkJggg==");
   background-position: center;
   background-repeat: no-repeat;
   background-size: 20px;
-}
-
-div.hover_shade .download_image:hover {
-  background-color: #c5c5c5;
 }
 
 input[type='submit'].button-small {
   font-size: 0.8rem;
 }
 
-.tab-view div.form-group {
-  padding: 10px;
-}
-
-.tab-view div.form-group.half-width {
-  display: inline-block;
-  width: calc(50% - 20);
-}
-
-.tab-view div.form-group.pull-right {
-  text-align: right;
-}
-
-.tab-view div.form-group label.form-field {
-  font-weight: bold;
-  width: 220px;
-  display: inline-block;
-}
-
-.tab-view div.form-group input.form-control {
-  width: 400px;
-  display: inline-block;
-}
-
 /* page view tabs */
-.tabs-wrapper .nav-tab-wrapper {
-  border-bottom: 1px solid #ccc;
+.tabs .nav-tabs {
+  border-bottom: 1px solid var(--table-borders);
   margin: 0;
   padding-top: 9px;
   padding-bottom: 0;
@@ -310,33 +303,39 @@ input[type='submit'].button-small {
           box-sizing: content-box;
 }
 
-.tabs-wrapper .nav-tab-wrapper .nav-tab {
+.tabs .nav-tabs .nav-tab {
   -webkit-box-shadow: none;
           box-shadow: none;
   outline: none;
   float: left;
   border: 1px solid #ccc;
   border-bottom: none;
-  margin-left: 0.5em;
+  margin-left: 10px;
   padding: 5px 10px;
   font-size: 14px;
   line-height: 24px;
   background: #f1f1f1;
   color: #555;
+  border-radius: 3px 3px 0 0;
+  text-decoration: none;
 }
 
-.tabs-wrapper .nav-tab-wrapper .nav-tab.pull-right {
+.tabs .nav-tabs .nav-tab:last-child {
+  margin-right: 10px;
+}
+
+.tabs .nav-tabs .nav-tab.pull-right {
   float: right;
 }
 
-.tabs-wrapper .nav-tab-wrapper .nav-tab.nav-tab-active {
-  border-bottom: 1px solid #f1f1f1;
+.tabs .nav-tabs .nav-tab.nav-tab-active {
+  border-bottom: 1px solid white;
   background: white;
   color: #000;
   margin-bottom: -1px;
 }
 
-.tabs-wrapper .tab-view {
+.tabs .tab-body {
   display: none;
   min-height: 300px;
   direction: ltr;
@@ -345,23 +344,35 @@ input[type='submit'].button-small {
   position: relative;
 }
 
-.tabs-wrapper .tab-view.active {
+.tabs .tab-body .form-group {
+  padding: 10px;
+}
+
+.tabs .tab-body .form-group.half-width {
+  display: inline-block;
+  width: calc(50% - 20);
+}
+
+.tabs .tab-body .form-group.pull-right {
+  text-align: right;
+}
+
+.tabs .tab-body .form-group label.form-field {
+  font-weight: bold;
+  width: 220px;
+  display: inline-block;
+}
+
+.tabs .tab-body .form-group input.form-control {
+  width: 400px;
+  display: inline-block;
+}
+
+.tabs .tab-body.active {
   display: block;
 }
 
-.tabs-wrapper .tab-view .standard-table thead th {
-  padding: 3px;
-}
-
-.tabs-wrapper .tab-view .standard-table tbody tr td {
-  text-align: center;
-}
-
-.tabs-wrapper .tab-view .standard-table tbody tr td.left {
-  text-align: left;
-}
-
-.tabs-wrapper .tab-view .form-group label.description {
+.tabs .tab-body .form-group label.description {
   display: block;
   position: relative;
   left: 230px;
@@ -369,7 +380,7 @@ input[type='submit'].button-small {
   font-size: 0.7rem;
 }
 
-.tabs-wrapper .tab-view .actions-bar {
+.tabs .tab-body .actions-bar {
   padding: 15px 0;
 }
 
@@ -384,7 +395,7 @@ input[type='submit'].button-small {
 }
 
 @media only screen and (max-width: 715px) {
-  .tab-view .form-group label.description {
+  .tab-body .form-group label.description {
     position: absolute;
     left: 10px;
     top: 70px;
