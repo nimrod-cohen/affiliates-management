@@ -53,10 +53,7 @@ class AffiliatesManagement
 
 		add_action('admin_menu', [$this, 'addSettingsMenu']);
 
-		//add affiliate scripts/css
-		add_action('wp_enqueue_scripts', [$this, 'addAFMAssets']);
-
-		add_shortcode("affiliates_management", [$this, 'showAffiliatesApp']);
+		add_action( 'template_redirect', [$this, 'showAffiliatePage'] );
 
 		add_action("init", [$this, "checkAffiliateActions"]);
 		add_action('init', [$this, 'addAttachmentTaxonomies']);
@@ -560,34 +557,46 @@ class AffiliatesManagement
 		return true;
 	}
 
-	function showAffiliatesApp()
-	{
-		$page = isset($_GET["page"]) ? $_GET["page"] : "";
+	function showAffiliatePage() {
+		$id = get_queried_object_id();
+		
+		if(get_post_meta($id, 'affiliates_page_id',true) == '1') {
+			$page = isset($_GET["pg"]) ? $_GET["pg"] : "login";
 
-		switch ($page) {
-			case "join_us":
-				require_once("screens" . DIRECTORY_SEPARATOR . "join_us.php");
-				break;
-			case "lost_pass":
-				require_once("screens" . DIRECTORY_SEPARATOR . "lost_pass.php");
-				break;
-			default:
-				$userId = get_current_user_id();
+			wp_styles();
+			self::addAFMAssets();
 
-				if ($userId == 0) {
-					require_once("screens" . DIRECTORY_SEPARATOR . "login.php");
-					return;
-				}
+			include_once("screens".DIRECTORY_SEPARATOR."header.php");
 
-				$data = get_userdata($userId);
+			switch ($page) {
+				case "join_us":
+					include_once("screens" . DIRECTORY_SEPARATOR . "join_us.php");
+					break;
+				case "lost_pass":
+					include_once("screens" . DIRECTORY_SEPARATOR . "lost_pass.php");
+					break;
+				default:
+					$userId = get_current_user_id();
+	
+					if ($userId == 0) {
+						include_once("screens" . DIRECTORY_SEPARATOR . "login.php");
+						break;
+					}
+	
+					$data = get_userdata($userId);
+	
+					if (in_array(self::AFM_ROLE_NAME, $data->roles)) {
+						$page = "home";
+						include_once("screens" . DIRECTORY_SEPARATOR . "home.php");
+						break;
+					}
+	
+					include_once("screens" . DIRECTORY_SEPARATOR . "login.php");
+					break;
+			}
 
-				if (in_array(self::AFM_ROLE_NAME, $data->roles)) {
-					require_once("screens" . DIRECTORY_SEPARATOR . "home.php");
-					return;
-				}
-
-				require_once("screens" . DIRECTORY_SEPARATOR . "login.php");
-				break;
+			include_once("screens".DIRECTORY_SEPARATOR."footer.php");
+			die;
 		}
 	}
 

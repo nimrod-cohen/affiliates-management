@@ -12,6 +12,7 @@ class AFMAffiliate
 	private $user = null;
 
 	public function ID() { return $this->ID; }
+	public function user() { return $this->user; }
 	public function skype(){ return get_user_meta($this->ID,"skype_user",true); }
 	public function phone(){ return get_user_meta($this->ID,"phone",true); }
 	public function fullname(){ return $this->user->display_name; }
@@ -22,6 +23,20 @@ class AFMAffiliate
 
 	private function __construct()
 	{}
+
+	public static function fromAffiliateEmail($email)
+	{
+		$aff = new AFMAffiliate();
+
+		$aff->user = get_user_by("email",$email);
+
+		if(!$aff->user) return null;
+
+		if(!in_array(AffiliatesManagement::AFM_ROLE_NAME,$aff->user->roles))
+			return null;
+
+		return $aff;
+	}
 
 	public static function fromAffiliateId($id)
 	{

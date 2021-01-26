@@ -1,4 +1,4 @@
-<div id="login" class="afm_form_container">
+<div class="page-content">
 	<?php
 
 	$affPage = AffiliatesManagement::getAffiliatesPage();
@@ -14,7 +14,7 @@
 	if( $this->error )
 		echo "<p class='message'>".$this->error."</p>";
 	?>
-	<form id="loginform" action="" method="POST">
+	<form id="join-form" action="" method="POST">
 		<input type="hidden" name="affiliate_action" value="do_register">
 		<p>
 			<label for="full_name">Full Name <span class="mandatory">*</span></label>
