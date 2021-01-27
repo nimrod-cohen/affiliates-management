@@ -557,45 +557,53 @@ class AffiliatesManagement
 
 	function showAffiliatePage() {
 		$id = get_queried_object_id();
+		global $wp;
+		$loginPage = get_permalink($id);
+
+		if(get_post_meta($id, 'affiliates_page_id',true) != '1') return;
 		
-		if(get_post_meta($id, 'affiliates_page_id',true) == '1') {
-			$page = isset($_GET["pg"]) ? $_GET["pg"] : "login";
+		$page = isset($_GET["pg"]) ? $_GET["pg"] : (is_user_logged_in() ? "home" : "login");
 
-			wp_styles();
-			self::addAFMAssets();
+		wp_styles();
+		self::addAFMAssets();
 
-			include_once("screens".DIRECTORY_SEPARATOR."header.php");
+		include("screens".DIRECTORY_SEPARATOR."header.php");
 
-			switch ($page) {
-				case "join_us":
-					include_once("screens" . DIRECTORY_SEPARATOR . "join_us.php");
-					break;
-				case "lost_pass":
-					include_once("screens" . DIRECTORY_SEPARATOR . "lost_pass.php");
-					break;
-				default:
-					$userId = get_current_user_id();
-	
-					if ($userId == 0) {
-						include_once("screens" . DIRECTORY_SEPARATOR . "login.php");
-						break;
-					}
-	
-					$data = get_userdata($userId);
-	
-					if (in_array(self::AFM_ROLE_NAME, $data->roles)) {
-						$page = "home";
-						include_once("screens" . DIRECTORY_SEPARATOR . "home.php");
-						break;
-					}
-	
-					include_once("screens" . DIRECTORY_SEPARATOR . "login.php");
-					break;
-			}
-
-			include_once("screens".DIRECTORY_SEPARATOR."footer.php");
+		switch ($page) {
+			case "logout":
+				wp_destroy_current_session();
+				wp_clear_auth_cookie();
+				wp_set_current_user( 0 );
+				wp_redirect($loginPage);
 			die;
+			case "join_us":
+				include("screens" . DIRECTORY_SEPARATOR . "join_us.php");
+				break;
+			case "lost_pass":
+				include("screens" . DIRECTORY_SEPARATOR . "lost_pass.php");
+				break;
+			default:
+				$userId = get_current_user_id();
+
+				if ($userId == 0) {
+					include("screens" . DIRECTORY_SEPARATOR . "login.php");
+					break;
+				}
+
+				$data = get_userdata($userId);
+
+				if (in_array(self::AFM_ROLE_NAME, $data->roles)) {
+					$page = "home";
+					include("screens" . DIRECTORY_SEPARATOR . "home.php");
+					break;
+				}
+
+				include("screens" . DIRECTORY_SEPARATOR . "login.php");
+				break;
 		}
+
+		include("screens".DIRECTORY_SEPARATOR."footer.php");
+		die;
 	}
 
 	function addAttachmentTaxonomies()

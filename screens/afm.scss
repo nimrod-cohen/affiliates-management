@@ -80,7 +80,7 @@ body {
 
   &.login-page,
   &.lost_pass-page {
-    row-gap: 50px;
+    row-gap: 100px;
 
     .page-content {
       width: 600px;
@@ -115,13 +115,24 @@ body {
           height: 100px;
         }
       }
-      a.login-link {
+      .login-link {
         grid-area: logout;
         justify-self: end;
       }
 
       .header-text {
         grid-area: title;
+      }
+    }
+    &.no-logo {
+      header {
+        grid-template-areas: 'title logout';
+      }
+      &.logged-out {
+        header {
+          grid-template-areas: 'title';
+          justify-content: center;
+        }
       }
     }
 

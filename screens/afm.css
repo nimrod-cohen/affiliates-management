@@ -90,7 +90,7 @@ body {
 }
 
 body.login-page, body.lost_pass-page {
-  row-gap: 50px;
+  row-gap: 100px;
 }
 
 body.login-page .page-content, body.lost_pass-page .page-content {
@@ -134,18 +134,28 @@ body.affiliates-page header .logo img {
   height: 100px;
 }
 
-body.affiliates-page header a.login-link {
+body.affiliates-page header .login-link {
   -ms-grid-row: 1;
   -ms-grid-column: 2;
   grid-area: logout;
-  -ms-grid-column-align: end;
       justify-self: end;
 }
 
 body.affiliates-page header .header-text {
-  -ms-grid-row: 2;
-  -ms-grid-column: 2;
+  -ms-grid-row: 1;
+  -ms-grid-column: 1;
   grid-area: title;
+}
+
+body.affiliates-page.no-logo header {
+      grid-template-areas: 'title logout';
+}
+
+body.affiliates-page.no-logo.logged-out header {
+      grid-template-areas: 'title';
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
 
 body.affiliates-page .page-content {
