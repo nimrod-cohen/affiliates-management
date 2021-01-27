@@ -4,6 +4,7 @@
 :root {
   --button: #4a4aaf;
   --button-danger: #e61364;
+  --button-secondary: #efefef;
   --info-bg: #d7eafd;
   --input-box: lightblue;
   --error-bg: #ffefef;
@@ -26,6 +27,7 @@
   &.success {
     background-color: var(--success-bg);
   }
+
   line-height: 1.3em;
   border-radius: 4px;
   padding: 20px 10px;
@@ -55,6 +57,10 @@ button {
 
   &.danger {
     background-color: var(--button-danger);
+  }
+
+  &.secondary {
+    background-color: var(--button-secondary);
   }
 
   &.small {

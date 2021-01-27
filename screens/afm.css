@@ -3,6 +3,7 @@
 :root {
   --button: #4a4aaf;
   --button-danger: #e61364;
+  --button-secondary: #efefef;
   --info-bg: #d7eafd;
   --input-box: lightblue;
   --error-bg: #ffefef;
@@ -59,6 +60,11 @@ button.primary {
 .button.danger,
 button.danger {
   background-color: var(--button-danger);
+}
+
+.button.secondary,
+button.secondary {
+  background-color: var(--button-secondary);
 }
 
 .button.small,
