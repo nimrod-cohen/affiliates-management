@@ -187,8 +187,6 @@ class AffiliatesManagement
 
 	function getCreatives()
 	{
-		check_ajax_referer('afm-nonce', 'security');
-
 		$page = $_POST["page"];
 
 		$creatives = AFMCreatives::all($page, AFMCreatives::PAGE_SIZE);
@@ -320,7 +318,6 @@ class AffiliatesManagement
 
 	function logEvent()
 	{
-		check_ajax_referer('afm-nonce', 'security');
 		$data = $_REQUEST["data"];
 		$data = json_decode(stripslashes($data),true);
 		$utm = $data["utm"];
@@ -398,9 +395,9 @@ class AffiliatesManagement
 		wp_localize_script('afm-affiliate-js',
 			'afm_info', [
 				'ajax_url' => admin_url('admin-ajax.php'),
-				'nonce' => wp_create_nonce('afm-nonce'),
 				'creatives_per_page' => AFMCreatives::PAGE_SIZE,
-				'landing_pages' => $lps
+				'landing_pages' => $lps,
+				'logged_in' => is_user_logged_in()
 			]);
 
 	}
@@ -436,7 +433,6 @@ class AffiliatesManagement
 
 		wp_localize_script('afm-tracker', 'afm_server_info', [
 			'ajax_url' => admin_url('admin-ajax.php'),
-			'nonce' => wp_create_nonce('afm-nonce'),
 			'keep_days' => get_option("afm-keep-days", AffiliatesManagement::AFM_KEEP_DAYS),
 			'aff_pixel' => $pixel
 		]);
@@ -465,8 +461,7 @@ class AffiliatesManagement
 
 		wp_localize_script('afm-admin-js', 'afm_admin',
 			['MIXED_CPA_REVSHARE' => AFM_DealType::MIXED_CPA_AND_REVEUE_SHARE,
-				'ajax_url' => admin_url('admin-ajax.php'),
-				'nonce' => wp_create_nonce('afm-nonce')]);
+				'ajax_url' => admin_url('admin-ajax.php')]);
 	}
 
 	function showMenu()
@@ -688,8 +683,6 @@ class AffiliatesManagement
 
 	function paymentHistory()
 	{
-		check_ajax_referer( 'afm-nonce', 'security' );
-
 		$affId = $_POST["aff_id"];
 		$month = $_POST["month"];
 
@@ -711,8 +704,6 @@ class AffiliatesManagement
 
 	function delPayment()
 	{
-		check_ajax_referer( 'afm-nonce', 'security' );
-
 		$affId = $_POST["aff_id"];
 		$month = $_POST["month"];
 		$paymentId = $_POST["payment_id"];

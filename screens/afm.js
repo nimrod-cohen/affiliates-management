@@ -1,5 +1,7 @@
 JSUtils.domReady(() => {
-  var tabsContainer = document.querySelector('.nav-tabs');
+  let tabsContainer = document.querySelector('.nav-tabs');
+  if (!tabsContainer) return;
+
   links = tabsContainer.querySelectorAll('a');
   links.forEach(link =>
     link.addEventListener('click', e => {
@@ -160,6 +162,7 @@ class InfinityScroller {
 }
 
 JSUtils.domReady(() => {
+  if (!afm_info.logged_in) return;
   window.infinityScroller = new InfinityScroller();
   window.infinityScroller.getCreatives();
 });

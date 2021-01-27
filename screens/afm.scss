@@ -102,7 +102,7 @@ body {
       border: solid 1px var(--page-borders);
 
       &.raise {
-        box-shadow: 0px 0px 15px 0px #0000005c;
+        box-shadow: 0px 0px 15px 0px #0000001f;
       }
 
       &.standard-width {
@@ -164,13 +164,16 @@ body {
         width: 100%;
         justify-content: space-between;
         align-items: center;
+        margin: 16px 0;
 
         label {
           white-space: nowrap;
           width: 180px;
         }
         input[type='text'],
-        input[type='password'] {
+        input[type='password'],
+        input[type='email'],
+        input[type='phone'] {
           width: 100%;
           line-height: 30px;
           padding: 0 5px;
@@ -188,71 +191,67 @@ body {
 #bannerFarm {
   overflow: scroll;
   max-height: 600px;
-}
 
-.banner_col_1,
-.banner_col_2,
-.banner_col_3 {
-  width: calc(33% - 3px);
-  display: block;
-  vertical-align: top;
-  box-sizing: content-box;
-  float: left;
-  margin-right: 6px;
-}
+  .banner_col_1,
+  .banner_col_2,
+  .banner_col_3 {
+    width: calc(33% - 3px);
+    display: block;
+    vertical-align: top;
+    box-sizing: content-box;
+    float: left;
+    margin-right: 6px;
 
-.banner_box {
-  position: relative;
-  display: block;
-  width: 100%;
-  border: solid 2px #e0e0e0;
-  vertical-align: middle;
-  text-align: center;
-  min-height: 100px;
-  background: white;
-  margin-bottom: 5px;
-  margin-right: 6px;
-  padding: 4px;
-  box-sizing: border-box;
-  max-height: 300px;
+    .banner_box {
+      position: relative;
+      display: block;
+      width: 100%;
+      border: solid 2px #e0e0e0;
+      vertical-align: middle;
+      text-align: center;
+      min-height: 100px;
+      background: white;
+      margin-bottom: 5px;
+      margin-right: 6px;
+      padding: 4px;
+      box-sizing: border-box;
+      max-height: 300px;
 
-  .middle_helper {
-    display: inline-block;
-    height: 100%;
-    vertical-align: middle;
+      .middle_helper {
+        display: inline-block;
+        height: 100%;
+        vertical-align: middle;
+      }
+
+      img {
+        vertical-align: middle;
+        max-height: 280px;
+        max-width: 100%;
+      }
+
+      .hover_shade {
+        background-color: rgba(240, 240, 240, 0.5);
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+
+        .download_image {
+          position: absolute;
+          bottom: 4px;
+          right: 4px;
+          width: 32px;
+          height: 32px;
+          padding: 4px;
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: 20px;
+        }
+      }
+    }
   }
-
-  img {
-    vertical-align: middle;
-    max-height: 280px;
-    max-width: 100%;
-  }
-}
-
-div.hover_shade {
-  background-color: rgba(240, 240, 240, 0.5);
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-
-  .download_image {
-    position: absolute;
-    bottom: 4px;
-    right: 4px;
-    width: 32px;
-    height: 32px;
-    padding: 4px;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: 20px;
-  }
-}
-
-input[type='submit'].button-small {
-  font-size: 0.8rem;
 }
 
 /* page view tabs */
