@@ -14,7 +14,7 @@
 			placeholder="Ex. https://www.mydomain.com/?utm_source={source}&utm_campaign={campaign}&event={event}" 
 			value="<?php echo $pixel; ?>">
 	</p>
-	<label class="description">Use {source}, {campaign} to receive traffic source info, and {event} placeholder to get type of conversion.<br/>
+	<label class="description small">Use {source}, {campaign} to receive traffic source info, and {event} placeholder to get type of conversion.<br/>
 	Available events: 'register','authenticated','payment'</label>
 
 	<div style="margin-top:20px;clear: both">

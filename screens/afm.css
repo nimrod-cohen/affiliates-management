@@ -86,31 +86,66 @@ body {
       -ms-flex-pack: center;
           justify-content: center;
   background-color: var(--main-bg);
+  row-gap: 20px;
+}
+
+body.login-page, body.lost_pass-page {
   row-gap: 50px;
 }
 
+body.login-page .page-content, body.lost_pass-page .page-content {
+  width: 600px;
+  -ms-grid-column-align: center;
+      justify-self: center;
+}
+
+body.join_us-page form {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
+  -webkit-column-gap: 20px;
+          column-gap: 20px;
+}
+
 body.affiliates-page header {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
+  width: 1000px;
+  max-width: 100%;
+  display: -ms-grid;
+  display: grid;
+      grid-template-areas: 'logo logout' 'logo title';
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
   gap: 20px;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
 }
 
-body.affiliates-page header img {
+body.affiliates-page header .logo {
+  -ms-grid-row: 1;
+  -ms-grid-row-span: 2;
+  -ms-grid-column: 1;
+  grid-area: logo;
+}
+
+body.affiliates-page header .logo img {
   height: 100px;
 }
 
+body.affiliates-page header a.login-link {
+  -ms-grid-row: 1;
+  -ms-grid-column: 2;
+  grid-area: logout;
+  -ms-grid-column-align: end;
+      justify-self: end;
+}
+
 body.affiliates-page header .header-text {
-  max-width: 400px;
-  font-size: 22px;
-  font-weight: 500;
-  text-align: center;
+  -ms-grid-row: 2;
+  -ms-grid-column: 2;
+  grid-area: title;
 }
 
 body.affiliates-page .page-content {
@@ -197,6 +232,8 @@ body.affiliates-page .page-content .row {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -webkit-column-gap: 8px;
+          column-gap: 8px;
   width: 100%;
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;

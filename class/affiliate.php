@@ -106,10 +106,11 @@ class AFMAffiliate
 
 	private static function validate($args,$checkPass)
 	{
-		$mandatoryFields = ["full_name" => "Full Name",
+		$mandatoryFields = [
+			"full_name" => "Full Name",
 			"phone" => "Phone",
-			"site_url" => "Website Url",
-			"user_login" => "Affiliate Email"];
+			"user_login" => "Affiliate Email"
+		];
 
 		if($checkPass)
 			$mandatoryFields = array_merge($mandatoryFields,
