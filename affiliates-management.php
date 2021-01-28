@@ -374,11 +374,15 @@ class AffiliatesManagement
 		wp_register_script("afm-affiliate-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "afm.js", ["jquery", "afm-utils-js"]);
 		wp_enqueue_script("afm-affiliate-js");
 
-		wp_register_script("remodaler-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "addons" . DIRECTORY_SEPARATOR . "remodaler.js", ["jquery"]);
+		wp_register_script("remodaler-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "addons" . DIRECTORY_SEPARATOR . "remodaler.js", ["afm-utils-js","jquery"]);
 		wp_enqueue_script("remodaler-js");
-
 		wp_register_style("remodaler-css", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "addons" . DIRECTORY_SEPARATOR . "remodaler.css");
 		wp_enqueue_style("remodaler-css");
+
+		wp_register_script("monthpicker-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "addons" . DIRECTORY_SEPARATOR . "monthpicker.js", ["afm-utils-js"]);
+		wp_enqueue_script("monthpicker-js");
+		wp_register_style("monthpicker-css", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "addons" . DIRECTORY_SEPARATOR . "monthpicker.css");
+		wp_enqueue_style("monthpicker-css");
 
 		$landingPages = get_option("afm_landingpages",[]);
 

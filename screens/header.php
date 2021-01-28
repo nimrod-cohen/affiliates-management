@@ -27,7 +27,7 @@
       </a>
   <?php } ?>
   <?php if( is_user_logged_in() ) { ?>
-    <a class="link login-link" href="<?php echo urldecode($logoutUrl); ?>">Log out</a>
+    <span class="login-link">Welcome <?php echo wp_get_current_user()->display_name;?>, <a class="link" href="<?php echo urldecode($logoutUrl); ?>">Log out</a></span>
   <?php } else { ?>
     <span class="login-link">Not logged in</span>
   <?php } ?>
