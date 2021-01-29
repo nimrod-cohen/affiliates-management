@@ -1,3 +1,80 @@
+//initialize infinity scrolling for banner farm
+JSUtils.domReady(() => {
+  if (!afm_info.logged_in) return;
+
+  const shortestColumn = () => {
+    var c2 = document.querySelector('#bannerFarm .banner_col_2').children.length;
+    var c1 = document.querySelector('#bannerFarm .banner_col_1').children.length;
+    var c3 = document.querySelector('#bannerFarm .banner_col_3').children.length;
+
+    if (c1 > c2) return 2;
+    else if (c2 > c3) return 3;
+    else return 1;
+  };
+
+  const wireEvents = () => {
+    let banners = document.querySelectorAll('.banner_box');
+    //remove partially attached events
+    banners.forEach(banner => {
+      banner.removeEventListener('mouseenter', addSuggestDownload);
+      banner.removeEventListener('mouseleave', removeSuggestDownload);
+    });
+
+    banners.forEach(banner => {
+      banner.addEventListener('mouseenter', addSuggestDownload);
+      banner.addEventListener('mouseleave', removeSuggestDownload);
+    });
+  };
+
+  const addSuggestDownload = ev => {
+    var url = ev.target.querySelector('img').getAttribute('src');
+    ev.target.insertAdjacentHTML(
+      'beforeend',
+      `<div class='hover_shade'>
+				<a target='_blank' download href='${url}'>
+					<div class='download_image button primary'>
+						<i class='fa fa-download'></i>
+					</div>
+				</a>
+			</div>`
+    );
+  };
+
+  const removeSuggestDownload = ev => {
+    let shade = ev.target.querySelector('.hover_shade');
+    shade.parentNode.removeChild(shade);
+  };
+
+  const getCreatives = async page => {
+    let response = await JSUtils.fetch(afm_info.ajax_url, {
+      action: 'afm_get_creatives',
+      security: afm_info.nonce,
+      page: page
+    });
+
+    if (response.length === 0) {
+      return true; //finished
+    }
+
+    var currCol = shortestColumn();
+
+    for (var i = 0; i < response.length; i++) {
+      var html = `<div class='banner_box'><span class='middle_helper'></span><img src='${response[i]}'/></div>`;
+      document.querySelector('div.banner_col_' + currCol).insertAdjacentHTML('beforeend', html);
+
+      currCol++;
+      currCol = currCol == 4 ? 1 : currCol;
+    }
+
+    wireEvents();
+
+    return response.length < afm_info.creatives_per_page;
+  };
+
+  window.bannerFarmScroll = new InfinityScroll('#bannerFarm', getCreatives);
+});
+
+//initialize tab navigation
 JSUtils.domReady(() => {
   let tabsContainer = document.querySelector('.nav-tabs');
   if (!tabsContainer) return;
@@ -14,8 +91,10 @@ JSUtils.domReady(() => {
       thisTab.classList.add('nav-tab-active');
     })
   );
+});
 
-  document.querySelector('#btnNewLink').addEventListener('click', ev => {
+JSUtils.domReady(() => {
+  document.querySelector('#new-link').addEventListener('click', ev => {
     ev.preventDefault();
 
     var form = ev.target.closest('form');
@@ -55,119 +134,19 @@ JSUtils.domReady(() => {
       }
     });
   });
-});
 
-class InfinityScroller {
-  isRetrieving = false;
-  isDone = false;
-  page = 1;
+  //leads
+  document.querySelector('#search-leads').addEventListener('click', () => {
+    let input = document.querySelector('#leads-month');
 
-  init = () => {
-    let banners = document.querySelectorAll('.banner_box');
-    //remove partially attached events
-    banners.forEach(banner => {
-      banner.removeEventListener('mouseenter', this.addSuggestDownload);
-      banner.removeEventListener('mouseleave', this.removeSuggestDownload);
+    JSUtils.fetch(afm_info.ajax_url, {
+      action: 'search-leads',
+      month: input.getAttribute('month'),
+      year: input.getAttribute('year')
     });
+  });
 
-    banners.forEach(banner => {
-      banner.addEventListener('mouseenter', this.addSuggestDownload);
-      banner.addEventListener('mouseleave', this.removeSuggestDownload);
-    });
-    document.querySelector('#bannerFarm').addEventListener('scroll', this.handleScroll);
-  };
-
-  handleScroll = ev => {
-    if (
-      this.scrollHeight -
-        (window.pageYOffset + document.querySelector('#bannerFarm').offsetHeight) >
-        300 ||
-      this.isRetrieving == true ||
-      this.isDone == true
-    )
-      return;
-
-    this.isRetrieving = true;
-
-    this.getCreatives();
-  };
-
-  addSuggestDownload = ev => {
-    var url = ev.target.querySelector('img').getAttribute('src');
-    ev.target.insertAdjacentHTML(
-      'beforeend',
-      `<div class='hover_shade'>
-				<a target='_blank' download href='${url}'>
-					<div class='download_image button primary'>
-						<i class='fa fa-download'></i>
-					</div>
-				</a>
-			</div>`
-    );
-  };
-
-  removeSuggestDownload = ev => {
-    let shade = ev.target.querySelector('.hover_shade');
-    shade.parentNode.removeChild(shade);
-  };
-
-  appendCreatives = response => {
-    this.page++;
-
-    var arr = JSON.parse(response);
-
-    if (arr.length < afm_info.creatives_per_page) this.isDone = true;
-
-    var currCol = this.shortestColumn();
-
-    for (var i = 0; i < arr.length; i++) {
-      var html = `<div class='banner_box'><span class='middle_helper'></span><img src='${arr[i]}'/></div>`;
-      document.querySelector('div.banner_col_' + currCol).insertAdjacentHTML('beforeend', html);
-
-      currCol++;
-      currCol = currCol == 4 ? 1 : currCol;
-    }
-
-    this.init();
-  };
-
-  getCreatives = () => {
-    if (this.isDone == true) return;
-
-    jQuery
-      .ajax({
-        url: afm_info.ajax_url,
-        type: 'post',
-        data: {
-          action: 'afm_get_creatives',
-          security: afm_info.nonce,
-          page: this.page
-        },
-        success: this.appendCreatives
-      })
-      .done(() => {
-        this.isRetrieving == false;
-      });
-  };
-
-  shortestColumn = () => {
-    var c2 = document.querySelector('#bannerFarm .banner_col_2').children.length;
-    var c1 = document.querySelector('#bannerFarm .banner_col_1').children.length;
-    var c3 = document.querySelector('#bannerFarm .banner_col_3').children.length;
-
-    if (c1 > c2) return 2;
-    else if (c2 > c3) return 3;
-    else return 1;
-  };
-}
-
-JSUtils.domReady(() => {
-  if (!afm_info.logged_in) return;
-  window.infinityScroller = new InfinityScroller();
-  window.infinityScroller.getCreatives();
-});
-
-JSUtils.domReady(() => {
+  //copiables
   let arr = document.querySelectorAll('.copiable .button');
 
   arr.forEach(btn => {

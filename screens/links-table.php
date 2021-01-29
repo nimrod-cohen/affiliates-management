@@ -3,7 +3,7 @@
 		<input type="hidden" name="affiliate_action" value="">
 		<input type="hidden" name="link_id" value="">
 		<input type="hidden" name="landing_page_id" value="">
-		<input type="submit" id="btnNewLink" class="button small primary" value="New link">
+		<input type="submit" id="new-link" class="button small primary" value="New link">
 	</div>
 	<table class="full-width">
 		<thead>

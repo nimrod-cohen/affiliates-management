@@ -33,6 +33,19 @@ const JSUtils = {
         }
       });
     });
+  },
+
+  fetch: async (url, values) => {
+    let response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+      },
+      credentials: 'same-origin',
+      body: Object.keys(values).reduce((str, key) => `${str}&${key}=${values[key]}`, '')
+    });
+    response = await response.json();
+    return response;
   }
 };
 

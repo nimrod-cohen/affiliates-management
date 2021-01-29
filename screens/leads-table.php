@@ -2,7 +2,7 @@
 	<div class="actions-bar row">
 		<input type="text" readonly class="monthpicker" id="leads-month">
 		<input type="text" class="" id="leads-name-or-email">
-		<button class="button primary" id="leads-name-or-email">Search</button>
+		<button class="button primary" id="search-leads">Search</button>
 	</div>
 	<table id="leads-table" class="full-width">
 		<thead>

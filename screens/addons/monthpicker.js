@@ -201,9 +201,10 @@ class MonthPicker {
   };
 }
 
-var monthPicker = null;
+//run as global
+window.monthPicker = null;
 JSUtils.domReady(() => {
-  monthPicker = new MonthPicker();
+  window.monthPicker = new MonthPicker();
 });
 
 //TODO: window resize event

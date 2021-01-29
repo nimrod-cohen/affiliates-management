@@ -371,7 +371,7 @@ class AffiliatesManagement
 		wp_register_script("afm-utils-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "jsutils.js", []);
 		wp_enqueue_script("afm-utils-js");
 
-		wp_register_script("afm-affiliate-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "afm.js", ["jquery", "afm-utils-js"]);
+		wp_register_script("afm-affiliate-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "afm.js", ["afm-utils-js"]);
 		wp_enqueue_script("afm-affiliate-js");
 
 		wp_register_script("remodaler-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "addons" . DIRECTORY_SEPARATOR . "remodaler.js", ["afm-utils-js","jquery"]);
@@ -383,6 +383,9 @@ class AffiliatesManagement
 		wp_enqueue_script("monthpicker-js");
 		wp_register_style("monthpicker-css", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "addons" . DIRECTORY_SEPARATOR . "monthpicker.css");
 		wp_enqueue_style("monthpicker-css");
+
+		wp_register_script("infinityscroll-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "addons" . DIRECTORY_SEPARATOR . "infinityscroll.js", ["afm-utils-js"]);
+		wp_enqueue_script("infinityscroll-js");
 
 		$landingPages = get_option("afm_landingpages",[]);
 
