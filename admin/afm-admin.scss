@@ -1,10 +1,10 @@
 .tab-view {
   display: none;
   margin-top: 15px;
-}
 
-.tab-view.active {
-  display: block;
+  &.active {
+    display: block;
+  }
 }
 
 .pull-right {
@@ -22,10 +22,9 @@ table#accounting-table > tbody > tr {
 
 td.payment-details-container table {
   border-collapse: collapse;
-}
-
-td.payment-details-container table tr td {
-  border: solid 1px lightgray;
+  tr td {
+    border: solid 1px lightgray;
+  }
 }
 
 div.lp_container {
@@ -34,19 +33,17 @@ div.lp_container {
   margin: 0;
   border: 0;
 }
-
 div.lp_titles_container {
   display: block;
-}
-
-div.lp_titles_container label.lp_list_title {
-  display: inline-block;
-  width: calc(50% - 4px);
-  min-width: 200px;
-  max-width: 500px;
-  font-size: 1.2em;
-  font-weight: bold;
-  padding: 2px;
+  label.lp_list_title {
+    display: inline-block;
+    width: calc(50% - 4px);
+    min-width: 200px;
+    max-width: 500px;
+    font-size: 1.2em;
+    font-weight: bold;
+    padding: 2px;
+  }
 }
 
 select.page_selection {
@@ -55,18 +52,16 @@ select.page_selection {
   min-width: 200px;
   max-width: 500px;
   min-height: 500px;
-}
 
-select.page_selection option {
-  padding: 2px;
-  cursor: pointer;
+  option {
+    padding: 2px;
+    cursor: pointer;
+  }
 }
 
 #aff-tabs a {
   outline: none !important;
+  &:focus {
+    outline: none !important;
+  }
 }
-
-#aff-tabs a:focus {
-  outline: none !important;
-}
-/*# sourceMappingURL=afm-admin.css.map */

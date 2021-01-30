@@ -163,6 +163,10 @@ body {
       table {
         border-collapse: collapse;
 
+        thead tr th {
+          background-color: white;
+        }
+
         tr {
           &:nth-child(even) {
             background-color: #f0f0f0;
@@ -231,6 +235,16 @@ body {
         }
       }
     }
+  }
+}
+
+.table-wrapper {
+  height: 600px;
+  overflow: auto;
+
+  thead tr th {
+    position: sticky;
+    top: 0;
   }
 }
 

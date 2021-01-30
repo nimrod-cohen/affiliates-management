@@ -31,6 +31,7 @@
 		<h2 class="nav-tab-wrapper" id="aff-tabs">
 			<a class="nav-tab <?php echo $activePage == 'accounting' ? 'nav-tab-active' : ''; ?>" id="accounting-tab" href="#top#accounting">Accounting</a>
 			<a class="nav-tab <?php echo $activePage == 'links' ? 'nav-tab-active' : ''; ?>" id="links-tab" href="#top#links">Links</a>
+			<a class="nav-tab <?php echo $activePage == 'deal' ? 'nav-tab-active' : ''; ?>" id="deal-tab" href="#top#deal">Deal</a>
 			<a class="nav-tab <?php echo $activePage == 'settings' ? 'nav-tab-active' : ''; ?>" id="settings-tab" href="#top#settings">Settings</a>
 		</h2>
 		<div id="tab-accounting" class="tab-view <?php echo $activePage == 'accounting' ? 'active' : ''; ?>">
@@ -38,6 +39,9 @@
 		</div>
 		<div id="tab-links" class="tab-view <?php echo $activePage == 'links' ? 'active' : ''; ?>">
 			<?php include_once("affiliate-links.php"); ?>
+		</div>
+		<div id="tab-deal" class="tab-view <?php echo $activePage == 'deal' ? 'active' : ''; ?>">
+			<?php include_once("affiliate-deal.php"); ?>
 		</div>
 		<div id="tab-settings" class="tab-view <?php echo $activePage == 'settings' ? 'active' : ''; ?>">
 			<?php include_once("affiliate-settings.php"); ?>

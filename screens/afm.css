@@ -192,6 +192,10 @@ body.affiliates-page .page-content table {
   border-collapse: collapse;
 }
 
+body.affiliates-page .page-content table thead tr th {
+  background-color: white;
+}
+
 body.affiliates-page .page-content table tr:nth-child(even) {
   background-color: #f0f0f0;
 }
@@ -272,6 +276,17 @@ body.affiliates-page .page-content .row input[type='phone'] {
 
 body.affiliates-page .page-content .row input[type='checkbox'] {
   margin-right: 5px;
+}
+
+.table-wrapper {
+  height: 600px;
+  overflow: auto;
+}
+
+.table-wrapper thead tr th {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
 }
 
 #bannerFarm {

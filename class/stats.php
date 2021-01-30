@@ -57,6 +57,13 @@ class AFMStats
 	{
 		global $wpdb;
 
+		$result = [
+			'aff_id' => get_user_meta($userId,'affiliate_id',true),
+			'link_id' => get_user_meta($userId,'affiliate_link_id',true)
+		];
+
+		if(strlen($result["aff_id"]) > 0 && strlen($result["link_id"]) > 0) return $result;
+
 		$sql = "SELECT aff_id,link_id
 			FROM afm_events
 			WHERE user_id = %d
@@ -65,7 +72,7 @@ class AFMStats
 
 		$sql = $wpdb->prepare($sql,$userId,AffiliatesManagement::lockingEvent());
 
-		$result = $wpdb->get_row($sql);
+		$result = $wpdb->get_row($sql, ARRAY_A);
 
 		if(!$result || !is_array($result) || count($result) == 0 || $result["aff_id"] == 0)
 			return false;
@@ -145,15 +152,26 @@ class AFMStats
 		return $result;
 	}
 
-	static function event($linkId,$affId,$trackerId,$userId,$event,$source = null,$medium = null,$campaign = null,$content = null,$term = null,$amount = 0)
+	static function event($linkId,$affId,$trackerId,$userId,$event,$source = null,$medium = null,$campaign = null,$content = null,$term = null,$amount = 0, $productId = null)
 	{
 		global $wpdb;
 
-		$sql = "INSERT INTO afm_events (link_id,aff_id,tracked_id,user_id,event,source,medium,campaign,content,term,amount)
-			VALUES (%d,%d,%s,%d,%s,%s,%s,%s,%s,%s,%f)";
+		//check if need to lock
+		$lockingEvents = AffiliatesManagement::lockingEvent();
+		if(!is_array($lockingEvents)) $lockingEvents = [$lockingEvents];
+
+		if ($userId != 0 &&	in_array($event, $lockingEvents) &&	!self::whoLocks($userId)) {
+			update_user_meta($userId,'affiliate_id',$affId);
+			update_user_meta($userId,'affiliate_link_id',$linkId);
+		}
+
+		
+
+		$sql = "INSERT INTO afm_events (link_id,aff_id,tracked_id,user_id,event,source,medium,campaign,content,term,amount,product_id)
+			VALUES (%d,%d,%s,%d,%s,%s,%s,%s,%s,%s,%f,%d)";
 
 		$sql = $wpdb->prepare($sql,$linkId,$affId,$trackerId,$userId,$event,
-			$source,$medium,$campaign,$content,$term,$amount);
+			$source,$medium,$campaign,$content,$term,$amount, $productId);
 
 		$wpdb->query($sql);
 	}

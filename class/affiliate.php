@@ -196,6 +196,36 @@ class AFMAffiliate
 		AFMAccounting::apply($this->ID(),$thisMonth,0,0,$amount,null,$comment);
 	}
 
+	public function getLeads($year, $month, $search, $page) {
+		global $wpdb;
+
+		$sql = "select u.ID, u.user_email, u.display_name, ump.meta_value as 'phone', uml.meta_value as 'link_id',
+			DATE_FORMAT(u.user_registered, %s) as user_registered, IFNULL(deposits.amount,0) as deposits
+			FROM wp_users u
+			INNER JOIN wp_usermeta umaf on umaf.user_id = u.ID and umaf.meta_key = 'affiliate_id' and umaf.meta_value = %d
+			LEFT OUTER JOIN wp_usermeta uml on uml.user_id = u.ID and uml.meta_key = 'affiliate_link_id'
+			LEFT OUTER JOIN wp_usermeta ump on ump.user_id = u.ID and ump.meta_key = 'user_phone'
+			LEFT OUTER JOIN (SELECT afe.user_id, SUM(amount) as amount
+											FROM afm_events afe
+											WHERE event in ('deposit','first_deposit') group by afe.user_id)
+											AS deposits ON deposits.user_id = u.ID
+			WHERE year(user_registered) = %d
+			AND month(user_registered) = %d";
+
+		if(strlen($search)) {
+			$sql .= " AND user_email like '%".$search."%'";
+			$search = "%".$search."%";
+		} else {
+			$sql .= " AND LENGTH(%s) = 0";
+		}
+
+		$sql .= " ORDER BY user_registered ASC limit ".AFMHelper::PAGE_SIZE." offset ".(($page-1) * AFMHelper::PAGE_SIZE);
+
+		$sql = $wpdb->prepare($sql,"%d-%m-%Y", $this->ID, $year, $month, $search);
+		$result = $wpdb->get_results($sql, ARRAY_A);
+		return $result;
+	}
+
 	public function compensate($userId,$amount,$isFirst,$orderId,$orderDetails)
 	{
 		$deal = $this->deal();

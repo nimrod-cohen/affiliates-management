@@ -7,6 +7,8 @@
  */
 class AFMHelper
 {
+	const PAGE_SIZE = 20;
+
 	static function pagingButton($total, $currentPage, $targetPage, $title)
 	{
 		if ($targetPage < 1 || $targetPage > $total || $targetPage == $currentPage)

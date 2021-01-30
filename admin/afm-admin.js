@@ -28,17 +28,19 @@
     });
   });
 
-  $(document).ready(function () {
-    var tabsContainer = $('.nav-tabs');
-    tabsContainer.find('a').click(function () {
-      var thisTab = $(this);
-      var allTabs = $('.tab-body');
-      tabsContainer.find('a').removeClass('nav-tab-active');
-      allTabs.removeClass('active');
-      var id = 'tab-' + thisTab.attr('id').replace('-tab', '');
-      $('#' + id).addClass('active');
-      thisTab.addClass('nav-tab-active');
-    });
+  JSUtils.domReady(() => {
+    var tabs = document.querySelectorAll('#aff-tabs a');
+    var tabViews = document.querySelectorAll('.tab-view');
+    tabs.forEach(tab =>
+      tab.addEventListener('click', () => {
+        tabs.forEach(tb => tb.classList.remove('nav-tab-active'));
+        tabViews.forEach(body => body.classList.remove('active'));
+
+        var id = 'tab-' + tab.getAttribute('id').replace('-tab', '');
+        document.querySelector('#' + id).classList.add('active');
+        tab.classList.add('nav-tab-active');
+      })
+    );
   });
 
   $(document).ready(function () {

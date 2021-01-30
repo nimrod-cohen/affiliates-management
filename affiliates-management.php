@@ -82,6 +82,15 @@ class AffiliatesManagement
 		//get payment history ajax calls
 		add_action('wp_ajax_payment_history', [$this, 'paymentHistory']);
 		add_action('wp_ajax_delete_payment_history', [$this, 'delPayment']);
+
+		//get leads table
+		add_action('wp_ajax_search_leads',[$this, 'searchLeads']);
+	}
+
+	function searchLeads() {
+		$affilate = AFMAffiliate::fromCurrentUser();
+		echo json_encode($affilate->getLeads($_REQUEST["year"], $_REQUEST["month"],"", $_REQUEST["page"]));
+		die;
 	}
 
 	function doCalculations()
@@ -97,7 +106,7 @@ class AffiliatesManagement
 	{
 		$affPage = self::getAffiliatesPage();
 
-		if (count($affPage) == 0) {
+		if (!$affPage) {
 			$page = array(
 				'post_type' => 'page',
 				'post_title' => "Affiliates",
@@ -147,6 +156,7 @@ class AffiliatesManagement
 			`content` VARCHAR(100) NULL,
 			`term` VARCHAR(100) NULL,
 			`amount` DECIMAL (10,2) NULL,
+			`product_id` BIGINT(20) NULL,
 			PRIMARY KEY  (`id`, `link_id`, `tracked_id`),
 			INDEX `SECONDARY` (`user_id` ASC),
 			INDEX `EVENT_BY_TS` (`ts` ASC)
@@ -189,7 +199,7 @@ class AffiliatesManagement
 	{
 		$page = $_POST["page"];
 
-		$creatives = AFMCreatives::all($page, AFMCreatives::PAGE_SIZE);
+		$creatives = AFMCreatives::all($page, AFMHelper::PAGE_SIZE);
 
 		echo json_encode($creatives);
 		die;
@@ -200,6 +210,8 @@ class AffiliatesManagement
 	 */
 	function logPayments_WC($orderId)
 	{
+		if(!class_exists("WC_Order")) return;
+
 		$order = new WC_Order($orderId);
 
 		$userId = $order->get_user_id();
@@ -241,7 +253,7 @@ class AffiliatesManagement
 
 		$amount = apply_filters("afm_post_charged_amount", $amount, $affiliate, $orderId);
 
-		AFMStats::event($stats["link_id"], $affiliate->ID(), "", $userId, $isFirst ? "first_deposit" : "deposit", "", "", "", "", "", $amount);
+		AFMStats::event($stats["link_id"], $affiliate->ID(), "", $userId, $isFirst ? "first_deposit" : "deposit", "", "", "", "", "", $amount, $details["product_id"]);
 
 		//add to accounting
 		$affiliate->compensate($userId, $amount, $isFirst, $orderId, $details);
@@ -368,23 +380,23 @@ class AffiliatesManagement
 		wp_register_style("afm-affiliate-css", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "afm.css");
 		wp_enqueue_style("afm-affiliate-css");
 
-		wp_register_script("afm-utils-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "jsutils.js", []);
+		wp_register_script("afm-utils-js", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "jsutils.js", []);
 		wp_enqueue_script("afm-utils-js");
 
 		wp_register_script("afm-affiliate-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "afm.js", ["afm-utils-js"]);
 		wp_enqueue_script("afm-affiliate-js");
 
-		wp_register_script("remodaler-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "addons" . DIRECTORY_SEPARATOR . "remodaler.js", ["afm-utils-js","jquery"]);
+		wp_register_script("remodaler-js", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "remodaler.js", ["afm-utils-js","jquery"]);
 		wp_enqueue_script("remodaler-js");
-		wp_register_style("remodaler-css", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "addons" . DIRECTORY_SEPARATOR . "remodaler.css");
+		wp_register_style("remodaler-css", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "remodaler.css");
 		wp_enqueue_style("remodaler-css");
 
-		wp_register_script("monthpicker-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "addons" . DIRECTORY_SEPARATOR . "monthpicker.js", ["afm-utils-js"]);
+		wp_register_script("monthpicker-js", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "monthpicker.js", ["afm-utils-js"]);
 		wp_enqueue_script("monthpicker-js");
-		wp_register_style("monthpicker-css", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "addons" . DIRECTORY_SEPARATOR . "monthpicker.css");
+		wp_register_style("monthpicker-css", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "monthpicker.css");
 		wp_enqueue_style("monthpicker-css");
 
-		wp_register_script("infinityscroll-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "addons" . DIRECTORY_SEPARATOR . "infinityscroll.js", ["afm-utils-js"]);
+		wp_register_script("infinityscroll-js", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "infinityscroll.js", ["afm-utils-js"]);
 		wp_enqueue_script("infinityscroll-js");
 
 		$landingPages = get_option("afm_landingpages",[]);
@@ -402,7 +414,7 @@ class AffiliatesManagement
 		wp_localize_script('afm-affiliate-js',
 			'afm_info', [
 				'ajax_url' => admin_url('admin-ajax.php'),
-				'creatives_per_page' => AFMCreatives::PAGE_SIZE,
+				'paging_size' => AFMHelper::PAGE_SIZE,
 				'landing_pages' => $lps,
 				'logged_in' => is_user_logged_in()
 			]);
@@ -460,10 +472,13 @@ class AffiliatesManagement
 
 		wp_enqueue_style('font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 
-		wp_register_style('afm-admin-css', plugin_dir_url(__FILE__) . 'admin/afm-admin.css');
-		wp_register_script('afm-admin-js', plugin_dir_url(__FILE__) . 'admin/afm-admin.js');
+		wp_register_script("afm-utils-js", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "jsutils.js", []);
+		wp_enqueue_script("afm-utils-js");
 
+		wp_register_style('afm-admin-css', plugin_dir_url(__FILE__) . 'admin/afm-admin.css');
 		wp_enqueue_style('afm-admin-css');
+
+		wp_register_script('afm-admin-js', plugin_dir_url(__FILE__) . 'admin/afm-admin.js', ['afm-utils-js']);
 		wp_enqueue_script('afm-admin-js');
 
 		wp_localize_script('afm-admin-js', 'afm_admin',
@@ -708,7 +723,7 @@ class AffiliatesManagement
 			$row["paid"] = AFMHelper::formatMoney($row["paid"]);
 		}
 
-		$result = ["rows"=>$result];
+		$result = ["rows" => $result];
 
 		$aff = AFMAffiliate::fromAffiliateId($affId);
 		$result["balance"] = AFMHelper::formatMoney($aff->balance());

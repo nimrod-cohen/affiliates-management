@@ -8,7 +8,6 @@
 
 class AFMCreatives
 {
-	const PAGE_SIZE = 30;
 	static function all($page, $limit)
 	{
 

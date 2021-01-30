@@ -68,10 +68,75 @@ JSUtils.domReady(() => {
 
     wireEvents();
 
-    return response.length < afm_info.creatives_per_page;
+    return response.length < afm_info.paging_size;
   };
 
   window.bannerFarmScroll = new InfinityScroll('#bannerFarm', getCreatives);
+});
+
+//leads
+JSUtils.domReady(() => {
+  //leads
+  let input = document.querySelector('#leads-month');
+  var currentQuery = {
+    year: input.getAttribute('year'),
+    month: input.getAttribute('month')
+  };
+
+  const getLeads = async page => {
+    let response = await JSUtils.fetch(afm_info.ajax_url, {
+      action: 'search_leads',
+      ...currentQuery,
+      page: page
+    });
+
+    var leadsTable = document.querySelector('#leads-table tbody');
+
+    if (!response) {
+      alert('Something is wrong');
+      if (leadsTable.childNodes.length === 0) {
+        leadsTable.insertAdjacentHTML('beforeend', '<tr><td colspan=6>No data found</td></tr>');
+      }
+      return true; //stop it from running again
+    }
+
+    if (response.length === 0) {
+      if (leadsTable.childNodes.length === 0) {
+        leadsTable.insertAdjacentHTML('beforeend', '<tr><td colspan=6>No data found</td></tr>');
+      }
+      return true; //finished
+    }
+
+    response.forEach(row => {
+      leadsTable.insertAdjacentHTML(
+        'beforeend',
+        `<tr user-id=${row.ID}>
+        <td>${row.user_registered}</td>
+        <td>${row.display_name}</td>
+        <td>${row.user_email}</td>
+        <td>${!row.phone || row.phone === 'undefined' ? '' : row.phone}</td>
+        <td>${row.deposits}</td>
+      </tr>`
+      );
+    });
+
+    return response.length < afm_info.paging_size;
+  };
+
+  document.querySelector('#search-leads').addEventListener('click', e => {
+    e.preventDefault();
+
+    var leadsTable = document.querySelector('#leads-table tbody');
+    leadsTable.replaceChildren();
+
+    let input = document.querySelector('#leads-month');
+    currentQuery = {
+      year: input.getAttribute('year'),
+      month: input.getAttribute('month')
+    };
+
+    window.leadsInfinityScroll = new InfinityScroll('#leads-scroller', getLeads);
+  });
 });
 
 //initialize tab navigation
@@ -93,6 +158,7 @@ JSUtils.domReady(() => {
   );
 });
 
+//links
 JSUtils.domReady(() => {
   document.querySelector('#new-link').addEventListener('click', ev => {
     ev.preventDefault();
@@ -132,17 +198,6 @@ JSUtils.domReady(() => {
         form.querySelector("input[name='affiliate_action']").value = 'delete_link';
         form.submit();
       }
-    });
-  });
-
-  //leads
-  document.querySelector('#search-leads').addEventListener('click', () => {
-    let input = document.querySelector('#leads-month');
-
-    JSUtils.fetch(afm_info.ajax_url, {
-      action: 'search-leads',
-      month: input.getAttribute('month'),
-      year: input.getAttribute('year')
     });
   });
 
