@@ -82,6 +82,47 @@ class AFMAffiliate
 		update_user_meta($this->ID,"afm_deal",$deal);
 	}
 
+	public function getProductPayout($productId, $isFirst) {
+		$payouts = $this->getProductPayouts();
+
+		foreach($payouts as $payout) {
+			if($payout["product_id"] == $productId && $payout["is_first"] == $isFirst) return $payout;
+		}
+
+		return false;
+	}
+
+	public function getProductPayouts() {
+		$payouts = get_user_meta($this->ID(),'product_payouts',true);
+		if($payouts)
+			$payouts = json_decode($payouts, true);
+		else 
+			$payouts = [];
+		return $payouts;
+	}
+
+	public function addProductPayout($productId, $isFirst, $payout) {
+		$payouts = $this->getProductPayouts();
+
+		$found = false;
+		foreach($payouts as $ppay) {
+			if($ppay["product_id"] == $productId && $ppay["is_first"] == $isFirst) {
+				$ppay["payout"] = $payout;
+				$found = true;
+				break;
+			}
+		}
+
+		if(!$found) {
+			$payouts[] = [
+				"product_id" => $productId,
+				"is_first" => $isFirst,
+				"payout" => $payout
+			];
+		}
+		update_user_meta($this->ID(),'product_payouts',json_encode($payouts));
+	}
+
 	public function createLink($landingPage)
 	{
 		global $wpdb;
@@ -229,6 +270,15 @@ class AFMAffiliate
 	public function compensate($userId,$amount,$isFirst,$orderId,$orderDetails)
 	{
 		$deal = $this->deal();
+		$dealType = $deal["type"];
+		$productPayout = false;
+		if(isset($orderDetails["product_id"])) {
+			$productPayout = $this->getProductPayout($orderDetails["product_id"],$isFirst);
+			
+			if($productPayout) {
+				$dealType = AFM_DealType::PRODUCT_PAYOUT;
+			}
+		}
 
 		$firstPaymentDate = AFMStats::firstPayment($userId);
 
@@ -239,6 +289,10 @@ class AFMAffiliate
 
 		switch($deal["type"])
 		{
+			case AFM_DealType::PRODUCT_PAYOUT:
+				$cpa = $productPayout["payout"];
+				$cpa = apply_filters("afm_post_calculate_commission_product_payout",$cpa,$orderDetails,$this);
+				break;
 			case AFM_DealType::CPA:
 				if($isFirst)
 				{

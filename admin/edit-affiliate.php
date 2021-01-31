@@ -31,7 +31,7 @@
 		<h2 class="nav-tab-wrapper" id="aff-tabs">
 			<a class="nav-tab <?php echo $activePage == 'accounting' ? 'nav-tab-active' : ''; ?>" id="accounting-tab" href="#top#accounting">Accounting</a>
 			<a class="nav-tab <?php echo $activePage == 'links' ? 'nav-tab-active' : ''; ?>" id="links-tab" href="#top#links">Links</a>
-			<a class="nav-tab <?php echo $activePage == 'deal' ? 'nav-tab-active' : ''; ?>" id="deal-tab" href="#top#deal">Deal</a>
+			<a class="nav-tab <?php echo $activePage == 'deal' ? 'nav-tab-active' : ''; ?>" id="deal-tab" href="#top#deal">Product Payouts</a>
 			<a class="nav-tab <?php echo $activePage == 'settings' ? 'nav-tab-active' : ''; ?>" id="settings-tab" href="#top#settings">Settings</a>
 		</h2>
 		<div id="tab-accounting" class="tab-view <?php echo $activePage == 'accounting' ? 'active' : ''; ?>">

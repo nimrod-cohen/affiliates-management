@@ -510,6 +510,9 @@ class AffiliatesManagement
 					$aff->pay($_POST["amount"], $_POST["comment"]);
 					$updateResult = true;
 					break;
+				case "add_product_payout":
+					$aff = AFMAffiliate::fromAffiliateId($_POST["affiliate_id"]);
+					$aff->addProductPayout($_POST["product_id"],isset($_POST["is_first"]) && $_POST["is_first"] == "on",$_POST["payout"]);
 				default:
 					break;
 			}

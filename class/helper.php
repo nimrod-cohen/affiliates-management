@@ -69,6 +69,7 @@ class AFM_DealType
 	const CPA = 1;
 	const REVENUE_SHARE = 2;
 	const MIXED_CPA_AND_REVEUE_SHARE = 3;
+	const PRODUCT_PAYOUT = 4;
 
 	public static function toString($type)
 	{
