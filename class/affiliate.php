@@ -287,7 +287,7 @@ class AFMAffiliate
 		$cpa = null;
 		$revShare = null;
 
-		switch($deal["type"])
+		switch($dealType)
 		{
 			case AFM_DealType::PRODUCT_PAYOUT:
 				$cpa = $productPayout["payout"];
