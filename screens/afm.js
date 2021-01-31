@@ -93,7 +93,7 @@ JSUtils.domReady(() => {
     var leadsTable = document.querySelector('#leads-table tbody');
 
     if (!response) {
-      alert('Something is wrong');
+      alert('Failed to retrieve leads', 'error');
       if (leadsTable.childNodes.length === 0) {
         leadsTable.insertAdjacentHTML('beforeend', '<tr><td colspan=6>No data found</td></tr>');
       }
@@ -210,7 +210,7 @@ JSUtils.domReady(() => {
       e.stopPropagation();
       let text = e.target.closest('.copiable').querySelector('span:first-child').innerText;
       JSUtils.copyToClipboard(text);
-      alert('done');
+      window.notifications.show('Link copied to clipboard successfully', 'success');
     });
   });
 });

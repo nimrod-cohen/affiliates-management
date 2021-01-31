@@ -3,7 +3,7 @@
  Plugin Name: Affiliates Management
  Plugin URI: http://longrunplan.com/plugins/affiliates-manager
  Description: Affiliate management plugin
- Version: 1.0
+ Version: 1.1
  Author: Nimrod Cohen
  Author URI: http://google.com?q=Nimrod+Cohen
  License: GPL2
@@ -398,6 +398,12 @@ class AffiliatesManagement
 
 		wp_register_script("infinityscroll-js", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "infinityscroll.js", ["afm-utils-js"]);
 		wp_enqueue_script("infinityscroll-js");
+
+		wp_register_script("notifications-js", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "notifications.js", ["afm-utils-js"]);
+		wp_enqueue_script("notifications-js");
+		wp_register_style("notifications-css", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "notifications.css");
+		wp_enqueue_style("notifications-css");
+		
 
 		$landingPages = get_option("afm_landingpages",[]);
 

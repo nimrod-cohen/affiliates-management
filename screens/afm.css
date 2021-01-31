@@ -236,6 +236,17 @@ body.affiliates-page .page-content table tr th .copiable span {
   text-align: left;
 }
 
+body.affiliates-page .page-content table tr td .copiable button,
+body.affiliates-page .page-content table tr th .copiable button {
+  display: -ms-grid;
+  display: grid;
+  -ms-flex-line-pack: center;
+      align-content: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
 body.affiliates-page .page-content table tr th {
   text-align: left;
   border-top: solid 1px var(--table-borders);

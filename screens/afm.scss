@@ -198,6 +198,11 @@ body {
                 display: inline-block;
                 text-align: left;
               }
+              button {
+                display: grid;
+                align-content: center;
+                justify-content: center;
+              }
             }
           }
           th {
