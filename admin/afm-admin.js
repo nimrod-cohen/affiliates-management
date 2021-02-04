@@ -43,6 +43,13 @@
     );
   });
 
+  JSUtils.domReady(() => {
+    JSUtils.addGlobalEventListener('#payouts-table', '.delete-payout', 'click', e => {
+      e.preventDefault();
+      console.log(e.target.closest('tr'));
+    });
+  });
+
   $(document).ready(function () {
     $('div.tablenav-pages a.paging-button').click(function () {
       var page = $(this).data('page');
@@ -90,18 +97,21 @@
 
         var html =
           '<table>' +
-          '<thead><tr><th>Payment date</th><th>Sum</th><th>Comment</th><th></th></tr></thead>' +
+          '<thead><tr><th>Payment date</th><th>Sum</th><th>Paid</th><th>Comment</th><th></th></tr></thead>' +
           '<tbody>';
         for (var i = 0; i < res.rows.length; i++) {
+          let row = res.rows[i];
           html +=
             "<tr data-row-id='" +
-            res.rows[i].id +
+            row.id +
             "'><td>" +
-            res.rows[i].action_date +
+            row.action_date +
             '</td><td>' +
-            res.rows[i].paid +
+            row.payout +
             '</td><td>' +
-            res.rows[i].comment +
+            row.paid +
+            '</td><td>' +
+            row.comment +
             '</td>' +
             "<td><button class='delete-row'>Delete</button></td>";
         }

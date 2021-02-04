@@ -23,12 +23,13 @@
   </div>
   <button class="button primary">Add</button>
 </form>
-<table class="wp-list-table widefat striped posts">
+<table id="payouts-table" class="wp-list-table widefat striped posts">
   <thead>
     <tr>
       <th>Product ID</th>
       <th>First Deposit</th>
       <th>Payout</th>
+      <th></th>
     </thead>
     <tbody>
     <?php 
@@ -39,10 +40,11 @@
     <?php } else { 
       foreach($payouts as $payout) {
       ?>
-    <tr>
+    <tr product_id="<?php echo $payout["product_id"]; ?>" is_first="<?php echo $payout["is_first"] ? "1" : "0" ?>">
       <td><?php echo $payout["product_id"]; ?></td>
       <td><?php echo $payout["is_first"] ? "YES" : "" ?></td>
       <td><?php echo $payout["payout"]; ?></td>
+      <td><button class="delete-payout button danger">delete</button></td>
     </tr>
     <?php } 
     } ?>

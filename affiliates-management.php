@@ -518,7 +518,11 @@ class AffiliatesManagement
 					break;
 				case "add_product_payout":
 					$aff = AFMAffiliate::fromAffiliateId($_POST["affiliate_id"]);
-					$aff->addProductPayout($_POST["product_id"],isset($_POST["is_first"]) && $_POST["is_first"] == "on",$_POST["payout"]);
+					$aff->updateProductPayout($_POST["product_id"],isset($_POST["is_first"]) && $_POST["is_first"] == "on",$_POST["payout"]);
+					break;
+				case "delete_product_payout":
+						$aff = AFMAffiliate::fromAffiliateId($_POST["affiliate_id"]);
+						$aff->deleteProductPayout($_POST["product_id"], isset($_POST["is_first"]) && $_POST["is_first"] == "on");
 				default:
 					break;
 			}
@@ -596,7 +600,7 @@ class AffiliatesManagement
 		$page = isset($_GET["pg"]) ? $_GET["pg"] : (is_user_logged_in() ? "home" : "login");
 
 		wp_styles();
-		self::addAFMAssets();
+		$this->addAFMAssets();
 
 		include("screens".DIRECTORY_SEPARATOR."header.php");
 
@@ -729,6 +733,7 @@ class AffiliatesManagement
 
 		foreach($result as &$row)
 		{
+			$row["payout"] = AFMHelper::formatMoney($row["ftd_revenue"] + $row["retention_revenue"]);
 			$row["paid"] = AFMHelper::formatMoney($row["paid"]);
 		}
 

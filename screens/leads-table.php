@@ -12,7 +12,7 @@
 				<th>Name</th>
 				<th>Email</th>
 				<th>Phone</th>
-				<th>Payment</th>
+				<th>Revenue</th>
 				<th></th>
 			</tr>
 			</thead>

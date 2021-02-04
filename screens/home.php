@@ -15,7 +15,7 @@
 		<a class="nav-tab <?php echo $activePage == 'leads' ? 'nav-tab-active' : ''; ?>" id="leads-tab" href="#top#tab_links">Leads</a>
 		<a class="nav-tab <?php echo $activePage == 'pixel' ? 'nav-tab-active' : ''; ?>" id="pixel-tab" href="#top#tab_links">Pixel</a>
 		<a class="nav-tab <?php echo $activePage == 'billing' ? 'nav-tab-active' : ''; ?>" id="billing-tab" href="#top#tab_billing">Billing</a>
-			<a class="nav-tab <?php echo $activePage == 'creatives' ? 'nav-tab-active' : ''; ?>" id="creatives-tab" href="#top#tab_creatives">Banner Farm</a>
+		<a class="nav-tab <?php echo $activePage == 'creatives' ? 'nav-tab-active' : ''; ?>" id="creatives-tab" href="#top#tab_creatives">Banner Farm</a>
 		<a class="nav-tab pull-right <?php echo $activePage == 'details' ? 'nav-tab-active' : ''; ?>" id="details-tab" href="#top#tab_details">Personal Details</a>
 	</h2>
 	<div id="tab-details" class="tab-body <?php echo $activePage == 'details' ? 'active' : ''; ?>">

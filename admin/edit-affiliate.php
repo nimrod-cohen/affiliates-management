@@ -41,7 +41,7 @@
 			<?php include_once("affiliate-links.php"); ?>
 		</div>
 		<div id="tab-deal" class="tab-view <?php echo $activePage == 'deal' ? 'active' : ''; ?>">
-			<?php include_once("affiliate-deal.php"); ?>
+			<?php include_once("affiliate-payouts.php"); ?>
 		</div>
 		<div id="tab-settings" class="tab-view <?php echo $activePage == 'settings' ? 'active' : ''; ?>">
 			<?php include_once("affiliate-settings.php"); ?>

@@ -101,11 +101,11 @@ class AFMAffiliate
 		return $payouts;
 	}
 
-	public function addProductPayout($productId, $isFirst, $payout) {
+	public function updateProductPayout($productId, $isFirst, $payout) {
 		$payouts = $this->getProductPayouts();
 
 		$found = false;
-		foreach($payouts as $ppay) {
+		foreach($payouts as &$ppay) {
 			if($ppay["product_id"] == $productId && $ppay["is_first"] == $isFirst) {
 				$ppay["payout"] = $payout;
 				$found = true;
@@ -120,6 +120,19 @@ class AFMAffiliate
 				"payout" => $payout
 			];
 		}
+		update_user_meta($this->ID(),'product_payouts',json_encode($payouts));
+	}
+
+	public function deleteProductPayout($productId, $isFirst) {
+		$payouts = $this->getProductPayouts();
+
+		foreach($payouts as $key => $ppay) {
+			if($ppay["product_id"] == $productId && $ppay["is_first"] == $isFirst) {
+				unset($payouts[$key]);
+				break;
+			}
+		}
+
 		update_user_meta($this->ID(),'product_payouts',json_encode($payouts));
 	}
 

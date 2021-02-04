@@ -26,6 +26,7 @@ const JSUtils = {
 
   //listen to an event with selector dynamically. the selector might yield empty result during assignment
   addGlobalEventListener: (parent, selector, eventName, fn) => {
+    if (typeof parent === 'string') parent = document.querySelector(parent);
     parent.addEventListener(eventName, e => {
       parent.querySelectorAll(selector).forEach(elem => {
         if (elem.isSameNode(e.target)) {

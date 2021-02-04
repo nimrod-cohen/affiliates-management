@@ -1,4 +1,4 @@
-<form class="settings" name="frmDetails" id="frmDetails" method="POST" novalidate="novalidate">
+<form class="details" name="frmDetails" id="frmDetails" method="POST" novalidate="novalidate">
 	<input type="hidden" name="affiliate_action" value="do_save_details">
 	<div class="row">
 		<label for="user_login">Your email</label>
