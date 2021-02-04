@@ -10,8 +10,8 @@
 			<tr>
 				<th>Date</th>
 				<th>Name</th>
-				<th>Email</th>
-				<th>Phone</th>
+				<th class='sensitive email'>Email</th>
+				<th class='sensitive phone'>Phone</th>
 				<th>Revenue</th>
 				<th></th>
 			</tr>

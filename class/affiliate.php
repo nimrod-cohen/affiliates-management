@@ -20,6 +20,7 @@ class AFMAffiliate
 	public function website(){ return $this->user->user_url; }
 	public function deal() { return get_user_meta($this->ID,"afm_deal",true); }
 	public function pixel() { return get_user_meta($this->ID,"afm_pixel",true); }
+	public function exposeLeads() { return get_user_meta($this->ID, "expose_leads", true) == "1"; }
 
 	private function __construct()
 	{}
@@ -207,11 +208,10 @@ class AFMAffiliate
 	{
 		wp_update_user($args);
 
-		update_user_meta($args["ID"],"phone",$args["phone"]);
-		update_user_meta($args["ID"],"skype_user",$args["skype_user"]);
-
-		if(isset($args["deal"]))
-			update_user_meta($args["ID"],"afm_deal",$args["deal"]);
+		if(isset($args["phone"]))	update_user_meta($args["ID"],"phone",$args["phone"]);
+		if(isset($args["skype_user"])) update_user_meta($args["ID"],"skype_user",$args["skype_user"]);
+		if(isset($args["deal"])) update_user_meta($args["ID"],"afm_deal",$args["deal"]);
+		if(isset($args["expose_leads"])) update_user_meta($args["ID"],"expose_leads",$args["expose_leads"] ? "1" : "0");
 	}
 
 	public static function update($args)
@@ -252,8 +252,9 @@ class AFMAffiliate
 
 	public function getLeads($year, $month, $search, $page) {
 		global $wpdb;
+		$exposeLeads = $this->exposeLeads();
 
-		$sql = "select u.ID, u.user_email, u.display_name, ump.meta_value as 'phone', uml.meta_value as 'link_id',
+		$sql = "select u.ID, REGEXP_REPLACE(u.display_name, '\@.*','') as display_name, {EXPOSE} uml.meta_value as 'link_id',
 			DATE_FORMAT(u.user_registered, %s) as user_registered, IFNULL(deposits.amount,0) as deposits
 			FROM wp_users u
 			INNER JOIN wp_usermeta umaf on umaf.user_id = u.ID and umaf.meta_key = 'affiliate_id' and umaf.meta_value = %d
@@ -265,6 +266,8 @@ class AFMAffiliate
 											AS deposits ON deposits.user_id = u.ID
 			WHERE year(user_registered) = %d
 			AND month(user_registered) = %d";
+
+		$sql = str_replace('{EXPOSE}',$exposeLeads ? "u.user_email, ump.meta_value as 'phone'," : "", $sql);
 
 		if(strlen($search)) {
 			$sql .= " AND user_email like '%".$search."%'";

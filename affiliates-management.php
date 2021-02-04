@@ -417,12 +417,19 @@ class AffiliatesManagement
 
 		}
 
+		$exposeLeads = false;
+		if(is_user_logged_in()) {
+			$aff = AFMAffiliate::fromCurrentUser();
+			$exposeLeads = $aff ? $aff->exposeLeads() : false;
+		}
+
 		wp_localize_script('afm-affiliate-js',
 			'afm_info', [
 				'ajax_url' => admin_url('admin-ajax.php'),
 				'paging_size' => AFMHelper::PAGE_SIZE,
 				'landing_pages' => $lps,
-				'logged_in' => is_user_logged_in()
+				'logged_in' => is_user_logged_in(),
+				'expose_leads' => $exposeLeads ? "1" : "0"
 			]);
 
 	}
@@ -506,7 +513,11 @@ class AffiliatesManagement
 					$showUpdated = true;
 					$updateResult = $this->saveAffiliateSettings();
 					break;
-				case "save_landingpages":
+					case "save_affilate_deal":
+						$showUpdated = true;
+						$updateResult = $this->saveAffiliateDeal();
+						break;
+					case "save_landingpages":
 					$showUpdated = true;
 					$updateResult = $this->saveLandingPages();
 					break;
@@ -554,16 +565,31 @@ class AffiliatesManagement
 			"user_url" => $_POST["url"],
 			"skype_user" => $_POST["skype"],
 			"phone" => $_POST["aff_phone"],
+		];
+
+		if (isset($_POST["password"]))
+			$data["user_pass"] = $_POST["password"];
+
+		AFMAffiliate::adminUpdate($data);
+
+		return true;
+	}
+
+	function saveAffiliateDeal()
+	{
+		if (!wp_verify_nonce($_POST["wp_nonce"], "save_affiliate_deal"))
+			return false;
+
+		$data = [
+			"ID" => $_POST["affiliate_id"],
 			"deal" => [
 				"type" => $_POST["deal_type"],
 				"CPA" => isset($_POST["cpa"]) ? $_POST["cpa"] : "",
 				"REVSHARE" => isset($_POST["revshare"]) ? $_POST["revshare"] : "",
 				"REVSHARE_PERIOD" => isset($_POST["revshare_period"]) ? $_POST["revshare_period"] : "",
-			]
+			],
+			"expose_leads" => isset($_POST["expose_leads"]) && $_POST["expose_leads"] == "on"
 		];
-
-		if (isset($_POST["password"]))
-			$data["user_pass"] = $_POST["password"];
 
 		AFMAffiliate::adminUpdate($data);
 

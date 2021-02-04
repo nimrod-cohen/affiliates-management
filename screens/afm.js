@@ -83,6 +83,11 @@ JSUtils.domReady(() => {
     month: input.getAttribute('month')
   };
 
+  if (afm_info.expose_leads !== '1') {
+    sensitives = document.querySelectorAll('#leads-table thead th.sensitive');
+    sensitives.forEach(field => (field.innerText = ''));
+  }
+
   const getLeads = async page => {
     let response = await JSUtils.fetch(afm_info.ajax_url, {
       action: 'search_leads',
@@ -113,8 +118,8 @@ JSUtils.domReady(() => {
         `<tr user-id=${row.ID}>
         <td>${row.user_registered}</td>
         <td>${row.display_name}</td>
-        <td>${row.user_email}</td>
-        <td>${!row.phone || row.phone === 'undefined' ? '' : row.phone}</td>
+        <td>${row.user_email || ''}</td>
+        <td>${row.phone || ''}</td>
         <td>${row.deposits}</td>
       </tr>`
       );

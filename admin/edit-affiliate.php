@@ -31,20 +31,24 @@
 		<h2 class="nav-tab-wrapper" id="aff-tabs">
 			<a class="nav-tab <?php echo $activePage == 'accounting' ? 'nav-tab-active' : ''; ?>" id="accounting-tab" href="#top#accounting">Accounting</a>
 			<a class="nav-tab <?php echo $activePage == 'links' ? 'nav-tab-active' : ''; ?>" id="links-tab" href="#top#links">Links</a>
-			<a class="nav-tab <?php echo $activePage == 'deal' ? 'nav-tab-active' : ''; ?>" id="deal-tab" href="#top#deal">Product Payouts</a>
-			<a class="nav-tab <?php echo $activePage == 'settings' ? 'nav-tab-active' : ''; ?>" id="settings-tab" href="#top#settings">Settings</a>
+			<a class="nav-tab <?php echo $activePage == 'deal-options' ? 'nav-tab-active' : ''; ?>" id="deal-options-tab" href="#top#deal-options">Deal options</a>
+			<a class="nav-tab <?php echo $activePage == 'payouts' ? 'nav-tab-active' : ''; ?>" id="payouts-tab" href="#top#payouts">Product Payouts</a>
+			<a class="nav-tab <?php echo $activePage == 'contact' ? 'nav-tab-active' : ''; ?>" id="contact-tab" href="#top#contact">Contact details</a>
 		</h2>
 		<div id="tab-accounting" class="tab-view <?php echo $activePage == 'accounting' ? 'active' : ''; ?>">
-			<?php include_once("affiliate-accounting.php"); ?>
+			<?php include_once("affiliate/accounting.php"); ?>
 		</div>
 		<div id="tab-links" class="tab-view <?php echo $activePage == 'links' ? 'active' : ''; ?>">
-			<?php include_once("affiliate-links.php"); ?>
+			<?php include_once("affiliate/links.php"); ?>
 		</div>
-		<div id="tab-deal" class="tab-view <?php echo $activePage == 'deal' ? 'active' : ''; ?>">
-			<?php include_once("affiliate-payouts.php"); ?>
+		<div id="tab-deal-options" class="tab-view <?php echo $activePage == 'deal-options' ? 'active' : ''; ?>">
+			<?php include_once("affiliate/deal-options.php"); ?>
 		</div>
-		<div id="tab-settings" class="tab-view <?php echo $activePage == 'settings' ? 'active' : ''; ?>">
-			<?php include_once("affiliate-settings.php"); ?>
+		<div id="tab-payouts" class="tab-view <?php echo $activePage == 'payouts' ? 'active' : ''; ?>">
+			<?php include_once("affiliate/payouts.php"); ?>
+		</div>
+		<div id="tab-contact" class="tab-view <?php echo $activePage == 'contact' ? 'active' : ''; ?>">
+			<?php include_once("affiliate/contact.php"); ?>
 		</div>
 	</div>
 </div>
