@@ -92,6 +92,8 @@ class AffiliatesManagement
 
 		//get leads table
 		add_action('wp_ajax_search_leads',[$this, 'searchLeads']);
+
+		add_action('wp_ajax_delete_product_payout', [$this, 'deleteProductPayout']);
 	}
 
 	function searchLeads() {
@@ -166,7 +168,7 @@ class AffiliatesManagement
 			$sql = "CREATE TABLE `afm_accounting_log` (
 				`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
 				`aff_id` BIGINT(20),
-				`action_date` TIMESTAMP NOT NULL,
+				`action_date` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
 				`ftd_revenue` DECIMAL(10,2) NULL,
 				`retention_revenue` DECIMAL(10,2) NULL,
 				`paid` DECIMAL(10,2) NULL,
@@ -560,9 +562,6 @@ class AffiliatesManagement
 					$aff = AFMAffiliate::fromAffiliateId($_POST["affiliate_id"]);
 					$aff->updateProductPayout($_POST["product_id"],isset($_POST["is_first"]) && $_POST["is_first"] == "on",$_POST["payout"]);
 					break;
-				case "delete_product_payout":
-						$aff = AFMAffiliate::fromAffiliateId($_POST["affiliate_id"]);
-						$aff->deleteProductPayout($_POST["product_id"], isset($_POST["is_first"]) && $_POST["is_first"] == "on");
 				default:
 					break;
 			}
@@ -571,6 +570,12 @@ class AffiliatesManagement
 		$page = isset($_GET["subpage"]) ? $_GET["subpage"] : "settings";
 
 		require_once "admin" . DIRECTORY_SEPARATOR . $page . ".php";
+	}
+
+	function deleteProductPayout() {
+		$aff = $_POST["affiliate_id"];
+		$aff = AFMAffiliate::fromAffiliateId($aff);
+		$aff->deleteProductPayout($_POST["product_id"], isset($_POST["is_first"]) && $_POST["is_first"] == "1");
 	}
 
 	function saveLandingPages()

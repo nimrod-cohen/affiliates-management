@@ -23,7 +23,7 @@
   </div>
   <button class="button primary">Add</button>
 </form>
-<table id="payouts-table" class="wp-list-table widefat striped posts">
+<table id="payouts-table" class="wp-list-table widefat striped posts" affiliate-id="<?php echo $aff->ID(); ?>">
   <thead>
     <tr>
       <th>Product ID</th>

@@ -44,9 +44,21 @@
   });
 
   JSUtils.domReady(() => {
-    JSUtils.addGlobalEventListener(document, '#payouts-table .delete-payout', 'click', e => {
+    JSUtils.addGlobalEventListener(document, '#payouts-table .delete-payout', 'click', async e => {
       e.preventDefault();
-      console.log(e.target.closest('tr'));
+      const tr = e.target.closest('tr');
+      let productId = tr.getAttribute('product_id');
+      let isFirst = tr.getAttribute('is_first');
+      let affId = tr.closest('table').getAttribute('affiliate-id');
+
+      await JSUtils.fetch(afm_admin.ajax_url, {
+        action: 'delete_product_payout',
+        affiliate_id: affId,
+        product_id: productId,
+        is_first: isFirst
+      });
+
+      tr.parentNode.removeChild(tr);
     });
   });
 
