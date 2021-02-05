@@ -44,7 +44,7 @@
   });
 
   JSUtils.domReady(() => {
-    JSUtils.addGlobalEventListener('#payouts-table', '.delete-payout', 'click', e => {
+    JSUtils.addGlobalEventListener(document, '#payouts-table .delete-payout', 'click', e => {
       e.preventDefault();
       console.log(e.target.closest('tr'));
     });

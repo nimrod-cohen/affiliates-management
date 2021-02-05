@@ -7,6 +7,8 @@
 	$currency = get_option("afm-currency",AffiliatesManagement::AFM_DEFAULT_CURRENCY);
 
 	$deal = AffiliatesManagement::defaultDeal();
+
+	$version = AffiliatesManagement::version();
 ?>
 <div class="wrap">
 	<?php if($showUpdated) { ?>
@@ -20,6 +22,7 @@
 			<a class="nav-tab <?php echo $activePage == 'affiliates' ? 'nav-tab-active' : ''; ?>" id="affiliates-tab" href="#top#affiliates">Affiliates</a>
 			<a class="nav-tab <?php echo $activePage == 'landingpages' ? 'nav-tab-active' : ''; ?>" id="landingpages-tab" href="#top#landingpages">Landing Pages</a>
 			<a class="nav-tab <?php echo $activePage == 'settings' ? 'nav-tab-active' : ''; ?>" id="settings-tab" href="#top#settings">Settings</a>
+			<span class='plugin-version'>v. <?php echo $version; ?></span>
 		</h2>
 		<div id="tab-affiliates" class="tab-view <?php echo $activePage == 'affiliates' ? 'active' : ''; ?>">
 			<?php include_once("affiliates-list.php"); ?>

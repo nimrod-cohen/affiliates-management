@@ -3,7 +3,7 @@
  Plugin Name: Affiliates Management
  Plugin URI: http://longrunplan.com/plugins/affiliates-manager
  Description: Affiliate management plugin
- Version: 1.1
+ Version: 1.2
  Author: Nimrod Cohen
  Author URI: http://google.com?q=Nimrod+Cohen
  License: GPL2
@@ -39,6 +39,11 @@ class AffiliatesManagement
 		"Israel New Shekels" => "ILS",
 		"Euro" => "EUR"
 	];
+
+	static function version() {
+		$plugin_data = get_plugin_data(__FILE__);
+		return $plugin_data['Version'];	
+	}
 
 	function __construct()
 	{
