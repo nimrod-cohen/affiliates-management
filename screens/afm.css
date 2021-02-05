@@ -77,38 +77,33 @@ body {
   height: 100vh;
   display: -ms-grid;
   display: grid;
-  -ms-grid-rows: 100px 1fr;
-      grid-template-rows: 100px 1fr;
+  -ms-grid-columns: 1fr;
+      grid-template-columns: 1fr;
+  padding: 0;
+  margin: 0;
+  -ms-grid-rows: 100px 1fr 40px;
+      grid-template-rows: 100px 1fr 40px;
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  background-color: var(--main-bg);
+  row-gap: 20px;
+  justify-items: center;
+}
+
+body.affiliates-page .header-wrapper {
+  width: 100%;
+  height: 100%;
+  display: -ms-grid;
+  display: grid;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  background-color: var(--main-bg);
-  row-gap: 20px;
+  border-bottom: solid 1px var(--page-borders);
+  background: white;
 }
 
-body.login-page, body.lost_pass-page {
-  row-gap: 100px;
-}
-
-body.login-page .page-content, body.lost_pass-page .page-content {
-  width: 600px;
-  -ms-grid-column-align: center;
-      justify-self: center;
-}
-
-body.join_us-page form {
-  display: -ms-grid;
-  display: grid;
-  -ms-grid-columns: 1fr 1fr;
-      grid-template-columns: 1fr 1fr;
-  -webkit-column-gap: 20px;
-          column-gap: 20px;
-}
-
-body.affiliates-page header {
+body.affiliates-page .header-wrapper header {
   width: 1000px;
   max-width: 100%;
   display: -ms-grid;
@@ -123,25 +118,30 @@ body.affiliates-page header {
           align-items: center;
 }
 
-body.affiliates-page header .logo {
+body.affiliates-page .header-wrapper header .logo {
   -ms-grid-row: 1;
   -ms-grid-row-span: 2;
   -ms-grid-column: 1;
   grid-area: logo;
+  display: -ms-grid;
+  display: grid;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 
-body.affiliates-page header .logo img {
-  height: 100px;
+body.affiliates-page .header-wrapper header .logo img {
+  height: 80px;
 }
 
-body.affiliates-page header .login-link {
+body.affiliates-page .header-wrapper header .login-link {
   -ms-grid-row: 1;
   -ms-grid-column: 2;
   grid-area: logout;
       justify-self: end;
 }
 
-body.affiliates-page header .header-text {
+body.affiliates-page .header-wrapper header .header-text {
   -ms-grid-row: 1;
   -ms-grid-column: 1;
   grid-area: title;
@@ -159,6 +159,8 @@ body.affiliates-page.no-logo.logged-out header {
 }
 
 body.affiliates-page .page-content {
+  width: 1000px;
+  max-width: 100%;
   -ms-flex-item-align: start;
       -ms-grid-row-align: start;
       align-self: start;
@@ -287,6 +289,25 @@ body.affiliates-page .page-content .row input[type='phone'] {
 
 body.affiliates-page .page-content .row input[type='checkbox'] {
   margin-right: 5px;
+}
+
+body.affiliates-page.login-page, body.affiliates-page.lost_pass-page {
+  row-gap: 100px;
+}
+
+body.affiliates-page.login-page .page-content, body.affiliates-page.lost_pass-page .page-content {
+  width: 600px;
+  -ms-grid-column-align: center;
+      justify-self: center;
+}
+
+body.affiliates-page.join_us-page form {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
+  -webkit-column-gap: 20px;
+          column-gap: 20px;
 }
 
 .table-wrapper {
@@ -480,6 +501,19 @@ body.affiliates-page .page-content .row input[type='checkbox'] {
 .affiliate-heading > * {
   line-height: 40px;
   padding: 0;
+}
+
+footer {
+  width: 100%;
+  height: 40px;
+  border-top: solid 1px var(--page-borders);
+  display: -ms-grid;
+  display: grid;
+  justify-items: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  font-size: 12px;
 }
 
 @media only screen and (max-width: 715px) {

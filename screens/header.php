@@ -16,6 +16,7 @@
   $classes .= $headerImage && strlen($headerImage) > 0 ? "" : " no-logo";
   $classes .= is_user_logged_in() ? "" : " logged-out";
 ?><body class="<?php echo $classes;?>">
+<div class="header-wrapper">
 <header>
   <?php 
     global $wp;
@@ -33,3 +34,4 @@
   <?php } ?>
   <div class='header-text'><?php echo get_bloginfo('name')?> - Affiliates system</div>
 </header>
+  </div>

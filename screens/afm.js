@@ -1,6 +1,6 @@
 //initialize infinity scrolling for banner farm
 JSUtils.domReady(() => {
-  if (!afm_info.logged_in) return;
+  if (afm_info.logged_in !== '1') return;
 
   const shortestColumn = () => {
     var c2 = document.querySelector('#bannerFarm .banner_col_2').children.length;
@@ -76,7 +76,8 @@ JSUtils.domReady(() => {
 
 //leads
 JSUtils.domReady(() => {
-  //leads
+  if (afm_info.logged_in !== '1') return;
+
   let input = document.querySelector('#leads-month');
   var currentQuery = {
     year: input.getAttribute('year'),
@@ -146,8 +147,9 @@ JSUtils.domReady(() => {
 
 //initialize tab navigation
 JSUtils.domReady(() => {
+  if (afm_info.logged_in !== '1') return;
+
   let tabsContainer = document.querySelector('.nav-tabs');
-  if (!tabsContainer) return;
 
   links = tabsContainer.querySelectorAll('a');
   links.forEach(link =>
@@ -165,6 +167,8 @@ JSUtils.domReady(() => {
 
 //links
 JSUtils.domReady(() => {
+  if (afm_info.logged_in !== '1') return;
+
   document.querySelector('#new-link').addEventListener('click', ev => {
     ev.preventDefault();
 
