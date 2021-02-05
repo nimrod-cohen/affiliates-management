@@ -633,15 +633,17 @@ class AffiliatesManagement
 		wp_styles();
 		$this->addAFMAssets();
 
+		if($page === 'logout') {
+			wp_destroy_current_session();
+			wp_clear_auth_cookie();
+			wp_set_current_user( 0 );
+			wp_redirect($loginPage);
+			die;
+		}
+
 		include("screens".DIRECTORY_SEPARATOR."header.php");
 
 		switch ($page) {
-			case "logout":
-				wp_destroy_current_session();
-				wp_clear_auth_cookie();
-				wp_set_current_user( 0 );
-				wp_redirect($loginPage);
-			die;
 			case "join_us":
 				include("screens" . DIRECTORY_SEPARATOR . "join_us.php");
 				break;
