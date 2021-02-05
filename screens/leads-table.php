@@ -22,7 +22,3 @@
 		</table>
 	</div>
 </form>
-<script>
-	//implement full url on hover + copy to clipboard
-
-</script>

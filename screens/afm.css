@@ -385,6 +385,18 @@ body.affiliates-page.join_us-page form {
   z-index: 1000;
 }
 
+#bannerFarm .banner_col_1 .banner_box .hover_shade .image-size,
+#bannerFarm .banner_col_2 .banner_box .hover_shade .image-size,
+#bannerFarm .banner_col_3 .banner_box .hover_shade .image-size {
+  position: relative;
+  top: 20px;
+  border: solid 1px var(--table-borders);
+  padding: 10px;
+  color: var(--button);
+  background: white;
+  border-radius: 3px;
+}
+
 #bannerFarm .banner_col_1 .banner_box .hover_shade .download_image,
 #bannerFarm .banner_col_2 .banner_box .hover_shade .download_image,
 #bannerFarm .banner_col_3 .banner_box .hover_shade .download_image {

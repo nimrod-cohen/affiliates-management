@@ -320,6 +320,16 @@ body {
         left: 0;
         z-index: 1000;
 
+        .image-size {
+          position: relative;
+          top: 20px;
+          border: solid 1px var(--table-borders);
+          padding: 10px;
+          color: var(--button);
+          background: white;
+          border-radius: 3px;
+        }
+
         .download_image {
           position: absolute;
           bottom: 4px;

@@ -27,7 +27,9 @@ JSUtils.domReady(() => {
   };
 
   const addSuggestDownload = ev => {
-    var url = ev.target.querySelector('img').getAttribute('src');
+    const img = ev.target.querySelector('img');
+    const url = img.getAttribute('src');
+
     ev.target.insertAdjacentHTML(
       'beforeend',
       `<div class='hover_shade'>
@@ -35,7 +37,8 @@ JSUtils.domReady(() => {
 					<div class='download_image button primary'>
 						<i class='fa fa-download'></i>
 					</div>
-				</a>
+        </a>
+        <span class='image-size small'>${img.naturalWidth}x${img.naturalHeight}</span>
 			</div>`
     );
   };
