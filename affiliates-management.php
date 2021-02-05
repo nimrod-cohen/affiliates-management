@@ -3,7 +3,7 @@
  Plugin Name: Affiliates Management
  Plugin URI: http://longrunplan.com/plugins/affiliates-manager
  Description: Affiliate management plugin
- Version: 1.2.1
+ Version: 1.2.2
  Author: Nimrod Cohen
  Author URI: http://google.com?q=Nimrod+Cohen
  License: GPL2
@@ -49,6 +49,8 @@ class AffiliatesManagement
 	{
 		register_activation_hook(__FILE__, [$this, "activate"]);
 		register_deactivation_hook(__FILE__, [$this, "deactivate"]);
+
+		$this->upgradeDB();
 
 		$location = get_option("afm-tracker-script-location", "header");
 		if ($location == "header")
@@ -107,6 +109,91 @@ class AffiliatesManagement
 		wp_clear_scheduled_hook('afm_do_calculations');
 	}
 
+	function upgradeDB() {
+		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+
+		global $wpdb;
+
+		$version = get_option('affiliates-management-version',0);
+
+		if(version_compare('1.2.1', $version, '>')) {
+			$charset_collate = $wpdb->get_charset_collate();
+
+			$sql = "CREATE TABLE `afm_links` (
+				`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+				`aff_id` BIGINT(20) NOT NULL,
+				`created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				`url` VARCHAR(1000) NOT NULL,
+				`is_deleted` BINARY(1) NOT NULL DEFAULT 0,
+				PRIMARY KEY  (`id`)
+			) " . $charset_collate;
+
+			dbDelta($sql);
+
+			$sql = "CREATE TABLE `afm_events` (
+				`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+				`link_id` BIGINT(20) NOT NULL,
+				`aff_id` BIGINT(20) NOT NULL,
+				`tracked_id` VARCHAR(100) NOT NULL,
+				`user_id` BIGINT(20) NULL,
+				`event` VARCHAR(100) NOT NULL,
+				`ts` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				`source` VARCHAR(100) NULL,
+				`medium` VARCHAR(100) NULL,
+				`campaign` VARCHAR(100) NULL,
+				`content` VARCHAR(100) NULL,
+				`term` VARCHAR(100) NULL,
+				`amount` DECIMAL (10,2) NULL,
+				`product_id` BIGINT(20) NULL,
+				PRIMARY KEY  (`id`, `link_id`, `tracked_id`),
+				INDEX `SECONDARY` (`user_id` ASC),
+				INDEX `EVENT_BY_TS` (`ts` ASC)
+			) " . $charset_collate;
+
+			dbDelta($sql);
+
+			$sql = "CREATE TABLE `afm_accounting` (
+				`aff_id` BIGINT(20),
+				`month` DATE NOT NULL,
+				`ftd_revenue` DECIMAL(10,2) NOT NULL DEFAULT 0,
+				`retention_revenue` DECIMAL(10,2) NOT NULL DEFAULT 0,
+				`paid` DECIMAL(10,2) NOT NULL DEFAULT 0,
+				PRIMARY KEY (`aff_id`,`month`)
+			) " . $charset_collate;
+
+			dbDelta($sql);
+
+			$sql = "CREATE TABLE `afm_accounting_log` (
+				`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+				`aff_id` BIGINT(20),
+				`action_date` TIMESTAMP NOT NULL,
+				`ftd_revenue` DECIMAL(10,2) NULL,
+				`retention_revenue` DECIMAL(10,2) NULL,
+				`paid` DECIMAL(10,2) NULL,
+				`user_id` BIGINT(20) NULL,
+				`order_id` BIGINT(20) NULL,
+				`comment` VARCHAR(1000) NULL,
+				`is_deleted` BINARY(1) NOT NULL DEFAULT 0,
+				PRIMARY KEY (`id`)
+			) " . $charset_collate;
+
+			dbDelta($sql);
+
+			$version = '1.2.1';
+			update_option('affiliates-management-version',$version);
+		}
+		if(version_compare('1.2.2', $version, '>')) {
+			$sql = "ALTER TABLE `afm_accounting_log` modify COLUMN `order_id` VARCHAR(100) NULL";
+			$wpdb->query($sql);
+
+			$sql = "update afm_accounting_log	set user_id = (select student_id from wp_payments where transaction_ref = order_id limit 1)";
+			$wpdb->query($sql);
+
+			$version = '1.2.2';
+			update_option('affiliates-management-version',$version);
+		}
+	}
+
 	function activate()
 	{
 		$affPage = self::getAffiliatesPage();
@@ -130,70 +217,7 @@ class AffiliatesManagement
 			add_role(self::AFM_ROLE_NAME, 'AFM Affiliate', array());
 		}
 
-		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-
-		global $wpdb;
-
-		$charset_collate = $wpdb->get_charset_collate();
-
-		$sql = "CREATE TABLE `afm_links` (
-			`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-			`aff_id` BIGINT(20) NOT NULL,
-			`created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-			`url` VARCHAR(1000) NOT NULL,
-			`is_deleted` BINARY(1) NOT NULL DEFAULT 0,
-			PRIMARY KEY  (`id`)
-		) " . $charset_collate;
-
-		dbDelta($sql);
-
-		$sql = "CREATE TABLE `afm_events` (
-			`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-			`link_id` BIGINT(20) NOT NULL,
-			`aff_id` BIGINT(20) NOT NULL,
-			`tracked_id` VARCHAR(100) NOT NULL,
-			`user_id` BIGINT(20) NULL,
-			`event` VARCHAR(100) NOT NULL,
-			`ts` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-			`source` VARCHAR(100) NULL,
-			`medium` VARCHAR(100) NULL,
-			`campaign` VARCHAR(100) NULL,
-			`content` VARCHAR(100) NULL,
-			`term` VARCHAR(100) NULL,
-			`amount` DECIMAL (10,2) NULL,
-			`product_id` BIGINT(20) NULL,
-			PRIMARY KEY  (`id`, `link_id`, `tracked_id`),
-			INDEX `SECONDARY` (`user_id` ASC),
-			INDEX `EVENT_BY_TS` (`ts` ASC)
-		) " . $charset_collate;
-
-		dbDelta($sql);
-
-		$sql = "CREATE TABLE `afm_accounting` (
-			`aff_id` BIGINT(20),
-			`month` DATE NOT NULL,
-			`ftd_revenue` DECIMAL(10,2) NOT NULL DEFAULT 0,
-			`retention_revenue` DECIMAL(10,2) NOT NULL DEFAULT 0,
-			`paid` DECIMAL(10,2) NOT NULL DEFAULT 0,
-			PRIMARY KEY (`aff_id`,`month`)
-		) " . $charset_collate;
-
-		dbDelta($sql);
-
-		$sql = "CREATE TABLE `afm_accounting_log` (
-			`id` BIGINT(20) NOT NULL AUTO_INCREMENT,
-			`aff_id` BIGINT(20),
-			`action_date` TIMESTAMP NOT NULL,
-			`ftd_revenue` DECIMAL(10,2) NULL,
-			`retention_revenue` DECIMAL(10,2) NULL,
-			`paid` DECIMAL(10,2) NULL,
-			`order_id` BIGINT(20) NULL,
-			`comment` VARCHAR(1000) NULL,
-			`is_deleted` BINARY(1) NOT NULL DEFAULT 0,
-			PRIMARY KEY (`id`)
-		) " . $charset_collate;
-
-		dbDelta($sql);
+		$this->upgradeDB();
 
 		if (!wp_next_scheduled('afm_do_calculations')) {
 			wp_schedule_event(time(), 'hourly', 'afm_do_calculations');

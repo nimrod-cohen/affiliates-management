@@ -247,7 +247,7 @@ class AFMAffiliate
 	public function pay($amount,$comment)
 	{
 		$thisMonth = strtotime( 'first day of ' . date( 'F Y'));
-		AFMAccounting::apply($this->ID(),$thisMonth,0,0,$amount,null,$comment);
+		AFMAccounting::apply($this->ID(), null, $thisMonth, 0, 0, $amount, null, $comment);
 	}
 
 	public function getLeads($year, $month, $search, $page) {
@@ -260,9 +260,10 @@ class AFMAffiliate
 			INNER JOIN wp_usermeta umaf on umaf.user_id = u.ID and umaf.meta_key = 'affiliate_id' and umaf.meta_value = %d
 			LEFT OUTER JOIN wp_usermeta uml on uml.user_id = u.ID and uml.meta_key = 'affiliate_link_id'
 			LEFT OUTER JOIN wp_usermeta ump on ump.user_id = u.ID and ump.meta_key = 'user_phone'
-			LEFT OUTER JOIN (SELECT afe.user_id, SUM(amount) as amount
-											FROM afm_events afe
-											WHERE event in ('deposit','first_deposit') group by afe.user_id)
+			LEFT OUTER JOIN (SELECT aal.user_id, SUM(ftd_revenue+retention_revenue) as amount
+											FROM afm_accounting_log aal
+											WHERE aal.aff_id = %d
+											group by aal.user_id)
 											AS deposits ON deposits.user_id = u.ID
 			WHERE year(user_registered) = %d
 			AND month(user_registered) = %d";
@@ -278,7 +279,7 @@ class AFMAffiliate
 
 		$sql .= " ORDER BY user_registered ASC limit ".AFMHelper::PAGE_SIZE." offset ".(($page-1) * AFMHelper::PAGE_SIZE);
 
-		$sql = $wpdb->prepare($sql,"%d-%m-%Y", $this->ID, $year, $month, $search);
+		$sql = $wpdb->prepare($sql,"%d-%m-%Y", $this->ID, $this->ID, $year, $month, $search);
 		$result = $wpdb->get_results($sql, ARRAY_A);
 		return $result;
 	}
@@ -339,7 +340,7 @@ class AFMAffiliate
 				break;
 		}
 
-		AFMAccounting::apply($this->ID(),$thisMonth,$cpa,$revShare,0,$orderId,null);
+		AFMAccounting::apply($this->ID(), $userId, $thisMonth,$cpa,$revShare,0,$orderId,null);
 	}
 
 	public function balance()

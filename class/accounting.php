@@ -8,7 +8,7 @@
 
 class AFMAccounting
 {
-	static function apply($affId,$month,$ftd = 0,$retention = 0,$paid = 0,$orderId = null,$comment = null, $noLog = false)
+	static function apply($affId, $userId, $month,$ftd = 0,$retention = 0,$paid = 0,$orderId = null,$comment = null, $noLog = false)
 	{
 		global $wpdb;
 
@@ -23,10 +23,10 @@ class AFMAccounting
 		$wpdb->query($sql);
 
 		if(!$noLog) {
-			$sql = "INSERT INTO afm_accounting_log (aff_id,action_date,ftd_revenue,retention_revenue,paid,order_id,comment,is_deleted )
-				VALUES ( %d, CURRENT_TIMESTAMP, %f, %f, %f, %d, %s, 0 )";
+			$sql = "INSERT INTO afm_accounting_log (aff_id, user_id,action_date,ftd_revenue,retention_revenue,paid,order_id,comment,is_deleted )
+				VALUES ( %d, %d, CURRENT_TIMESTAMP, %f, %f, %f, %d, %s, 0 )";
 
-			$sql = $wpdb->prepare($sql, $affId, $ftd, $retention, $paid, $orderId, $comment);
+			$sql = $wpdb->prepare($sql, $affId, $userId, $ftd, $retention, $paid, $orderId, $comment);
 
 			$wpdb->query($sql);
 		}
@@ -83,6 +83,6 @@ class AFMAccounting
 
 		$wpdb->query($sql);
 
-		self::apply($affId,strtotime($month),0,0,$result["paid"]*-1,null,null,true);
+		self::apply($affId,$result["user_id"],strtotime($month),0,0,$result["paid"]*-1,null,null,true);
 	}
 }
