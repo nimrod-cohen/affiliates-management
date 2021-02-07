@@ -77,7 +77,7 @@
         $(this).after(
           "<tr class='payment-details-row' data-row-month='" +
             month +
-            "' ><td></td><td class='payment-details-container' colspan='5'><i class='fa fa-cog fa-spin'></i></td></tr>"
+            "' ><td></td><td class='payment-details-container' colspan='6'><i class='fa fa-cog fa-spin'></i></td></tr>"
         );
 
         var affId = $(this).closest('table').data('affiliate-id');
