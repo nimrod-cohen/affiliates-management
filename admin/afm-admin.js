@@ -1,188 +1,166 @@
-(function ($) {
-  $(document).ready(function () {
-    $('select.page_selection option').click(function () {
-      var parent = $(this).closest('select');
+JSUtils.domReady(() => {
+  let options = document.querySelectorAll('select.page_selection option');
+  options.forEach(option =>
+    option.addEventListener('click', e => {
+      var parent = e.target.closest('select');
 
-      $(this).prop('selected', false);
+      e.target.selected = false;
 
-      if (parent.attr('id') == 'off_pages') $('#on_pages').append($(this));
-      else $('#off_pages').append($(this));
-    });
+      if (parent.getAttribute('id') == 'off_pages')
+        document.getElementById('on_pages').appendChild(e.target);
+      else document.getElementById('off_pages').appendChild(e.target);
+    })
+  );
 
-    $('#submit_landingpages').click(function (ev) {
-      $('select#on_pages option').each(function () {
-        $(this).prop('selected', true);
-      });
+  //mark them as selected before submittion, so they will be posted to server.
+  document.querySelector('#submit_landingpages').addEventListener('click', () => {
+    let opts = document.querySelectorAll('select#on_pages option');
+    for (var i = 0; i < opts.length; i++) {
+      //don't use .forEach - its async and will not be on time before posting.
+      opts[i].selected = true;
+    }
+  });
+});
+
+JSUtils.domReady(() => {
+  document.getElementById('deal_type').addEventListener('change', e => {
+    var val = e.target.value;
+
+    let dealRows = document.querySelectorAll('tr[deal-id]');
+
+    dealRows.forEach(dealRow => {
+      if (dealRow.getAttribute('deal-id') != val && val != afm_admin.MIXED_CPA_REVSHARE)
+        dealRow.classList.add('hidden');
+      else dealRow.classList.remove('hidden');
     });
   });
+});
 
-  $(document).ready(function () {
-    $('#deal_type').change(function () {
-      var val = $(this).val();
+JSUtils.domReady(() => {
+  var tabs = document.querySelectorAll('#aff-tabs a');
+  var tabViews = document.querySelectorAll('.tab-view');
+  tabs.forEach(tab =>
+    tab.addEventListener('click', () => {
+      tabs.forEach(tb => tb.classList.remove('nav-tab-active'));
+      tabViews.forEach(body => body.classList.remove('active'));
 
-      $('tr[deal-id]').each(function () {
-        if ($(this).attr('deal-id') != val && val != afm_admin.MIXED_CPA_REVSHARE)
-          $(this).addClass('hidden');
-        else $(this).removeClass('hidden');
-      });
-    });
-  });
+      var id = 'tab-' + tab.getAttribute('id').replace('-tab', '');
+      document.querySelector('#' + id).classList.add('active');
+      tab.classList.add('nav-tab-active');
+    })
+  );
+});
 
-  JSUtils.domReady(() => {
-    var tabs = document.querySelectorAll('#aff-tabs a');
-    var tabViews = document.querySelectorAll('.tab-view');
-    tabs.forEach(tab =>
-      tab.addEventListener('click', () => {
-        tabs.forEach(tb => tb.classList.remove('nav-tab-active'));
-        tabViews.forEach(body => body.classList.remove('active'));
+JSUtils.domReady(() => {
+  JSUtils.addGlobalEventListener(document, '#payouts-table .delete-payout', 'click', async e => {
+    e.preventDefault();
+    const tr = e.target.closest('tr');
+    let productId = tr.getAttribute('product_id');
+    let isFirst = tr.getAttribute('is_first');
+    let affId = tr.closest('table').getAttribute('affiliate-id');
 
-        var id = 'tab-' + tab.getAttribute('id').replace('-tab', '');
-        document.querySelector('#' + id).classList.add('active');
-        tab.classList.add('nav-tab-active');
-      })
-    );
-  });
-
-  JSUtils.domReady(() => {
-    JSUtils.addGlobalEventListener(document, '#payouts-table .delete-payout', 'click', async e => {
-      e.preventDefault();
-      const tr = e.target.closest('tr');
-      let productId = tr.getAttribute('product_id');
-      let isFirst = tr.getAttribute('is_first');
-      let affId = tr.closest('table').getAttribute('affiliate-id');
-
-      await JSUtils.fetch(afm_admin.ajax_url, {
-        action: 'delete_product_payout',
-        affiliate_id: affId,
-        product_id: productId,
-        is_first: isFirst
-      });
-
-      tr.parentNode.removeChild(tr);
-    });
-  });
-
-  $(document).ready(function () {
-    $('div.tablenav-pages a.paging-button').click(function () {
-      var page = $(this).data('page');
-      $('input#current-page-selector').val(page);
-      $(this).closest('form').submit();
+    await JSUtils.fetch(afm_admin.ajax_url, {
+      action: 'delete_product_payout',
+      affiliate_id: affId,
+      product_id: productId,
+      is_first: isFirst
     });
 
-    $('table#accounting-table tbody tr').click(function () {
-      var month = $(this).data('month');
+    tr.parentNode.removeChild(tr);
+  });
+});
 
-      var detailSelector = "tr.payment-details-row[data-row-month='" + month + "']";
-      if ($(detailSelector).length == 0) {
-        $(this).after(
-          "<tr class='payment-details-row' data-row-month='" +
-            month +
-            "' ><td></td><td class='payment-details-container' colspan='6'><i class='fa fa-cog fa-spin'></i></td></tr>"
+JSUtils.domReady(() => {
+  let pagingButtons = document.querySelectorAll('div.tablenav-pages a.paging-button');
+  pagingButtons.forEach(btn =>
+    btn.addEventListener('click', e => {
+      var page = e.target.getAttribute('data-page');
+      document.querySelector('input#current-page-selector').value = page;
+      e.target.closest('form').submit();
+    })
+  );
+
+  const fetchPayments = (masterRow, month, affId) => {
+    JSUtils.fetch(afm_admin.ajax_url, {
+      action: 'payment_history',
+      security: afm_admin.nonce,
+      aff_id: affId,
+      month: month
+    }).then(response => renderPayoutHistory(masterRow, response));
+  };
+
+  let rows = document.querySelectorAll('table#accounting-table tbody tr');
+  rows.forEach(row =>
+    row.addEventListener('click', e => {
+      var month = row.getAttribute('data-month');
+
+      let masterRow = document.querySelector(`tr.payment-details-row[data-row-month='${month}']`);
+      if (!masterRow) {
+        row.insertAdjacentHTML(
+          'afterend',
+          `<tr class='payment-details-row' data-row-month='${month}' >
+          <td></td>
+          <td class='payment-details-container' colspan='6'><i class='fa fa-cog fa-spin'></i></td>
+        </tr>`
         );
 
-        var affId = $(this).closest('table').data('affiliate-id');
-        fetchPayments($(detailSelector), month, affId);
-      } else if ($(detailSelector).is(':visible')) $(detailSelector).hide();
-      else $(detailSelector).show();
-    });
-  });
-
-  function fetchPayments(row, month, affId) {
-    $.ajax({
-      url: afm_admin.ajax_url,
-      type: 'post',
-      data: {
-        action: 'payment_history',
-        security: afm_admin.nonce,
-        aff_id: affId,
-        month: month
-      },
-      success: function (response) {
-        var res = JSON.parse(response);
-
-        $('#current_balance').html(res.balance);
-
-        if (res.rows.length == 0) {
-          row.find('td.payment-details-container').html('no results');
-          return;
-        }
-
-        var html =
-          '<table>' +
-          '<thead><tr><th>Payment date</th><th>Sum</th><th>Paid</th><th>Comment</th><th></th></tr></thead>' +
-          '<tbody>';
-        for (var i = 0; i < res.rows.length; i++) {
-          let row = res.rows[i];
-          html +=
-            "<tr data-row-id='" +
-            row.id +
-            "'><td>" +
-            row.action_date +
-            '</td><td>' +
-            row.payout +
-            '</td><td>' +
-            row.paid +
-            '</td><td>' +
-            row.comment +
-            '</td>' +
-            "<td><button class='delete-row'>Delete</button></td>";
-        }
-        html += '</tbody></table>';
-        row.find('td.payment-details-container').html(html);
+        var affId = row.closest('table').getAttribute('data-affiliate-id');
+        masterRow = document.querySelector(`tr.payment-details-row[data-row-month='${month}']`);
+        fetchPayments(masterRow, month, affId);
+      } else {
+        masterRow.style.display = masterRow.style.display === 'none' ? 'table-row' : 'none';
       }
-    });
-  }
+    })
+  );
 
-  $(document).on('click', 'button.delete-row', function () {
-    $(this).prop('disabled', true);
-    $(this).html("<i class='fa fa-cog fa-spin'></i><span> deleting</span>");
+  const renderPayoutHistory = (monthRow, data) => {
+    document.querySelector('#current_balance').innerText = data.balance;
 
-    var masterRow = $(this).closest('tr.payment-details-row');
+    if (data.rows.length == 0) {
+      monthRow.querySelector('td.payment-details-container').innerHTML = 'no results';
+      return;
+    }
 
-    var paymentId = $(this).closest('tr').data('row-id');
-    var affId = $('table#accounting-table').data('affiliate-id');
-    var month = $(this).closest('tr.payment-details-row').data('row-month');
+    var html =
+      '<table>' +
+      '<thead><tr><th>Payment date</th><th>Sum</th><th>Paid</th><th>Comment</th><th></th></tr></thead>' +
+      '<tbody>';
+    for (var i = 0; i < data.rows.length; i++) {
+      let row = data.rows[i];
+      html +=
+        "<tr data-row-id='" +
+        row.id +
+        "'><td>" +
+        row.action_date +
+        '</td><td>' +
+        row.payout +
+        '</td><td>' +
+        row.paid +
+        '</td><td>' +
+        row.comment +
+        '</td>' +
+        "<td><button class='delete-row'>Delete</button></td>";
+    }
+    html += '</tbody></table>';
+    monthRow.querySelector('td.payment-details-container').innerHTML = html;
+  };
 
-    $.ajax({
-      url: afm_admin.ajax_url,
-      type: 'post',
-      data: {
-        action: 'delete_payment_history',
-        security: afm_admin.nonce,
-        payment_id: paymentId,
-        aff_id: affId,
-        month: month
-      },
-      success: function (response) {
-        var res = JSON.parse(response);
+  JSUtils.addGlobalEventListener(document, 'button.delete-row', 'click', e => {
+    e.target.disabled = true;
+    e.target.innerHTML = "<i class='fa fa-cog fa-spin'></i><span> deleting</span>";
 
-        $('#current_balance').html(res.balance);
+    let masterRow = e.target.closest('tr.payment-details-row');
 
-        if (res.rows.length == 0) {
-          masterRow.find('td.payment-details-container').html('no results');
-          return;
-        }
+    var paymentId = e.target.closest('tr').getAttribute('data-row-id');
+    var affId = document.querySelector('table#accounting-table').getAttribute('data-affiliate-id');
+    var month = e.target.closest('tr.payment-details-row').getAttribute('data-row-month');
 
-        var html =
-          '<table>' +
-          '<thead><tr><th>Payment date</th><th>Sum</th><th>Comment</th><th></th></tr></thead>' +
-          '<tbody>';
-        for (var i = 0; i < res.rows.length; i++) {
-          html +=
-            "<tr data-row-id='" +
-            res.rows[i].id +
-            "'><td>" +
-            res.rows[i].action_date +
-            '</td><td>' +
-            res.rows[i].paid +
-            '</td><td>' +
-            res.rows[i].comment +
-            '</td>' +
-            "<td><button class='delete-row'>Delete</button></td>";
-        }
-        html += '</tbody></table>';
-        masterRow.find('td.payment-details-container').html(html);
-      }
-    });
+    JSUtils.fetch(afm_admin.ajax_url, {
+      action: 'delete_payment_history',
+      security: afm_admin.nonce,
+      payment_id: paymentId,
+      aff_id: affId,
+      month: month
+    }).then(response => renderPayoutHistory(masterRow, response));
   });
-})(jQuery);
+});

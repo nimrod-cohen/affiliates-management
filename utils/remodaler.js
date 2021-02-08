@@ -1,5 +1,5 @@
 (function () {
-  if (!window['remodler'])
+  if (!window['remodaler'])
     window['remodaler'] = {
       types: {
         ALERT: 0,
@@ -17,14 +17,14 @@
 
         if (typeof self._options.type == 'undefined') self._options.type = self.types.ALERT;
 
-        jQuery('.remodal h2[data-remodal-title]').text(self._options.title);
-        jQuery('.remodal p[data-remodal-message]').html(self._options.message);
+        document.querySelector('.remodal h2[data-remodal-title]').innerText = self._options.title;
+        document.querySelector('.remodal p[data-remodal-message]').innerHTML =
+          self._options.message;
 
         if (self._options.type == self.types.INPUT) {
           if (typeof self._options.values == 'undefined')
-            jQuery('.remodal p[data-remodal-input]').html(
-              "<input type='text' name='remodal-data-input'>"
-            );
+            document.querySelector('.remodal p[data-remodal-input]').innerHTML =
+              "<input type='text' name='remodal-data-input'>";
           else {
             var select = "<select name='remodal-data-input'>";
             for (var i = 0; i < self._options.values.length; i++) {
@@ -32,23 +32,29 @@
               select += "<option value='" + val.value + "'>" + val.title + '</option>';
             }
             select += '</select>';
-            jQuery('.remodal p[data-remodal-input]').html(select);
+            document.querySelector('.remodal p[data-remodal-input]').innerHTML = select;
           }
         }
 
-        jQuery(".remodal button[data-remodal-action='confirm']").text(self._options.confirmText);
-        jQuery(".remodal button[data-remodal-action='cancel']").text(self._options.cancelText);
+        document.querySelector(".remodal button[data-remodal-action='confirm']").innerText =
+          self._options.confirmText || 'Confirm';
+        document.querySelector(".remodal button[data-remodal-action='cancel']").innerText =
+          self._options.cancelText || 'Cancel';
 
         if (self._options.type == self.types.ALERT)
-          jQuery(".remodal button[data-remodal-action='cancel']").hide();
+          document.querySelector(".remodal button[data-remodal-action='cancel']").style.display =
+            'none';
         else if (self._options.type == self.types.CONFIRM || self._options.type == self.types.INPUT)
-          jQuery(".remodal button[data-remodal-action='cancel']").show();
+          document.querySelector(".remodal button[data-remodal-action='cancel']").style.display =
+            'block';
 
-        if (self._options.type != self.types.INPUT) jQuery('[data-remodal-input]').hide();
-        else jQuery('[data-remodal-input]').show();
+        if (self._options.type != self.types.INPUT)
+          document.querySelector('[data-remodal-input]').style.display = 'none';
+        else document.querySelector('[data-remodal-input]').style.display = 'block';
 
-        jQuery(document).on('confirmation', '.remodal', function () {
-          var val = jQuery('.remodal [name=remodal-data-input]').val();
+        JSUtils.addGlobalEventListener(document, '.remodal', 'confirmation', () => {
+          var inp = document.querySelector('.remodal [name=remodal-data-input]');
+          let val = inp ? inp.value : null;
           self._confirm(val);
         });
 
@@ -58,7 +64,7 @@
       },
 
       _show: function () {
-        jQuery('.remodal-bg').css('display', 'flex');
+        document.querySelector('.remodal-bg').style.display = 'flex';
       },
 
       _confirm: function (val) {
@@ -66,7 +72,8 @@
       },
 
       _init: function () {
-        jQuery(document.body).append(
+        document.body.insertAdjacentHTML(
+          'afterend',
           "<div class='remodal-bg'>" +
             "<div class='remodal' data-remodal-id='modal'>" +
             "<button data-remodal-action='close' class='remodal-close'>&#x00D7;</button>" +
@@ -79,17 +86,24 @@
             '</div>'
         );
 
-        jQuery('.remodal-confirm').click(function (ev) {
+        document.querySelector('.remodal-confirm').addEventListener('click', ev => {
           ev.preventDefault();
-          jQuery('.remodal-bg').hide();
-          jQuery('.remodal').trigger('confirmation');
+          document.querySelector('.remodal-bg').style.display = 'none';
+          var event = document.createEvent('HTMLEvents');
+          event.initEvent('confirmation', true, false);
+          document.querySelector('.remodal').dispatchEvent(event);
         });
 
-        jQuery('.remodal-cancel, .remodal-close').click(function (ev) {
-          ev.preventDefault();
-          jQuery('.remodal-bg').hide();
-          jQuery('.remodal').trigger('cancellation');
-        });
+        let cancels = document.querySelectorAll('.remodal-cancel, .remodal-close');
+        cancels.forEach(btn =>
+          btn.addEventListener('click', ev => {
+            ev.preventDefault();
+            document.querySelector('.remodal-bg').style.display = 'none';
+            var event = document.createEvent('HTMLEvents');
+            event.initEvent('cancellation', true, false);
+            document.querySelector('.remodal').dispatchEvent(event);
+          })
+        );
 
         this._initialized = true;
       }

@@ -417,7 +417,7 @@ class AffiliatesManagement
 		wp_register_script("afm-affiliate-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "afm.js", ["afm-utils-js"]);
 		wp_enqueue_script("afm-affiliate-js");
 
-		wp_register_script("remodaler-js", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "remodaler.js", ["afm-utils-js","jquery"]);
+		wp_register_script("remodaler-js", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "remodaler.js", ["afm-utils-js"]);
 		wp_enqueue_script("remodaler-js");
 		wp_register_style("remodaler-css", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "remodaler.css");
 		wp_enqueue_style("remodaler-css");
@@ -477,7 +477,7 @@ class AffiliatesManagement
 	 */
 	function injectTracker()
 	{
-		wp_register_script("afm-tracker", plugin_dir_url(__FILE__) . "afm_tracker.js", ["jquery"]);
+		wp_register_script("afm-tracker", plugin_dir_url(__FILE__) . "afm_tracker.js", []);
 		wp_enqueue_script("afm-tracker");
 
 		//if this is an affiliate related visit, we'll load the pixel.
@@ -555,7 +555,8 @@ class AffiliatesManagement
 				case "pay_affilate":
 					$showUpdated = true;
 					$aff = AFMAffiliate::fromAffiliateId($_POST["affiliate_id"]);
-					$aff->pay($_POST["amount"], $_POST["comment"]);
+					$date = $_POST["payment_date"];
+					$aff->pay($_POST["amount"], $_POST["comment"], $date);
 					$updateResult = true;
 					break;
 				case "add_product_payout":
@@ -814,13 +815,14 @@ class AffiliatesManagement
 		$month = $_POST["month"];
 		$paymentId = $_POST["payment_id"];
 
-		AFMAccounting::deletePayment($affId,$month,$paymentId);
+		AFMAccounting::deletePayment($affId,$paymentId);
 
 		$result = AFMAccounting::paymentLog($affId,$month);
 
 		foreach($result as &$row)
 		{
 			$row["paid"] = AFMHelper::formatMoney($row["paid"]);
+			$row["payout"] = AFMHelper::formatMoney($row["ftd_revenue"] + $row["retention_revenue"]);
 		}
 
 		$result = ["rows" => $result];

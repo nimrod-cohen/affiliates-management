@@ -30,7 +30,11 @@
 					<td><label><?php echo AFMHelper::formatMoney($aff->balance()); ?></label></td>
 				</tr>
 				<tr>
-					<th><label for="amount">Amount <span class="amount">(required)</span></label></th>
+					<th><label for="payment_date">Payment Date <span class="required">*</span></label></th>
+					<td><input type="date" name="payment_date" id="payment_date" value="" class="regular-text ltr"></td>
+				</tr>
+				<tr>
+					<th><label for="amount">Amount <span class="required">*</span></label></th>
 					<td><input type="text" name="amount" id="amount" value="" class="regular-text ltr"></td>
 				</tr>
 				<tr>

@@ -244,10 +244,12 @@ class AFMAffiliate
 		update_user_meta($userId,"afm_pixel",$pixel);
 	}
 
-	public function pay($amount,$comment)
+	public function pay($amount,$comment, $date)
 	{
-		$thisMonth = strtotime( 'first day of ' . date( 'F Y'));
-		AFMAccounting::apply($this->ID(), null, $thisMonth, 0, 0, $amount, null, $comment);
+		$date = strtotime($date);
+		if(!$date)
+			$date = strtotime( 'first day of ' . date('F Y'));
+		AFMAccounting::apply($this->ID(), null, $date, 0, 0, $amount, null, $comment);
 	}
 
 	public function getLeads($year, $month, $search, $page) {
@@ -299,8 +301,6 @@ class AFMAffiliate
 
 		$firstPaymentDate = AFMStats::firstPayment($userId);
 
-		$thisMonth = strtotime( 'first day of ' . date( 'F Y'));
-
 		$cpa = null;
 		$revShare = null;
 
@@ -340,7 +340,7 @@ class AFMAffiliate
 				break;
 		}
 
-		AFMAccounting::apply($this->ID(), $userId, $thisMonth,$cpa,$revShare,0,$orderId,null);
+		AFMAccounting::apply($this->ID(), $userId, strtotime("now"),$cpa,$revShare,0,$orderId,null);
 	}
 
 	public function balance()

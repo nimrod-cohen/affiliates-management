@@ -8,7 +8,7 @@
 
 class AFMAccounting
 {
-	static function apply($affId, $userId, $month,$ftd = 0,$retention = 0,$paid = 0,$orderId = null,$comment = null, $noLog = false)
+	static function apply($affId, $userId, $timestamp,$ftd = 0,$retention = 0,$paid = 0,$orderId = null,$comment = null, $noLog = false)
 	{
 		global $wpdb;
 
@@ -18,15 +18,15 @@ class AFMAccounting
 					ON DUPLICATE KEY UPDATE
 					ftd_revenue = ftd_revenue + %f, retention_revenue = retention_revenue + %f, paid = paid + %f";
 
-		$sql = $wpdb->prepare($sql,$affId,date('Y-m-d',$month),$ftd,$retention,$paid,$ftd,$retention,$paid);
+		$sql = $wpdb->prepare($sql,$affId,date('Y-m-01',$timestamp),$ftd,$retention,$paid,$ftd,$retention,$paid);
 
 		$wpdb->query($sql);
 
 		if(!$noLog) {
 			$sql = "INSERT INTO afm_accounting_log (aff_id, user_id,action_date,ftd_revenue,retention_revenue,paid,order_id,comment,is_deleted )
-				VALUES ( %d, %d, CURRENT_TIMESTAMP, %f, %f, %f, %d, %s, 0 )";
+				VALUES ( %d, %d, %s, %f, %f, %f, %d, %s, 0 )";
 
-			$sql = $wpdb->prepare($sql, $affId, $userId, $ftd, $retention, $paid, $orderId, $comment);
+			$sql = $wpdb->prepare($sql, $affId, $userId, date('Y-m-d', $timestamp), $ftd, $retention, $paid, $orderId, $comment);
 
 			$wpdb->query($sql);
 		}
@@ -62,7 +62,7 @@ class AFMAccounting
 		return $wpdb->get_results($sql,ARRAY_A);
 	}
 
-	static function deletePayment($affId,$month,$paymentId)
+	static function deletePayment($affId,$paymentId)
 	{
 		global $wpdb;
 
@@ -83,6 +83,6 @@ class AFMAccounting
 
 		$wpdb->query($sql);
 
-		self::apply($affId,$result["user_id"],strtotime($month),0,0,$result["paid"]*-1,null,null,true);
+		self::apply($affId,$result["user_id"],strtotime($result["action_date"]),0,0,$result["paid"]*-1,null,null,true);
 	}
 }
