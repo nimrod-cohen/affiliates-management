@@ -265,8 +265,6 @@ class AFMAffiliate
 			LEFT OUTER JOIN (SELECT aal.user_id, SUM(ftd_revenue+retention_revenue) as amount
 											FROM afm_accounting_log aal
 											WHERE aal.aff_id = %d
-											AND year(aal.action_date) = %d
-											and month(aal.action_date) = %d
 											group by aal.user_id)
 											AS deposits ON deposits.user_id = u.ID
 			WHERE year(user_registered) = %d
@@ -283,7 +281,7 @@ class AFMAffiliate
 
 		$sql .= " ORDER BY user_registered ASC limit ".AFMHelper::PAGE_SIZE." offset ".(($page-1) * AFMHelper::PAGE_SIZE);
 
-		$sql = $wpdb->prepare($sql,"%d-%m-%Y", $this->ID, $this->ID, $year, $month, $year, $month, $search);
+		$sql = $wpdb->prepare($sql,"%d-%m-%Y", $this->ID, $this->ID, $year, $month, $search);
 		$result = $wpdb->get_results($sql, ARRAY_A);
 		return $result;
 	}
