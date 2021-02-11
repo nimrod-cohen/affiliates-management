@@ -274,11 +274,16 @@ class AffiliatesManagement
 	{
 		$stats = AFMStats::byUser($userId);
 
-		if (!$stats) return;
+		$affiliate = null;
 
-		$affiliate = AFMAffiliate::fromAffiliateId($stats["aff_id"]);
+		if ($stats)	$affiliate = AFMAffiliate::fromAffiliateId($stats["aff_id"]);
 
-		if(!$affiliate) return;
+		if(!$affiliate) { 
+			//this transaction does not belong to an affiliate, 
+			//we just log it so we could later attribute it to an affiliate if need be, and move on
+			AFMStats::event(0, 0, "", $userId, "deposit", "", "", "", "", "", $amount, $details["product_id"]);
+			return;
+		}
 
 		$isFirst = AFMStats::firstPayment($userId) == false;
 
