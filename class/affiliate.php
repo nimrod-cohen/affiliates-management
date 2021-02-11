@@ -314,7 +314,7 @@ class AFMAffiliate
 		$sql = $wpdb->prepare($sql, $userId);
 		$result = $wpdb->get_results($sql, ARRAY_A);
 
-		update_user_meta($userId, "affiliate-id", $this->ID());
+		update_user_meta($userId, "affiliate_id", $this->ID());
 
 		foreach($result as $row) {
 			$this->compensate($userId, $row["amount"], $row["event"] == 'first_deposit', "", ["product_id" => $row["product_id"]]);
