@@ -40,7 +40,7 @@ class AffiliatesManagement
 		"Euro" => "EUR"
 	];
 
-	static function version() {
+	public static function version() {
 		$plugin_data = get_plugin_data(__FILE__);
 		return $plugin_data['Version'];	
 	}
