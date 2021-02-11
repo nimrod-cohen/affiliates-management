@@ -94,6 +94,7 @@ class AffiliatesManagement
 		add_action('wp_ajax_search_leads',[$this, 'searchLeads']);
 
 		add_action('wp_ajax_delete_product_payout', [$this, 'deleteProductPayout']);
+		add_action('wp_ajax_attach_user_to_affiliate', [$this, 'attachUserToAffiliate']);
 	}
 
 	function searchLeads() {
@@ -278,14 +279,14 @@ class AffiliatesManagement
 
 		if ($stats)	$affiliate = AFMAffiliate::fromAffiliateId($stats["aff_id"]);
 
+		$isFirst = AFMStats::firstPayment($userId) == false;
+
 		if(!$affiliate) { 
 			//this transaction does not belong to an affiliate, 
 			//we just log it so we could later attribute it to an affiliate if need be, and move on
-			AFMStats::event(0, 0, "", $userId, "deposit", "", "", "", "", "", $amount, $details["product_id"]);
+			AFMStats::event(0, 0, "", $userId, $isFirst ? "first_deposit" : "deposit", "", "", "", "", "", $amount, $details["product_id"]);
 			return;
 		}
-
-		$isFirst = AFMStats::firstPayment($userId) == false;
 
 		$amount = apply_filters("afm_post_charged_amount", $amount, $affiliate, $orderId);
 
@@ -419,13 +420,13 @@ class AffiliatesManagement
 		wp_register_script("afm-utils-js", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "jsutils.js", []);
 		wp_enqueue_script("afm-utils-js");
 
-		wp_register_script("afm-affiliate-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "afm.js", ["afm-utils-js"]);
-		wp_enqueue_script("afm-affiliate-js");
-
 		wp_register_script("remodaler-js", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "remodaler.js", ["afm-utils-js"]);
 		wp_enqueue_script("remodaler-js");
 		wp_register_style("remodaler-css", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "remodaler.css");
 		wp_enqueue_style("remodaler-css");
+
+		wp_register_script("afm-affiliate-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "afm.js", ["afm-utils-js", "remodaler-js"]);
+		wp_enqueue_script("afm-affiliate-js");
 
 		wp_register_script("monthpicker-js", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "monthpicker.js", ["afm-utils-js"]);
 		wp_enqueue_script("monthpicker-js");
@@ -523,11 +524,20 @@ class AffiliatesManagement
 
 		wp_register_script("afm-utils-js", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "jsutils.js", []);
 		wp_enqueue_script("afm-utils-js");
-
 		wp_register_style('afm-admin-css', plugin_dir_url(__FILE__) . 'admin/afm-admin.css');
 		wp_enqueue_style('afm-admin-css');
 
-		wp_register_script('afm-admin-js', plugin_dir_url(__FILE__) . 'admin/afm-admin.js', ['afm-utils-js']);
+		wp_register_script("remodaler-js", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "remodaler.js", ["afm-utils-js"]);
+		wp_enqueue_script("remodaler-js");
+		wp_register_style("remodaler-css", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "remodaler.css");
+		wp_enqueue_style("remodaler-css");
+
+		wp_register_script("notifications-js", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "notifications.js", ["afm-utils-js"]);
+		wp_enqueue_script("notifications-js");
+		wp_register_style("notifications-css", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "notifications.css");
+		wp_enqueue_style("notifications-css");
+
+		wp_register_script('afm-admin-js', plugin_dir_url(__FILE__) . 'admin/afm-admin.js', ['afm-utils-js', 'remodaler-js', 'notifications-js']);
 		wp_enqueue_script('afm-admin-js');
 
 		wp_localize_script('afm-admin-js', 'afm_admin',
@@ -583,6 +593,26 @@ class AffiliatesManagement
 		$aff = AFMAffiliate::fromAffiliateId($aff);
 		$aff->deleteProductPayout($_POST["product_id"], isset($_POST["is_first"]) && $_POST["is_first"] == "1");
 	}
+
+	function attachUserToAffiliate() {
+		if(!current_user_can('administrator')) {
+			$response = ["error" => true, "message" => "Unauthorized request"];
+			echo json_encode($response);
+			die;
+		}
+
+		$affId = $_POST["affiliate_id"];
+		$userId = $_POST["user_id"];
+
+		$aff = AFMAffiliate::fromAffiliateId($affId);
+		$aff->attachUser($userId);
+
+		$response = ["error" => false, "message" => "User attached successfully"];
+		echo json_encode($response);
+		die;
+
+	}
+
 
 	function saveLandingPages()
 	{

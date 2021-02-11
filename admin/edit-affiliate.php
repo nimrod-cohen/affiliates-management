@@ -20,11 +20,12 @@
 		<button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button></div>
 <?php } ?>
 
-<div class="wrap" id="profile-page">
+<div class="wrap" id="affiliate-page" affiliate-id="<?php echo $aff->ID(); ?>">
 	<div class="affiliate-heading">
 		<p><a href="<?php echo admin_url("admin.php?page=affiliates-management"); ?>">← Back to Affiliates</a></p>
 		<h1 STYLE="display: inline-block"><?php echo $aff->fullname(); ?> - details</h1>
 		<a href="<?php echo admin_url("admin.php?page=affiliates-management&subpage=pay-affiliate&id=".$aff->ID()); ?>" class="page-title-action">New Payment</a>
+		<a href="#" id="attach-user-to-affiliate" class="page-title-action">Attach User</a>
 		<span class="pull-right">Current Balance: <span id="current_balance"><?php echo AFMHelper::formatMoney($aff->balance()); ?></span></span>
 	</div>
 	<div class="aff_content_cell" id="aff_content_top">

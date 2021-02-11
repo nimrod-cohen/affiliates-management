@@ -286,6 +286,41 @@ class AFMAffiliate
 		return $result;
 	}
 
+	public function attachUser($userId) {
+		global $wpdb;
+		//select all user events:
+		$sql = "SELECT DISTINCT tracked_id FROM afm_events where user_id = %d";
+		$sql = $wpdb->prepare($sql,$userId);
+		$result = $wpdb->get_results($sql, ARRAY_A);
+		
+		$trackers = [];
+		foreach($result as $row) {
+			$tracker = trim($row["tracked_id"]);
+			if(strlen($tracker) > 0) $trackers[] = "'".$tracker."'";
+		}
+		$trackers = implode(",",$trackers);
+
+		//set all afm_events to this affiliate
+		$sql = "UPDATE afm_events SET aff_id = %d WHERE user_id = %d OR tracked_id in (".$trackers.")";
+		$sql = $wpdb->prepare($sql, $this->ID(), $userId);
+		$wpdb->query($sql);
+
+		//compensate affiliate
+		$sql = "SELECT `event`, amount, ts, product_id
+				FROM afm_events 
+				WHERE user_id = %d 
+				AND event in ('deposit', 'first_deposit')
+				ORDER BY ts ASC";
+		$sql = $wpdb->prepare($sql, $userId);
+		$result = $wpdb->get_results($sql, ARRAY_A);
+
+		update_user_meta($userId, "affiliate-id", $this->ID());
+
+		foreach($result as $row) {
+			$this->compensate($userId, $row["amount"], $row["event"] == 'first_deposit', "", ["product_id" => $row["product_id"]]);
+		}
+	}
+
 	public function compensate($userId,$amount,$isFirst,$orderId,$orderDetails)
 	{
 		$deal = $this->deal();

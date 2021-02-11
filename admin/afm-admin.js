@@ -1,4 +1,29 @@
 JSUtils.domReady(() => {
+  let attachBtn = document.getElementById('attach-user-to-affiliate');
+  attachBtn &&
+    attachBtn.addEventListener('click', e => {
+      e.preventDefault();
+      remodaler.show({
+        title: 'Attach User to affiliate',
+        message: 'Enter user ID',
+        type: remodaler.types.INPUT,
+        confirmText: 'Attach',
+        confirm: async val => {
+          let affId = document.querySelector('#affiliate-page').getAttribute('affiliate-id');
+          let response = await JSUtils.fetch(afm_admin.ajax_url, {
+            action: 'attach_user_to_affiliate',
+            user_id: val,
+            affiliate_id: affId
+          });
+
+          notifications.show(response.message, response.error ? 'error' : 'success');
+        }
+      });
+    });
+});
+
+//handle allowed landing pages selection/deselection.
+JSUtils.domReady(() => {
   let options = document.querySelectorAll('select.page_selection option');
   options.forEach(option =>
     option.addEventListener('click', e => {
@@ -13,13 +38,15 @@ JSUtils.domReady(() => {
   );
 
   //mark them as selected before submittion, so they will be posted to server.
-  document.querySelector('#submit_landingpages').addEventListener('click', () => {
-    let opts = document.querySelectorAll('select#on_pages option');
-    for (var i = 0; i < opts.length; i++) {
-      //don't use .forEach - its async and will not be on time before posting.
-      opts[i].selected = true;
-    }
-  });
+  let submit = document.querySelector('#submit_landingpages');
+  submit &&
+    submit.addEventListener('click', () => {
+      let opts = document.querySelectorAll('select#on_pages option');
+      for (var i = 0; i < opts.length; i++) {
+        //don't use .forEach - its async and will not be on time before posting.
+        opts[i].selected = true;
+      }
+    });
 });
 
 JSUtils.domReady(() => {
