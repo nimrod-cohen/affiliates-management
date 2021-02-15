@@ -290,7 +290,7 @@ class AffiliatesManagement
 
 		$amount = apply_filters("afm_post_charged_amount", $amount, $affiliate, $orderId);
 
-		AFMStats::event($stats["link_id"], $affiliate->ID(), "", $userId, $isFirst ? "first_deposit" : "deposit", "", "", "", "", "", $amount, $details["product_id"]);
+		AFMStats::event($stats["link_id"], $affiliate->ID(), "", $userId, $isFirst ? "first_deposit" : "deposit", $orderId, "", "", "", "", $amount, $details["product_id"]);
 
 		//add to accounting
 		$affiliate->compensate($userId, $amount, $isFirst, $orderId, $details);

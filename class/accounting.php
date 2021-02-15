@@ -8,21 +8,32 @@
 
 class AFMAccounting
 {
-	static function apply($affId, $userId, $timestamp,$ftd = 0,$retention = 0,$paid = 0,$orderId = null,$comment = null, $noLog = false)
+	static function apply($affId, $userId, $timestamp,$ftd = 0,$retention = 0,$paid = 0,$orderId = null,$comment = null)
 	{
 		global $wpdb;
 
-		$sql = "INSERT INTO afm_accounting
-					(aff_id,month, ftd_revenue, retention_revenue,paid)
-					VALUES (%d, %s, %f, %f, %f)
-					ON DUPLICATE KEY UPDATE
-					ftd_revenue = ftd_revenue + %f, retention_revenue = retention_revenue + %f, paid = paid + %f";
+		$sql = "SELECT id FROM afm_accounting_log 
+			WHERE aff_id = %d 
+			AND user_id = %d
+			AND order_id = %s 
+			AND is_deleted = 0";
 
-		$sql = $wpdb->prepare($sql,$affId,date('Y-m-01',$timestamp),$ftd,$retention,$paid,$ftd,$retention,$paid);
+		$sql = $wpdb->prepare($sql, $affId, $userId, $orderId);
 
-		$wpdb->query($sql);
+		$id = $wpdb->get_var($sql);
 
-		if(!$noLog) {
+		//order id should not be zero, but for old time sake
+		if($id != null && intval($orderId) > 0) {
+			$sql = "UPDATE afm_accounting_log 
+			set ftd_revenue = %f,
+			retention_revenue = %f,
+			paid = %f
+			WHERE id = %d";
+
+			$sql = $wpdb->prepare($sql, $ftd, $retention, $paid, $id);
+
+			$wpdb->query($sql);
+		}	else {
 			$sql = "INSERT INTO afm_accounting_log (aff_id, user_id,action_date,ftd_revenue,retention_revenue,paid,order_id,comment,is_deleted )
 				VALUES ( %d, %d, %s, %f, %f, %f, %d, %s, 0 )";
 
@@ -30,6 +41,29 @@ class AFMAccounting
 
 			$wpdb->query($sql);
 		}
+
+		AFMAccounting::recalculateAccounting($affId, $timestamp);
+	}
+
+	static function recalculateAccounting($affId,$month) {
+		global $wpdb;
+		$sql = "SELECT SUM(ftd_revenue) AS ftd, SUM(retention_revenue) AS retention, SUM(paid) as paid
+		FROM afm_accounting_log
+		WHERE year(action_date) = %d and month(action_date) = %d and aff_id = %d and is_deleted  = 0
+		";
+		$sql = $wpdb->prepare($sql, date('Y', $month), date('m', $month), $affId);
+
+		$sums = $wpdb->get_row($sql, ARRAY_A);
+
+		$sql = "INSERT INTO afm_accounting
+					(aff_id,month, ftd_revenue, retention_revenue,paid)
+					VALUES (%d, %s, %f, %f, %f)
+					ON DUPLICATE KEY UPDATE
+					ftd_revenue = %f, retention_revenue = %f, paid = %f";
+
+		$sql = $wpdb->prepare($sql,$affId,date('Y-m-01',$month),$sums["ftd"],$sums["retention"],$sums["paid"],$sums["ftd"],$sums["retention"],$sums["paid"]);
+
+		$wpdb->query($sql);
 	}
 
 	static function byAffiliate($affId,$page,$pageSize = null, &$count = null)
@@ -83,6 +117,6 @@ class AFMAccounting
 
 		$wpdb->query($sql);
 
-		self::apply($affId,$result["user_id"],strtotime($result["action_date"]),0,0,$result["paid"]*-1,null,null,true);
+		self::recalculateAccounting($affId,strtotime($result["action_date"]));
 	}
 }

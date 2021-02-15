@@ -306,7 +306,7 @@ class AFMAffiliate
 		$wpdb->query($sql);
 
 		//compensate affiliate
-		$sql = "SELECT `event`, amount, ts, product_id
+		$sql = "SELECT `event`, amount, ts, product_id, source
 				FROM afm_events 
 				WHERE user_id = %d 
 				AND event in ('deposit', 'first_deposit')
@@ -317,7 +317,9 @@ class AFMAffiliate
 		update_user_meta($userId, "affiliate_id", $this->ID());
 
 		foreach($result as $row) {
-			$this->compensate($userId, $row["amount"], $row["event"] == 'first_deposit', "", ["product_id" => $row["product_id"]]);
+			$this->compensate($userId, $row["amount"], $row["event"] == 'first_deposit', $row["source"], [
+				"product_id" => $row["product_id"]
+			]);
 		}
 	}
 
