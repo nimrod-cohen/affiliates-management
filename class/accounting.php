@@ -8,6 +8,19 @@
 
 class AFMAccounting
 {
+	static function find($affId, $userId, $orderId) {
+		global $wpdb;
+
+		$sql = "SELECT * FROM afm_accounting_log 
+			WHERE aff_id = %d 
+			AND user_id = %d
+			AND order_id = %s 
+			AND is_deleted = 0";
+
+		$sql = $wpdb->prepare($sql, $affId, $userId, $orderId);
+		return $wpdb->get_row($sql, ARRAY_A);
+	}
+
 	static function apply($affId, $userId, $timestamp,$ftd = 0,$retention = 0,$paid = 0,$orderId = null,$comment = null)
 	{
 		global $wpdb;

@@ -296,6 +296,20 @@ class AffiliatesManagement
 		$affiliate->compensate($userId, $amount, $isFirst, $orderId, $details);
 	}
 
+	static function logRefund($userId,$orderId,$affiliateId){
+		//find payment record	
+		$accountingLog = AFMAccounting::find($affiliateId, $userId, $orderId);
+
+		if(!$accountingLog) return;
+
+		$amount = -1 * ($accountingLog["ftd_revenue"] + $accountingLog["retention_revenue"] - $accountingLog["paid"]);
+
+		AFMStats::event(0, $affiliateId, "", $userId, "refund", $orderId, "", "", "", "", $amount, 0);
+
+		AFMAccounting::deletePayment($affiliateId, $accountingLog["id"]);
+
+	}
+
 	/*
 	 * logging payments done by WPSC
 	 */

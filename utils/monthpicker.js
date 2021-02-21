@@ -1,5 +1,5 @@
 class MonthPicker {
-  state = new StateManager();
+  state = window.StateManagerFactory();
 
   constructor() {
     let date = new Date();

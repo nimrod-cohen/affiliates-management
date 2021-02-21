@@ -1,4 +1,4 @@
-const JSUtils = {
+window.JSUtils = window.JSUtils || {
   copyToClipboard: text => {
     var inp = document.createElement('input');
     inp.value = text;
@@ -51,36 +51,42 @@ const JSUtils = {
 };
 
 //observers - call a list of functions when state changes
-class StateManager {
-  state = {};
+if (typeof window.StateManagerFactory === 'undefined') {
+  window.StateManagerFactory = () => {
+    class StateManager {
+      state = {};
 
-  constructor() {}
+      constructor() {}
 
-  emptyItem = () => {
-    return {
-      value: null,
-      fns: []
-    };
-  };
+      emptyItem = () => {
+        return {
+          value: null,
+          fns: []
+        };
+      };
 
-  get = item => (this.state[item] ? this.state[item].value : undefined);
+      get = item => (this.state[item] ? this.state[item].value : undefined);
 
-  set = (item, value) => {
-    if (!this.state[item]) {
-      this.state[item] = this.emptyItem();
+      set = (item, value) => {
+        if (!this.state[item]) {
+          this.state[item] = this.emptyItem();
+        }
+
+        //no change, no events
+        if (value === this.state[item].value) return;
+
+        this.state[item].value = value;
+        this.state[item].fns.forEach(fn => fn(value));
+      };
+
+      listen = (item, fn) => {
+        if (!this.state[item]) {
+          this.state[item] = this.emptyItem();
+        }
+        this.state[item].fns.push(fn);
+      };
     }
 
-    //no change, no events
-    if (value === this.state[item].value) return;
-
-    this.state[item].value = value;
-    this.state[item].fns.forEach(fn => fn(value));
-  };
-
-  listen = (item, fn) => {
-    if (!this.state[item]) {
-      this.state[item] = this.emptyItem();
-    }
-    this.state[item].fns.push(fn);
+    return new StateManager();
   };
 }
