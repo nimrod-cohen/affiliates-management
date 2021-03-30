@@ -102,7 +102,14 @@ class AFMAccounting
 	{
 		global $wpdb;
 
-		$sql = "SELECT * FROM afm_accounting_log WHERE is_deleted = 0 and aff_id = %d and year(action_date) = year(%s) and month(action_date) = month(%s) ORDER BY id ASC";
+		$sql = "SELECT al.*, u.display_name
+			FROM afm_accounting_log al
+			LEFT OUTER JOIN wp_users u on u.id = al.user_id 
+			WHERE is_deleted = 0 
+			AND aff_id = %d 
+			AND year(action_date) = year(%s) 
+			AND month(action_date) = month(%s)
+			ORDER BY id ASC";
 
 		$sql = $wpdb->prepare($sql,$affId,$month,$month);
 

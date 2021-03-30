@@ -150,7 +150,7 @@ JSUtils.domReady(() => {
 
     var html =
       '<table>' +
-      '<thead><tr><th>Payment date</th><th>Sum</th><th>Paid</th><th>Comment</th><th></th></tr></thead>' +
+      '<thead><tr><th>Payment date</th><th>User</th><th>Transaction Id</th><th>Sum</th><th>Paid</th><th>Comment</th><th></th></tr></thead>' +
       '<tbody>';
     for (var i = 0; i < data.rows.length; i++) {
       let row = data.rows[i];
@@ -159,6 +159,10 @@ JSUtils.domReady(() => {
         row.id +
         "'><td>" +
         row.action_date +
+        '</td><td>' +
+        row.display_name +
+        '</td><td>' +
+        row.order_id +
         '</td><td>' +
         row.payout +
         '</td><td>' +
