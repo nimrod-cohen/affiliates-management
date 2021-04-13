@@ -264,7 +264,8 @@ class AFMAffiliate
 			LEFT OUTER JOIN wp_usermeta ump on ump.user_id = u.ID and ump.meta_key = 'user_phone'
 			LEFT OUTER JOIN (SELECT aal.user_id, SUM(ftd_revenue+retention_revenue) as amount
 											FROM afm_accounting_log aal
-											WHERE aal.aff_id = %d
+											WHERE aal.aff_id = %d 
+											AND aal.is_deleted <> '1'
 											group by aal.user_id)
 											AS deposits ON deposits.user_id = u.ID
 			WHERE year(user_registered) = %d
