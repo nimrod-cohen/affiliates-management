@@ -3,7 +3,7 @@
 		<input type="hidden" name="affiliate_action" value="">
 		<input type="hidden" name="link_id" value="">
 		<input type="hidden" name="landing_page_id" value="">
-		<input type="submit" id="new-link" class="button small primary" value="New link">
+		<input type="button" id="new-link" class="button small primary" value="New link">
 	</div>
 	<table class="full-width">
 		<thead>
@@ -37,7 +37,7 @@
 				<td><?php echo $link["click"]; ?></td>
 				<td><?php echo $link["register"]; ?></td>
 				<td><?php echo $link["first_deposit"]; ?></td>
-				<td><input type="submit" class="button small danger delete-link" link-id="<?php echo $link["id"]; ?>" value="Delete"></td>
+				<td><input type="button" class="button small danger delete-link" link-id="<?php echo $link["id"]; ?>" value="Delete"></td>
 			</tr>
 		<?php }	?>
 		</tbody>

@@ -175,10 +175,6 @@ JSUtils.domReady(() => {
   document.querySelector('#new-link').addEventListener('click', ev => {
     ev.preventDefault();
 
-    var form = ev.target.closest('form');
-
-    form.querySelector("input[name='affiliate_action']").value = 'create_link';
-
     if (afm_info.landing_pages.length > 0) {
       remodaler.show({
         title: 'Landing Page',
@@ -187,8 +183,16 @@ JSUtils.domReady(() => {
         values: afm_info.landing_pages,
         confirmText: 'Create',
         confirm: function (val) {
-          form.querySelector("input[name='landing_page_id']").value = val;
-          form.submit();
+          var data = {
+            action: 'create_affiliate_link',
+            landing_page_id: val
+          };
+
+          JSUtils.fetch(afm_info.ajax_url, data).then(() => {
+            //reload links table
+            //TODO: replace with table ajax reload
+            document.location.reload();
+          });
         }
       });
     } else form.submit();
@@ -205,10 +209,16 @@ JSUtils.domReady(() => {
       type: remodaler.types.CONFIRM,
       confirmText: 'Yes, delete',
       confirm: () => {
-        var form = ev.target.closest('form');
-        form.querySelector("input[name='link_id']").value = linkId;
-        form.querySelector("input[name='affiliate_action']").value = 'delete_link';
-        form.submit();
+        var data = {
+          link_id: linkId,
+          action: 'delete_affiliate_link'
+        };
+
+        JSUtils.fetch(afm_info.ajax_url, data).then(() => {
+          //reload links table
+          //TODO: replace with table ajax reload
+          document.location.reload();
+        });
       }
     });
   });

@@ -3,7 +3,7 @@
  Plugin Name: Affiliates Management
  Plugin URI: http://longrunplan.com/plugins/affiliates-manager
  Description: Affiliate management plugin
- Version: 1.2.2
+ Version: 1.2.3
  Author: Nimrod Cohen
  Author URI: http://google.com?q=Nimrod+Cohen
  License: GPL2
@@ -93,8 +93,28 @@ class AffiliatesManagement
 		//get leads table
 		add_action('wp_ajax_search_leads',[$this, 'searchLeads']);
 
+		add_action('wp_ajax_create_affiliate_link', [$this, 'createAffiliateLink']);
+		add_action('wp_ajax_delete_affiliate_link', [$this, 'deleteAffiliateLink']);
+
 		add_action('wp_ajax_delete_product_payout', [$this, 'deleteProductPayout']);
 		add_action('wp_ajax_attach_user_to_affiliate', [$this, 'attachUserToAffiliate']);
+	}
+
+	function createAffiliateLink() {
+		$affiliate = AFMAffiliate::fromCurrentUser();
+		$affiliate->createLink(isset($_POST["landing_page_id"]) ? $_POST["landing_page_id"] : false);
+
+		echo json_encode(['error' => false]);
+		die;
+	}
+
+	function deleteAffiliateLink() {
+		$affiliate = AFMAffiliate::fromCurrentUser();
+		$linkId = $_POST["link_id"];
+		$affiliate->deleteLink($linkId);
+
+		echo json_encode(['error' => false]);
+		die;
 	}
 
 	function searchLeads() {
@@ -195,6 +215,12 @@ class AffiliatesManagement
 			$version = '1.2.2';
 			update_option('affiliates-management-version',$version);
 		}
+
+		if(version_compare('1.2.3', $version, '>')) {
+			$version = '1.2.3';
+			update_option('affiliates-management-version',$version);
+		}
+
 	}
 
 	function activate()
@@ -796,14 +822,6 @@ class AffiliatesManagement
 				case "do_save_pixel":
 					AFMAffiliate::setPixel(isset($_POST["pixel"]) ? trim($_POST["pixel"]) : "");
 					break;
-				case "create_link":
-					$affiliate = AFMAffiliate::fromCurrentUser();
-					$affiliate->createLink(isset($_POST["landing_page_id"]) ? $_POST["landing_page_id"] : false);
-					break;
-				case "delete_link":
-					$affiliate = AFMAffiliate::fromCurrentUser();
-					$linkId = $_POST["link_id"];
-					$affiliate->deleteLink($linkId);
 			}
 		}
 		catch(Exception $ex)
