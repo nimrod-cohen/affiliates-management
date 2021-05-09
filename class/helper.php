@@ -60,6 +60,7 @@ class AFMHelper
 	public static function formatMoney($sum)
 	{
 		$fmt = new NumberFormatter( 'en_US', NumberFormatter::CURRENCY );
+		$fmt->setAttribute(NumberFormatter::FRACTION_DIGITS, 0);
 		return $fmt->formatCurrency($sum, get_option("afm-currency",AffiliatesManagement::AFM_DEFAULT_CURRENCY));
 	}
 }

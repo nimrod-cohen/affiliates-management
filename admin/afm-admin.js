@@ -1,25 +1,23 @@
 JSUtils.domReady(() => {
-  let attachBtn = document.getElementById('attach-user-to-affiliate');
-  attachBtn &&
-    attachBtn.addEventListener('click', e => {
-      e.preventDefault();
-      remodaler.show({
-        title: 'Attach User to affiliate',
-        message: 'Enter user ID',
-        type: remodaler.types.INPUT,
-        confirmText: 'Attach',
-        confirm: async val => {
-          let affId = document.querySelector('#affiliate-page').getAttribute('affiliate-id');
-          let response = await JSUtils.fetch(afm_admin.ajax_url, {
-            action: 'attach_user_to_affiliate',
-            user_id: val,
-            affiliate_id: affId
-          });
+  document.getElementById('attach-user-to-affiliate')?.addEventListener('click', e => {
+    e.preventDefault();
+    remodaler.show({
+      title: 'Attach User to affiliate',
+      message: 'Enter user ID',
+      type: remodaler.types.INPUT,
+      confirmText: 'Attach',
+      confirm: async val => {
+        let affId = document.querySelector('#affiliate-page').getAttribute('affiliate-id');
+        let response = await JSUtils.fetch(afm_admin.ajax_url, {
+          action: 'attach_user_to_affiliate',
+          user_id: val,
+          affiliate_id: affId
+        });
 
-          notifications.show(response.message, response.error ? 'error' : 'success');
-        }
-      });
+        notifications.show(response.message, response.error ? 'error' : 'success');
+      }
     });
+  });
 });
 
 //handle allowed landing pages selection/deselection.
