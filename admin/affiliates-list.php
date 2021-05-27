@@ -34,6 +34,7 @@
 			<!--input id="cb-select-all-1" type="checkbox"-->
 		</td>
 		<th scope="col" id="p_affiliate" class="manage-column column-affiliate">Affiliate</th>
+		<th scope="col" id="p_fullname" class="manage-column column-fullname">Name</th>
 		<th scope="col" id="p_deal" class="manage-column column-deal">Deal</th>
 		<th scope="col" id="p_balance" class="manage-column column-balance">Balance</th>
 	</tr>
@@ -60,6 +61,7 @@
 					<span class="pay"><a class="submitpay" href="<?php echo $payUrl; ?>">Pay</a></span>
 				</div>
 			</td>
+			<td><?php echo $aff->fullname(); ?></td>
 			<td><?php echo AFM_DealType::parseDeal($aff->deal()); ?></td>
 			<td><?php echo $aff->balance(); ?></td>
 		</tr>
