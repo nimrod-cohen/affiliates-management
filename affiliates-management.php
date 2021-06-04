@@ -3,7 +3,7 @@
  Plugin Name: Affiliates Management
  Plugin URI: http://longrunplan.com/plugins/affiliates-manager
  Description: Affiliate management plugin
- Version: 1.2.3
+ Version: 1.2.4
  Author: Nimrod Cohen
  Author URI: http://google.com?q=Nimrod+Cohen
  License: GPL2
@@ -98,6 +98,7 @@ class AffiliatesManagement
 
 		add_action('wp_ajax_delete_product_payout', [$this, 'deleteProductPayout']);
 		add_action('wp_ajax_attach_user_to_affiliate', [$this, 'attachUserToAffiliate']);
+		add_action('wp_ajax_create_affiliate', [$this, 'createAffiliate']);
 	}
 
 	function createAffiliateLink() {
@@ -105,6 +106,23 @@ class AffiliatesManagement
 		$affiliate->createLink(isset($_POST["landing_page_id"]) ? $_POST["landing_page_id"] : false);
 
 		echo json_encode(['error' => false]);
+		die;
+	}
+
+	function createAffiliate() {
+		$tempPwd = wp_generate_password();
+
+		$vars = [
+			'user_login' => $_POST["email"],
+			'phone' => $_POST["phone"],
+			'full_name' => $_POST["full_name"],
+			'user_pass' => $tempPwd,
+			'user_pass_2' => $tempPwd
+		];
+
+		AFMAffiliate::register($vars);
+
+		echo json_encode(['error' => false, 'message' => 'Affiliate created successfully']);
 		die;
 	}
 
@@ -216,8 +234,8 @@ class AffiliatesManagement
 			update_option('affiliates-management-version',$version);
 		}
 
-		if(version_compare('1.2.3', $version, '>')) {
-			$version = '1.2.3';
+		if(version_compare('1.2.4', $version, '>')) {
+			$version = '1.2.4';
 			update_option('affiliates-management-version',$version);
 		}
 

@@ -4,7 +4,8 @@
       types: {
         ALERT: 0,
         CONFIRM: 1,
-        INPUT: 2
+        INPUT: 2,
+        FORM: 3
       },
       _initialized: false,
       _options: null,
@@ -41,21 +42,34 @@
         document.querySelector(".remodal button[data-remodal-action='cancel']").innerText =
           self._options.cancelText || 'Cancel';
 
-        if (self._options.type == self.types.ALERT)
-          document.querySelector(".remodal button[data-remodal-action='cancel']").style.display =
-            'none';
-        else if (self._options.type == self.types.CONFIRM || self._options.type == self.types.INPUT)
-          document.querySelector(".remodal button[data-remodal-action='cancel']").style.display =
-            'block';
+        switch (self._options.type) {
+          case self.types.ALERT:
+            document.querySelector(".remodal button[data-remodal-action='cancel']").style.display =
+              'none';
+            break;
+          case self.types.CONFIRM:
+          case self.types.FORM:
+          case self.types.INPUT:
+            document.querySelector(".remodal button[data-remodal-action='cancel']").style.display =
+              'block';
+            break;
+        }
 
-        if (self._options.type != self.types.INPUT)
-          document.querySelector('[data-remodal-input]').style.display = 'none';
-        else document.querySelector('[data-remodal-input]').style.display = 'block';
+        document.querySelector('[data-remodal-input]').style.display =
+          self._options.type !== self.types.INPUT ? 'none' : 'block';
 
         JSUtils.addGlobalEventListener(document, '.remodal', 'confirmation', () => {
-          var inp = document.querySelector('.remodal [name=remodal-data-input]');
-          let val = inp ? inp.value : null;
-          self._confirm(val);
+          if (self._options.type !== self.types.FORM) {
+            var inp = document.querySelector('.remodal [name=remodal-data-input]');
+            let val = inp ? inp.value : null;
+            self._confirm(val);
+          } else {
+            let form = {};
+            document
+              .querySelectorAll('.remodal p[data-remodal-message] input')
+              .forEach(inp => (form[inp.getAttribute('name')] = inp.value));
+            self._confirm(form);
+          }
         });
 
         if (typeof this._options.init == 'function') this._options.init();

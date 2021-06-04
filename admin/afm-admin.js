@@ -18,6 +18,37 @@ JSUtils.domReady(() => {
       }
     });
   });
+
+  document.querySelector('button#new-affiliate')?.addEventListener('click', e => {
+    e.preventDefault();
+    remodaler.show({
+      title: 'Create affiliate',
+      message: `
+        <div style='margin-bottom:10px;'>
+          <span>Full name</span>
+          <input type='text' name='full_name' />
+        </div>
+        <div style='margin-bottom:10px;'>
+          <span>Email</span>
+          <input type='text' name='email' />
+        </div>
+        <div style='margin-bottom:10px;'>
+          <span>Phone</span>
+          <input type='text' name='phone' />
+        </div>
+      `,
+      type: remodaler.types.FORM,
+      confirmText: 'Create',
+      confirm: async frm => {
+        let response = await JSUtils.fetch(afm_admin.ajax_url, {
+          action: 'create_affiliate',
+          ...frm
+        });
+
+        notifications.show(response.message, response.error ? 'error' : 'success');
+      }
+    });
+  });
 });
 
 //handle allowed landing pages selection/deselection.

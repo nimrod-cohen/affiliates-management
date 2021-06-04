@@ -20,6 +20,7 @@
 			<label class="screen-reader-text" for="user-search-input">Search Affiliates:</label>
 			<input type="search" id="affiliate-input" name="affiliate_search" value="<?php echo $affiliateSearch; ?>">
 			<input type="submit" id="search-submit" class="button" value="Search Affiliates">
+			<button id="new-affiliate" class="button button-primary">New Affiliate</button>
 		</p>
 		<input type="hidden" name="action" value="aff_page"/>
 		<input type="hidden" name="active_page" value="affiliates"/>
