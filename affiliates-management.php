@@ -137,7 +137,11 @@ class AffiliatesManagement
 
 	function searchLeads() {
 		$affilate = AFMAffiliate::fromCurrentUser();
-		echo json_encode($affilate->getLeads($_REQUEST["year"], $_REQUEST["month"],"", $_REQUEST["page"]));
+		$user = isset($_POST["user"]) ? trim($_POST["user"]) : false;
+
+		$result = $affilate->getLeads($_REQUEST["year"], $_REQUEST["month"],$user, $_REQUEST["page"]);
+
+		echo json_encode($result);
 		die;
 	}
 

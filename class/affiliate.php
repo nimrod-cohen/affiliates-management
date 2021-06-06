@@ -274,7 +274,7 @@ class AFMAffiliate
 		$sql = str_replace('{EXPOSE}',$exposeLeads ? "u.user_email, ump.meta_value as 'phone'," : "", $sql);
 
 		if(strlen($search)) {
-			$sql .= " AND user_email like '%".$search."%'";
+			$sql .= " AND ( user_email like '%".$search."%' or display_name like '%".$search."%' )";
 			$search = "%".$search."%";
 		} else {
 			$sql .= " AND LENGTH(%s) = 0";
@@ -282,7 +282,7 @@ class AFMAffiliate
 
 		$sql .= " ORDER BY user_registered ASC limit ".AFMHelper::PAGE_SIZE." offset ".(($page-1) * AFMHelper::PAGE_SIZE);
 
-		$sql = $wpdb->prepare($sql,"%d-%m-%Y", $this->ID, $this->ID, $year, $month, $search);
+		$sql = $wpdb->prepare($sql,"%d-%m-%Y", $this->ID, $this->ID, $year, $month, $search, $search);
 		$result = $wpdb->get_results($sql, ARRAY_A);
 		return $result;
 	}

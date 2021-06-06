@@ -84,7 +84,8 @@ JSUtils.domReady(() => {
   let input = document.querySelector('#leads-month');
   var currentQuery = {
     year: input.getAttribute('year'),
-    month: input.getAttribute('month')
+    month: input.getAttribute('month'),
+    user: document.querySelector('#leads-name-or-email').value
   };
 
   if (afm_info.expose_leads !== '1') {
@@ -141,7 +142,8 @@ JSUtils.domReady(() => {
     let input = document.querySelector('#leads-month');
     currentQuery = {
       year: input.getAttribute('year'),
-      month: input.getAttribute('month')
+      month: input.getAttribute('month'),
+      user: document.querySelector('#leads-name-or-email').value
     };
 
     window.leadsInfinityScroll = new InfinityScroll('#leads-scroller', getLeads);
