@@ -238,8 +238,8 @@ class AffiliatesManagement
 			update_option('affiliates-management-version',$version);
 		}
 
-		if(version_compare('1.2.4', $version, '>')) {
-			$version = '1.2.4';
+		if(version_compare('1.2.5', $version, '>')) {
+			$version = '1.2.5';
 			update_option('affiliates-management-version',$version);
 		}
 
