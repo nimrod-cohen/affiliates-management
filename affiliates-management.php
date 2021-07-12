@@ -3,7 +3,7 @@
  Plugin Name: Affiliates Management
  Plugin URI: http://longrunplan.com/plugins/affiliates-manager
  Description: Affiliate management plugin
- Version: 1.2.5
+ Version: 1.2.6
  Author: Nimrod Cohen
  Author URI: http://google.com?q=Nimrod+Cohen
  License: GPL2
@@ -238,8 +238,8 @@ class AffiliatesManagement
 			update_option('affiliates-management-version',$version);
 		}
 
-		if(version_compare('1.2.5', $version, '>')) {
-			$version = '1.2.5';
+		if(version_compare('1.2.6', $version, '>')) {
+			$version = '1.2.6';
 			update_option('affiliates-management-version',$version);
 		}
 
@@ -876,12 +876,9 @@ class AffiliatesManagement
 		wp_redirect($link);
 	}
 
-	function paymentHistory()
-	{
-		$affId = $_POST["aff_id"];
-		$month = $_POST["month"];
+	private function getPaymentHistoryLines($affId, $month, $exposeLeads) {
 
-		$result = AFMAccounting::paymentLog($affId,$month);
+		$result = AFMAccounting::paymentLog($affId,$month, $exposeLeads);
 
 		foreach($result as &$row)
 		{
@@ -894,32 +891,53 @@ class AffiliatesManagement
 		$aff = AFMAffiliate::fromAffiliateId($affId);
 		$result["balance"] = AFMHelper::formatMoney($aff->balance());
 
-		echo json_encode($result);
+		return $result;
+	}
+
+	function paymentHistory()
+	{
+		$user = wp_get_current_user();
+		if(!$user) throw new Exception(("Not allowed"));
+
+		$affId = $user->ID;
+		$month = $_POST["month"];
+		$exposeLeads = false;
+
+		if(in_array('administrator', $user->roles)) {
+			$affId = $_POST["aff_id"];
+			$exposeLeads = true;
+		} else {
+			$aff = AFMAffiliate::fromCurrentUser();
+			if(!$aff) throw new Exception("Not allowed");
+			$exposeLeads = $aff->exposeLeads();
+		}
+
+		echo json_encode($this->getPaymentHistoryLines($affId, $month, $exposeLeads));
 		die;
 	}
 
 	function delPayment()
 	{
+		$user = wp_get_current_user();
+		if(!$user) throw new Exception(("Not allowed"));
+
 		$affId = $_POST["aff_id"];
 		$month = $_POST["month"];
 		$paymentId = $_POST["payment_id"];
+		$exposeLeads = false;
+
+		if(in_array('administrator', $user->roles)) {
+			$affId = $_POST["aff_id"];
+			$exposeLeads = true;
+		} else {
+			$aff = AFMAffiliate::fromCurrentUser();
+			if(!$aff) throw new Exception("Not allowed");
+			$exposeLeads = $aff->exposeLeads();
+		}
 
 		AFMAccounting::deletePayment($affId,$paymentId);
 
-		$result = AFMAccounting::paymentLog($affId,$month);
-
-		foreach($result as &$row)
-		{
-			$row["paid"] = AFMHelper::formatMoney($row["paid"]);
-			$row["payout"] = AFMHelper::formatMoney($row["ftd_revenue"] + $row["retention_revenue"]);
-		}
-
-		$result = ["rows" => $result];
-
-		$aff = AFMAffiliate::fromAffiliateId($affId);
-		$result["balance"] = AFMHelper::formatMoney($aff->balance());
-
-		echo json_encode($result);
+		echo json_encode($this->getPaymentHistoryLines($affId, $month, $exposeLeads));
 		die;
 	}
 

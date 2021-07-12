@@ -39,8 +39,10 @@
 		$retention = $row["retention_revenue"];
 		$paid = $row["paid"];
 		$month = date("M Y",strtotime($row["month"]));
+		$monthId = date('m', strtotime($row["month"]));
+		$yearId = date('Y', strtotime($row["month"]));
 		?>
-		<tr>
+		<tr class='billing-row clickable' month='<?php echo $monthId ?>' year='<?php echo $yearId ?>'>
 			<td><?php echo $month; ?></td>
 			<td><?php echo AFMHelper::formatMoney($ftd); ?></td>
 			<td><?php echo AFMHelper::formatMoney($retention); ?></td>

@@ -273,16 +273,19 @@ class AFMAffiliate
 
 		$sql = str_replace('{EXPOSE}',$exposeLeads ? "u.user_email, ump.meta_value as 'phone'," : "", $sql);
 
+		$args = ["%d-%m-%Y", $this->ID, $this->ID, $year, $month];
+
 		if(strlen($search)) {
-			$sql .= " AND ( user_email like '%".$search."%' or display_name like '%".$search."%' )";
-			$search = "%".$search."%";
-		} else {
-			$sql .= " AND LENGTH(%s) = 0";
+			$search = '%'.$wpdb->esc_like($search).'%';
+			$sql .= " AND ( user_email like %s or display_name like %s )";
+			$args[] = $search;
+			$args[] = $search;
 		}
 
 		$sql .= " ORDER BY user_registered ASC limit ".AFMHelper::PAGE_SIZE." offset ".(($page-1) * AFMHelper::PAGE_SIZE);
 
-		$sql = $wpdb->prepare($sql,"%d-%m-%Y", $this->ID, $this->ID, $year, $month, $search, $search);
+		$sql = $wpdb->prepare($sql, ...$args);
+
 		$result = $wpdb->get_results($sql, ARRAY_A);
 		return $result;
 	}

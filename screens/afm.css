@@ -198,6 +198,18 @@ body.affiliates-page .page-content table thead tr th {
   background-color: white;
 }
 
+body.affiliates-page .page-content table tr.clickable {
+  cursor: pointer;
+}
+
+body.affiliates-page .page-content table tr.clickable:hover {
+  background-color: #e0f6fc91;
+}
+
+body.affiliates-page .page-content table tr.elaborated table {
+  font-size: 0.8rem;
+}
+
 body.affiliates-page .page-content table tr:nth-child(even) {
   background-color: #f0f0f0;
 }

@@ -98,11 +98,13 @@ class AFMAccounting
 		return $results;
 	}
 
-	static function paymentLog($affId,$month)
+	static function paymentLog($affId, $month, $exposeLeads)
 	{
+		AFMAffiliate::fromAffiliateId($affId);
+
 		global $wpdb;
 
-		$sql = "SELECT al.*, u.display_name
+		$sql = "SELECT al.* {EXPOSE}
 			FROM afm_accounting_log al
 			LEFT OUTER JOIN wp_users u on u.id = al.user_id 
 			WHERE is_deleted = 0 
@@ -110,6 +112,8 @@ class AFMAccounting
 			AND year(action_date) = year(%s) 
 			AND month(action_date) = month(%s)
 			ORDER BY id ASC";
+
+$sql = str_replace('{EXPOSE}',$exposeLeads ? ", u.display_name" : "", $sql);
 
 		$sql = $wpdb->prepare($sql,$affId,$month,$month);
 

@@ -167,6 +167,17 @@ body {
         }
 
         tr {
+          &.clickable {
+            cursor: pointer;
+            &:hover {
+              background-color: #e0f6fc91;
+            }
+          }
+
+          &.elaborated table {
+            font-size: 0.8rem;
+          }
+
           &:nth-child(even) {
             background-color: #f0f0f0;
           }

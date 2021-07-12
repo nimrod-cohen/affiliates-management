@@ -170,6 +170,56 @@ JSUtils.domReady(() => {
   );
 });
 
+//billing details
+JSUtils.domReady(() => {
+  let rows = document.querySelectorAll('.billing-row');
+
+  rows.forEach(row => {
+    row.addEventListener('click', e => {
+      let year = row.getAttribute('year');
+      let month = row.getAttribute('month');
+
+      let data = {
+        action: 'payment_history',
+        month: `${year}-${month}-01`
+      };
+
+      if (row.nextElementSibling.classList.contains('elaborated')) {
+        row.parentNode.removeChild(row.nextElementSibling);
+        return;
+      }
+
+      JSUtils.fetch(afm_info.ajax_url, data).then(result => {
+        row.insertAdjacentHTML(
+          'afterend',
+          `<tr class='elaborated'><td colspan=6>No data</td></tr>`
+        );
+        if (!result.rows.length) return;
+
+        let td = row.nextElementSibling.firstChild;
+        let html = `<table><thead><tr>
+            <th>Date</th>
+            <th>User</th>
+            <th>FTD</th>
+            <th>Rev Share</th>
+            <th>Paid</th>
+            </tr></thead><tbody>`;
+        result.rows.forEach(r => {
+          html += `<tr>
+            <td>${r.action_date.substring(0, 10)}</td>
+            <td>${r.display_name || r.user_id}</td>
+            <td>${r.ftd_revenue}</td>
+            <td>${r.retention_revenue}</td>
+            <td>${r.paid}</td>
+            </tr>`;
+        });
+        html += '</tbody></table>';
+        td.innerHTML = html;
+      });
+    });
+  });
+});
+
 //links
 JSUtils.domReady(() => {
   if (afm_info.logged_in !== '1') return;
