@@ -297,7 +297,7 @@ class AFMAffiliate
 		$sql = $wpdb->prepare($sql,$userId);
 		$result = $wpdb->get_results($sql, ARRAY_A);
 		
-		$trackers = [];
+		$trackers = ["'non-existant-tracker'"]; //so that in clause won't fail
 		foreach($result as $row) {
 			$tracker = trim($row["tracked_id"]);
 			if(strlen($tracker) > 0) $trackers[] = "'".$tracker."'";

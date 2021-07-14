@@ -58,20 +58,6 @@
         document.querySelector('[data-remodal-input]').style.display =
           self._options.type !== self.types.INPUT ? 'none' : 'block';
 
-        JSUtils.addGlobalEventListener(document, '.remodal', 'confirmation', () => {
-          if (self._options.type !== self.types.FORM) {
-            var inp = document.querySelector('.remodal [name=remodal-data-input]');
-            let val = inp ? inp.value : null;
-            self._confirm(val);
-          } else {
-            let form = {};
-            document
-              .querySelectorAll('.remodal p[data-remodal-message] input')
-              .forEach(inp => (form[inp.getAttribute('name')] = inp.value));
-            self._confirm(form);
-          }
-        });
-
         if (typeof this._options.init == 'function') this._options.init();
 
         self._show();
@@ -118,6 +104,21 @@
             document.querySelector('.remodal').dispatchEvent(event);
           })
         );
+
+        var self = this;
+        JSUtils.addGlobalEventListener(document, '.remodal', 'confirmation', () => {
+          if (self._options.type !== self.types.FORM) {
+            var inp = document.querySelector('.remodal [name=remodal-data-input]');
+            let val = inp ? inp.value : null;
+            self._confirm(val);
+          } else {
+            let form = {};
+            document
+              .querySelectorAll('.remodal p[data-remodal-message] input')
+              .forEach(inp => (form[inp.getAttribute('name')] = inp.value));
+            self._confirm(form);
+          }
+        });
 
         this._initialized = true;
       }
