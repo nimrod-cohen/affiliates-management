@@ -19,6 +19,19 @@ JSUtils.domReady(() => {
     });
   });
 
+  document.getElementById('rebalance-affiliate')?.addEventListener('click', async e => {
+    e.preventDefault();
+    let affId = document.querySelector('#affiliate-page').getAttribute('affiliate-id');
+    let response = await JSUtils.fetch(afm_admin.ajax_url, {
+      action: 'rebalance_affiliate',
+      affiliate_id: affId
+    });
+
+    document.querySelector('span#current_balance').innerHTML = response.balance;
+
+    notifications.show(response.message, response.error ? 'error' : 'success');
+  });
+
   document.querySelector('button#new-affiliate')?.addEventListener('click', e => {
     e.preventDefault();
     remodaler.show({

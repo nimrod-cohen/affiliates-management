@@ -3,7 +3,7 @@
  Plugin Name: Affiliates Management
  Plugin URI: http://longrunplan.com/plugins/affiliates-manager
  Description: Affiliate management plugin
- Version: 1.2.7
+ Version: 1.2.8
  Author: Nimrod Cohen
  Author URI: http://google.com?q=Nimrod+Cohen
  License: GPL2
@@ -83,9 +83,6 @@ class AffiliatesManagement
 		//enqueue css/js to admin
 		add_action('admin_enqueue_scripts', [$this, 'registerAdminAssets']);
 
-		//run financial calculations
-		add_action('afm_do_calculations', [$this, 'doCalculations']);
-
 		//get payment history ajax calls
 		add_action('wp_ajax_payment_history', [$this, 'paymentHistory']);
 		add_action('wp_ajax_delete_payment_history', [$this, 'delPayment']);
@@ -98,6 +95,7 @@ class AffiliatesManagement
 
 		add_action('wp_ajax_delete_product_payout', [$this, 'deleteProductPayout']);
 		add_action('wp_ajax_attach_user_to_affiliate', [$this, 'attachUserToAffiliate']);
+		add_action('wp_ajax_rebalance_affiliate', [$this, 'rebalanceAffiliate']);
 		add_action('wp_ajax_create_affiliate', [$this, 'createAffiliate']);
 	}
 
@@ -143,10 +141,6 @@ class AffiliatesManagement
 
 		echo json_encode($result);
 		die;
-	}
-
-	function doCalculations()
-	{
 	}
 
 	function deactivate()
@@ -238,8 +232,8 @@ class AffiliatesManagement
 			update_option('affiliates-management-version',$version);
 		}
 
-		if(version_compare('1.2.7', $version, '>')) {
-			$version = '1.2.7';
+		if(version_compare('1.2.8', $version, '>')) {
+			$version = '1.2.8';
 			update_option('affiliates-management-version',$version);
 		}
 
@@ -654,6 +648,26 @@ class AffiliatesManagement
 		$aff = $_POST["affiliate_id"];
 		$aff = AFMAffiliate::fromAffiliateId($aff);
 		$aff->deleteProductPayout($_POST["product_id"], isset($_POST["is_first"]) && $_POST["is_first"] == "1");
+	}
+
+	function  rebalanceAffiliate() {
+		if(!current_user_can('administrator')) {
+			$response = ["error" => true, "message" => "Unauthorized request"];
+			echo json_encode($response);
+			die;
+		}
+
+		$affId = $_POST["affiliate_id"];
+
+		$aff = AFMAffiliate::fromAffiliateId($affId);
+
+		AFMAccounting::recalculateAccounting($affId, strtotime("now"));
+
+		$balance = AFMHelper::formatMoney($aff->balance());
+
+		$response = ["error" => false, "message" => "Affiliate rebalanced successfully", "balance" => $balance];
+		echo json_encode($response);
+		die;
 	}
 
 	function attachUserToAffiliate() {
