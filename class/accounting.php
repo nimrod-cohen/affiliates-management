@@ -55,28 +55,32 @@ class AFMAccounting
 			$wpdb->query($sql);
 		}
 
-		AFMAccounting::recalculateAccounting($affId, $timestamp);
+		AFMAccounting::recalculateAccounting($affId);
 	}
 
-	static function recalculateAccounting($affId,$month) {
+	static function recalculateAccounting($affId) {
 		global $wpdb;
-		$sql = "SELECT SUM(ftd_revenue) AS ftd, SUM(retention_revenue) AS retention, SUM(paid) as paid
-		FROM afm_accounting_log
-		WHERE year(action_date) = %d and month(action_date) = %d and aff_id = %d and is_deleted  = 0
-		";
-		$sql = $wpdb->prepare($sql, date('Y', $month), date('m', $month), $affId);
-
-		$sums = $wpdb->get_row($sql, ARRAY_A);
-
-		$sql = "INSERT INTO afm_accounting
-					(aff_id,month, ftd_revenue, retention_revenue,paid)
-					VALUES (%d, %s, %f, %f, %f)
-					ON DUPLICATE KEY UPDATE
-					ftd_revenue = %f, retention_revenue = %f, paid = %f";
-
-		$sql = $wpdb->prepare($sql,$affId,date('Y-m-01',$month),$sums["ftd"],$sums["retention"],$sums["paid"],$sums["ftd"],$sums["retention"],$sums["paid"]);
-
+		$sql = "DELETE FROM afm_accounting where aff_id = %d";
+		$sql = $wpdb->prepare($sql, $affId);
 		$wpdb->query($sql);
+
+		$sql = "SELECT year(action_date) as `year` , month(action_date) as `month`, SUM(ftd_revenue) AS ftd, SUM(retention_revenue) AS retention, SUM(paid) as paid
+		FROM afm_accounting_log
+		WHERE  aff_id = %d and is_deleted  = 0
+		GROUP BY year(action_date) , month(action_date)
+		";
+		$sql = $wpdb->prepare($sql, $affId);
+
+		$monthlySums = $wpdb->get_results($sql, ARRAY_A);
+		foreach($monthlySums as $sums) {
+			$sql = "INSERT INTO afm_accounting
+				(aff_id,month, ftd_revenue, retention_revenue,paid)
+				VALUES (%d, %s, %f, %f, %f)";
+
+			$sql = $wpdb->prepare($sql,$affId,$sums['year'].'-'.$sums['month'].'-01',$sums["ftd"],$sums["retention"],$sums["paid"]);
+
+			$wpdb->query($sql);
+		}
 	}
 
 	static function byAffiliate($affId,$page,$pageSize = null, &$count = null)
@@ -113,11 +117,24 @@ class AFMAccounting
 			AND month(action_date) = month(%s)
 			ORDER BY id ASC";
 
-$sql = str_replace('{EXPOSE}',$exposeLeads ? ", u.display_name" : "", $sql);
+		$sql = str_replace('{EXPOSE}',$exposeLeads ? ", u.display_name" : "", $sql);
 
 		$sql = $wpdb->prepare($sql,$affId,$month,$month);
 
 		return $wpdb->get_results($sql,ARRAY_A);
+	}
+
+	static function deleteUserPayments($affId, $userId) {
+		global $wpdb;
+
+		$sql = "DELETE FROM afm_accounting_log
+			WHERE aff_id = %d AND user_id = %d";
+
+		$sql = $wpdb->prepare($sql,$affId, $userId);
+
+		$wpdb->query($sql);
+
+		self::recalculateAccounting($affId);
 	}
 
 	static function deletePayment($affId,$paymentId)
@@ -141,6 +158,6 @@ $sql = str_replace('{EXPOSE}',$exposeLeads ? ", u.display_name" : "", $sql);
 
 		$wpdb->query($sql);
 
-		self::recalculateAccounting($affId,strtotime($result["action_date"]));
+		self::recalculateAccounting($affId);
 	}
 }

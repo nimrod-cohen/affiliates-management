@@ -2,19 +2,32 @@ JSUtils.domReady(() => {
   document.getElementById('attach-user-to-affiliate')?.addEventListener('click', e => {
     e.preventDefault();
     remodaler.show({
-      title: 'Attach User to affiliate',
-      message: 'Enter user ID',
-      type: remodaler.types.INPUT,
-      confirmText: 'Attach',
-      confirm: async val => {
+      title: 'Attach/Detach User to affiliate',
+      message: `
+      <div class='remodal-form-line'>
+        <label class='remodal-form-line-title'>User ID</label>
+        <input type='text' name='user_id' />
+      </div>
+      <div class='remodal-form-line'>
+        <label class='remodal-form-line-title'>Attach or Detach</label>
+        <label class="radio-option"><input type='radio' name='attach' value="attach"/> Attach user to Affiliate</label>
+        <label class="radio-option"><input type='radio' name='attach' value="detach"/> Detach user from Affiliate</label>
+      </div>
+    `,
+      type: remodaler.types.FORM,
+      confirmText: 'Apply',
+      confirm: async vals => {
         let affId = document.querySelector('#affiliate-page').getAttribute('affiliate-id');
         let response = await JSUtils.fetch(afm_admin.ajax_url, {
           action: 'attach_user_to_affiliate',
-          user_id: val,
-          affiliate_id: affId
+          user_id: vals.user_id,
+          affiliate_id: affId,
+          attach: vals.attach
         });
 
-        notifications.show(response.message, response.error ? 'error' : 'success');
+        document.querySelector('span#current_balance').innerHTML = response.balance;
+
+        location.reload();
       }
     });
   });

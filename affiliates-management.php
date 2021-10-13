@@ -3,7 +3,7 @@
  Plugin Name: Affiliates Management
  Plugin URI: http://longrunplan.com/plugins/affiliates-manager
  Description: Affiliate management plugin
- Version: 1.2.8
+ Version: 1.2.9
  Author: Nimrod Cohen
  Author URI: http://google.com?q=Nimrod+Cohen
  License: GPL2
@@ -232,8 +232,8 @@ class AffiliatesManagement
 			update_option('affiliates-management-version',$version);
 		}
 
-		if(version_compare('1.2.8', $version, '>')) {
-			$version = '1.2.8';
+		if(version_compare('1.2.9', $version, '>')) {
+			$version = '1.2.9';
 			update_option('affiliates-management-version',$version);
 		}
 
@@ -661,7 +661,7 @@ class AffiliatesManagement
 
 		$aff = AFMAffiliate::fromAffiliateId($affId);
 
-		AFMAccounting::recalculateAccounting($affId, strtotime("now"));
+		AFMAccounting::recalculateAccounting($affId);
 
 		$balance = AFMHelper::formatMoney($aff->balance());
 
@@ -679,11 +679,16 @@ class AffiliatesManagement
 
 		$affId = $_POST["affiliate_id"];
 		$userId = $_POST["user_id"];
+		$action = $_POST["attach"];
 
 		$aff = AFMAffiliate::fromAffiliateId($affId);
-		$aff->attachUser($userId);
+		if($action == 'attach')
+			$aff->attachUser($userId);
+		else 
+			$aff->detachUser($userId);
 
-		$response = ["error" => false, "message" => "User attached successfully"];
+		$balance = AFMHelper::formatMoney($aff->balance());
+		$response = ["error" => false, "message" => "User ".$action."ed successfully", "balance" => $balance ];
 		echo json_encode($response);
 		die;
 

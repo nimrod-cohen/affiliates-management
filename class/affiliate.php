@@ -290,6 +290,32 @@ class AFMAffiliate
 		return $result;
 	}
 
+	public function detachUser($userId) {
+		global $wpdb;
+		//select all user events:
+		$sql = "SELECT DISTINCT tracked_id FROM afm_events where user_id = %d";
+		$sql = $wpdb->prepare($sql,$userId);
+		$result = $wpdb->get_results($sql, ARRAY_A);
+		
+		$trackers = ["'non-existant-tracker'"]; //so that in clause won't fail
+		foreach($result as $row) {
+			$tracker = trim($row["tracked_id"]);
+			if(strlen($tracker) > 0) $trackers[] = "'".$tracker."'";
+		}
+		$trackers = implode(",",$trackers);
+
+		//set all afm_events to this affiliate
+		$sql = "UPDATE afm_events SET aff_id = NULL, link_id = NULL WHERE user_id = %d OR tracked_id in (".$trackers.")";
+		$sql = $wpdb->prepare($sql, $userId);
+		$wpdb->query($sql);
+
+		//decmpensate affiliate
+		update_user_meta($userId, "affiliate_id", null);
+		update_user_meta($userId, "affiliate_link_id", null);
+
+		AFMAccounting::deleteUserPayments($this->ID(), $userId);
+	}
+
 	public function attachUser($userId) {
 		global $wpdb;
 		//select all user events:
