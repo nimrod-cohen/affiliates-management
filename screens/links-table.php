@@ -19,10 +19,9 @@
 		</thead>
 		<tbody>
 		<?php
-		$page = isset($_POST["paged"]) ? $_POST["paged"] : 0;
-		$links = AFMStats::affLinkStats(get_current_user_id(),$page,20);
+		$links = AFMStats::affLinkStats(get_current_user_id());
 		foreach($links as $link) { 
-			$linkUrl = $link["url"]."?uid=".$link["aff_id"]."&sid=".$link["id"];
+			$linkUrl = urldecode($link["url"])."?uid=".$link["aff_id"]."&sid=".$link["id"];
 			?>
 		
 			<tr>

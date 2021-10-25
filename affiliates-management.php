@@ -3,7 +3,7 @@
  Plugin Name: Affiliates Management
  Plugin URI: http://longrunplan.com/plugins/affiliates-manager
  Description: Affiliate management plugin
- Version: 1.2.9
+ Version: 1.2.10
  Author: Nimrod Cohen
  Author URI: http://google.com?q=Nimrod+Cohen
  License: GPL2
@@ -232,8 +232,8 @@ class AffiliatesManagement
 			update_option('affiliates-management-version',$version);
 		}
 
-		if(version_compare('1.2.9', $version, '>')) {
-			$version = '1.2.9';
+		if(version_compare('1.2.10', $version, '>')) {
+			$version = '1.2.10';
 			update_option('affiliates-management-version',$version);
 		}
 

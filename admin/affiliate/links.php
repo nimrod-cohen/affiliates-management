@@ -11,8 +11,7 @@
 	</thead>
 	<tbody>
 	<?php
-	$page = isset($_POST["paged"]) ? $_POST["paged"] : 0;
-	$links = AFMStats::affLinkStats($aff->ID(),$page,20);
+	$links = AFMStats::affLinkStats($aff->ID());
 	foreach($links as $link) { ?>
 		<tr>
 			<td><?php echo $link["id"]; ?></td>

@@ -240,7 +240,7 @@ JSUtils.domReady(() => {
             landing_page_id: val
           };
 
-          JSUtils.fetch(afm_info.ajax_url, data).then(() => {
+          JSUtils.fetch(afm_info.ajax_url, data).then(result => {
             //reload links table
             //TODO: replace with table ajax reload
             document.location.reload();

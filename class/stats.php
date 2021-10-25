@@ -106,7 +106,7 @@ class AFMStats
 		return $result;
 	}
 
-	static function affLinkStats($affId,$page, $limit)
+	static function affLinkStats($affId)
 	{
 		global $wpdb;
 
@@ -116,10 +116,9 @@ class AFMStats
 			WHERE afml.aff_id = %d
 			AND afml.is_deleted = 0
 			GROUP BY afml.id,event
-			ORDER BY afml.id
-			LIMIT %d,%d";
+			ORDER BY afml.id";
 
-		$sql = $wpdb->prepare($sql, '%d/%m/%Y %H:%i', $affId, $page, $limit);
+		$sql = $wpdb->prepare($sql, '%d/%m/%Y %H:%i', $affId);
 
 		$rows = $wpdb->get_results($sql, ARRAY_A);
 
