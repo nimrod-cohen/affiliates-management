@@ -259,6 +259,8 @@ class AFMAffiliate
 
 		}
 
+		if(!$listId || strlen($listId) == 0) return;
+
 		$body = [
 			"email" => $data["email"],
 			"firstName" => $firstName,
