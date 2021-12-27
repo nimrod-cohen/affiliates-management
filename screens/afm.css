@@ -49,7 +49,7 @@ button {
   border: 0;
   outline: 0;
   line-height: 30px;
-  font-weight: 500;
+  font-weight: lighter;
 }
 
 .button.primary,
@@ -198,6 +198,10 @@ body.affiliates-page .page-content table thead tr th {
   background-color: white;
 }
 
+body.affiliates-page .page-content table tr {
+  line-height: 30px;
+}
+
 body.affiliates-page .page-content table tr.clickable {
   cursor: pointer;
 }
@@ -218,6 +222,14 @@ body.affiliates-page .page-content table tr td,
 body.affiliates-page .page-content table tr th {
   padding: 5px 10px;
   text-align: left;
+  white-space: nowrap;
+}
+
+body.affiliates-page .page-content table tr td button,
+body.affiliates-page .page-content table tr td .button,
+body.affiliates-page .page-content table tr th button,
+body.affiliates-page .page-content table tr th .button {
+  font-weight: lighter;
 }
 
 body.affiliates-page .page-content table tr td span.small,
@@ -227,16 +239,15 @@ body.affiliates-page .page-content table tr th span.small {
 
 body.affiliates-page .page-content table tr td .copiable,
 body.affiliates-page .page-content table tr th .copiable {
-  max-width: 400px;
   overflow: hidden;
   display: -ms-grid;
   display: grid;
+  -ms-grid-columns: 1fr 0;
+      grid-template-columns: 1fr 0;
+  gap: 0;
   -webkit-box-pack: justify;
       -ms-flex-pack: justify;
           justify-content: space-between;
-  -ms-grid-columns: 320px 22px;
-      grid-template-columns: 320px 22px;
-  gap: 20px;
 }
 
 body.affiliates-page .page-content table tr td .copiable span,
@@ -244,7 +255,6 @@ body.affiliates-page .page-content table tr th .copiable span {
   white-space: nowrap;
   text-overflow: ellipsis;
   font-size: 0.8em;
-  max-width: 320px;
   overflow: hidden;
   display: inline-block;
   text-align: left;
@@ -252,19 +262,37 @@ body.affiliates-page .page-content table tr th .copiable span {
 
 body.affiliates-page .page-content table tr td .copiable button,
 body.affiliates-page .page-content table tr th .copiable button {
-  display: -ms-grid;
-  display: grid;
+  display: none;
   -ms-flex-line-pack: center;
       align-content: center;
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
+  height: 20px;
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  border-radius: 50%;
+  border: solid 1px;
+  background: white;
+  color: blueviolet;
 }
 
 body.affiliates-page .page-content table tr th {
   text-align: left;
   border-top: solid 1px var(--table-borders);
   border-bottom: solid 1px var(--table-borders);
+}
+
+body.affiliates-page .page-content table tr:hover .copiable {
+  -ms-grid-columns: 1fr 22px;
+      grid-template-columns: 1fr 22px;
+  gap: 5px;
+}
+
+body.affiliates-page .page-content table tr:hover .copiable button {
+  display: -ms-grid;
+  display: grid;
 }
 
 body.affiliates-page .page-content .row {

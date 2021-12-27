@@ -49,7 +49,7 @@ button {
   border: 0;
   outline: 0;
   line-height: 30px;
-  font-weight: 500;
+  font-weight: lighter;
 
   &.primary {
     background-color: var(--button);
@@ -167,6 +167,8 @@ body {
         }
 
         tr {
+          line-height: 30px;
+
           &.clickable {
             cursor: pointer;
             &:hover {
@@ -186,32 +188,42 @@ body {
           th {
             padding: 5px 10px;
             text-align: left;
+            white-space: nowrap;
+
+            button,
+            .button {
+              font-weight: lighter;
+            }
 
             span.small {
               font-size: 0.8em;
             }
 
             .copiable {
-              max-width: 400px;
               overflow: hidden;
               display: grid;
+              grid-template-columns: 1fr 0;
+              gap: 0;
               justify-content: space-between;
-              grid-template-columns: 320px 22px;
-              gap: 20px;
 
               span {
                 white-space: nowrap;
                 text-overflow: ellipsis;
                 font-size: 0.8em;
-                max-width: 320px;
                 overflow: hidden;
                 display: inline-block;
                 text-align: left;
               }
               button {
-                display: grid;
+                display: none;
                 align-content: center;
                 justify-content: center;
+                height: 20px;
+                align-self: center;
+                border-radius: 50%;
+                border: solid 1px;
+                background: white;
+                color: blueviolet;
               }
             }
           }
@@ -219,6 +231,17 @@ body {
             text-align: left;
             border-top: solid 1px var(--table-borders);
             border-bottom: solid 1px var(--table-borders);
+          }
+
+          &:hover {
+            .copiable {
+              grid-template-columns: 1fr 22px;
+              gap: 5px;
+
+              button {
+                display: grid;
+              }
+            }
           }
         }
       }

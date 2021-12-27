@@ -20,6 +20,13 @@ class AFMAffiliate
 	public function website(){ return $this->user->user_url; }
 	public function deal() { return get_user_meta($this->ID,"afm_deal",true); }
 	public function pixel() { return get_user_meta($this->ID,"afm_pixel",true); }
+	public function integration() { 
+		$integration = get_user_meta($this->ID,"afm_integration",true);
+
+		if(empty($integration)) return [];
+
+		return json_decode($integration, true);
+	}
 	public function exposeLeads() { return get_user_meta($this->ID, "expose_leads", true) == "1"; }
 
 	private function __construct()
@@ -235,6 +242,79 @@ class AFMAffiliate
 		$arr["skype_user"] = isset($args["skype"]) ? $args["skype"] : "";
 
 		self::adminUpdate($arr);
+	}
+
+	private static function firePixelSmoove($smoove, $data, $event) {	
+		$name = explode(" ",$data["name"]);
+		$firstName = array_shift($name);
+		$lastName = join(" ",$name);
+	
+		$listId = $smoove["lead_list"];
+		switch($event) {
+			case "customer":
+				$listId = $smoove["customer_list"];
+			case "lead":
+			default:
+				break;
+
+		}
+
+		$body = [
+			"email" => $data["email"],
+			"firstName" => $firstName,
+			"lastName" => $lastName,
+			"cellPhone" => $data["phone"],
+			"lists_ToSubscribe" => [$listId]
+		];
+		
+		$url = add_query_arg( [
+			'updateIfExists' => "true",
+			'restoreIfDeleted' => "true",
+			'restoreIfUnsubscribed' => "true",
+			'overrideNullableValue' => "true"
+		], 'https://rest.smoove.io/v1/Contacts' );
+		
+		if(wp_get_environment_type() != "production") return;
+
+		$request = new WP_Http();
+		$result = $request->request(
+			$url,
+			[
+				"method" => "POST",
+				"httpversion" => "1.1",
+				"blocking" => true,
+				"headers" => [
+					"Content-Type" => "application/json",
+					"authorization" => "Bearer ".$smoove["api_key"]
+				],
+				"body" => json_encode($body)
+			]
+		);
+		if(!isset($result["response"]["code"]) || $result["response"]["code"] != 200) {
+			ValueSchool::log(json_encode($result));
+		}	
+	}
+
+	public static function firePixel($affId, $affLinkId, $event, $data) {
+
+		$aff = AFMAffiliate::fromAffiliateId($affId);
+		if(!$aff) return;
+
+		$integration = $aff->integration();
+
+		if(isset($integration["smoove"]) &&
+			isset($integration["smoove"]["enabled"]) && 
+			$integration["smoove"]["enabled"] == true
+			) {
+			self::firePixelSmoove($integration["smoove"], $data, $event);
+		}
+	}
+
+	public static function setIntegration($data)
+	{
+		$userId = get_current_user_id();
+
+		update_user_meta($userId,"afm_integration",json_encode($data));
 	}
 
 	public static function setPixel($pixel)

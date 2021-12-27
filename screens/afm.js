@@ -288,3 +288,20 @@ JSUtils.domReady(() => {
     });
   });
 });
+
+JSUtils.domReady(() => {
+  document.querySelector('#chk_smoove').addEventListener('change', e => {
+    const inps = document.querySelectorAll('section#smoove input[type=text]');
+
+    inps.forEach(inp => {
+      if (e.target.checked) {
+        inp.value = inp.getAttribute('hidden-value');
+        inp.disabled = false;
+      } else {
+        inp.setAttribute('hidden-value', inp.value);
+        inp.value = '';
+        inp.disabled = true;
+      }
+    });
+  });
+});

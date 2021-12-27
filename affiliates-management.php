@@ -3,7 +3,7 @@
  Plugin Name: Affiliates Management
  Plugin URI: http://longrunplan.com/plugins/affiliates-manager
  Description: Affiliate management plugin
- Version: 1.2.10
+ Version: 1.2.11
  Author: Nimrod Cohen
  Author URI: http://google.com?q=Nimrod+Cohen
  License: GPL2
@@ -862,6 +862,14 @@ class AffiliatesManagement
 					break;
 				case "do_save_pixel":
 					AFMAffiliate::setPixel(isset($_POST["pixel"]) ? trim($_POST["pixel"]) : "");
+					$aff = AFMAffiliate::fromCurrentUser();
+					$integration = $aff->integration();
+					$smoove = ["enabled" => false];
+					if(isset($_POST["chk_smoove"]) && $_POST["chk_smoove"] == "on") {
+						$smoove = array_merge($_POST["smoove"],["enabled"=>true]);
+					}
+					$integration["smoove"] = $smoove;
+					AFMAffiliate::setIntegration($integration);
 					break;
 			}
 		}
