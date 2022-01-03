@@ -2,8 +2,8 @@
 /*
  Plugin Name: Affiliates Management
  Plugin URI: http://longrunplan.com/plugins/affiliates-manager
- Description: Affiliate management plugin
- Version: 1.2.11
+ Description: Affiliate management plugin ***IMPORTANT: MUST INSTALL WPJSUtils Plugin***
+ Version: 1.2.12
  Author: Nimrod Cohen
  Author URI: http://google.com?q=Nimrod+Cohen
  License: GPL2
@@ -473,30 +473,8 @@ class AffiliatesManagement
 		wp_register_style("afm-affiliate-css", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "afm.css");
 		wp_enqueue_style("afm-affiliate-css");
 
-		wp_register_script("afm-utils-js", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "jsutils.js", []);
-		wp_enqueue_script("afm-utils-js");
-
-		wp_register_script("remodaler-js", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "remodaler.js", ["afm-utils-js"]);
-		wp_enqueue_script("remodaler-js");
-		wp_register_style("remodaler-css", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "remodaler.css");
-		wp_enqueue_style("remodaler-css");
-
 		wp_register_script("afm-affiliate-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "afm.js", ["afm-utils-js", "remodaler-js"]);
 		wp_enqueue_script("afm-affiliate-js");
-
-		wp_register_script("monthpicker-js", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "monthpicker.js", ["afm-utils-js"]);
-		wp_enqueue_script("monthpicker-js");
-		wp_register_style("monthpicker-css", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "monthpicker.css");
-		wp_enqueue_style("monthpicker-css");
-
-		wp_register_script("infinityscroll-js", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "infinityscroll.js", ["afm-utils-js"]);
-		wp_enqueue_script("infinityscroll-js");
-
-		wp_register_script("notifications-js", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "notifications.js", ["afm-utils-js"]);
-		wp_enqueue_script("notifications-js");
-		wp_register_style("notifications-css", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "notifications.css");
-		wp_enqueue_style("notifications-css");
-		
 
 		$landingPages = get_option("afm_landingpages",[]);
 
@@ -578,20 +556,8 @@ class AffiliatesManagement
 
 		wp_enqueue_style('font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css');
 
-		wp_register_script("afm-utils-js", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "jsutils.js", []);
-		wp_enqueue_script("afm-utils-js");
 		wp_register_style('afm-admin-css', plugin_dir_url(__FILE__) . 'admin/afm-admin.css');
 		wp_enqueue_style('afm-admin-css');
-
-		wp_register_script("remodaler-js", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "remodaler.js", ["afm-utils-js"]);
-		wp_enqueue_script("remodaler-js");
-		wp_register_style("remodaler-css", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "remodaler.css");
-		wp_enqueue_style("remodaler-css");
-
-		wp_register_script("notifications-js", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "notifications.js", ["afm-utils-js"]);
-		wp_enqueue_script("notifications-js");
-		wp_register_style("notifications-css", plugin_dir_url(__FILE__) . "utils" . DIRECTORY_SEPARATOR . "notifications.css");
-		wp_enqueue_style("notifications-css");
 
 		wp_register_script('afm-admin-js', plugin_dir_url(__FILE__) . 'admin/afm-admin.js', ['afm-utils-js', 'remodaler-js', 'notifications-js']);
 		wp_enqueue_script('afm-admin-js');
