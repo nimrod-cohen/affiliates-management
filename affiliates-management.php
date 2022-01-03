@@ -473,7 +473,7 @@ class AffiliatesManagement
 		wp_register_style("afm-affiliate-css", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "afm.css");
 		wp_enqueue_style("afm-affiliate-css");
 
-		wp_register_script("afm-affiliate-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "afm.js", ["afm-utils-js", "remodaler-js"]);
+		wp_register_script("afm-affiliate-js", plugin_dir_url(__FILE__) . "screens" . DIRECTORY_SEPARATOR . "afm.js", ["wpjsutils", "remodaler-js"]);
 		wp_enqueue_script("afm-affiliate-js");
 
 		$landingPages = get_option("afm_landingpages",[]);
