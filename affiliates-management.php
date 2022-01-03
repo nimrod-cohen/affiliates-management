@@ -559,7 +559,7 @@ class AffiliatesManagement
 		wp_register_style('afm-admin-css', plugin_dir_url(__FILE__) . 'admin/afm-admin.css');
 		wp_enqueue_style('afm-admin-css');
 
-		wp_register_script('afm-admin-js', plugin_dir_url(__FILE__) . 'admin/afm-admin.js', ['afm-utils-js', 'remodaler-js', 'notifications-js']);
+		wp_register_script('afm-admin-js', plugin_dir_url(__FILE__) . 'admin/afm-admin.js', ['wpjsutils', 'remodaler-js', 'notifications-js']);
 		wp_enqueue_script('afm-admin-js');
 
 		wp_localize_script('afm-admin-js', 'afm_admin',
