@@ -3,6 +3,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, shrink-to-fit=no,maximum-scale=1">
   <title><?php echo get_bloginfo('name')?> - Affiliates system</title>
   <meta name="description" content="<?php echo get_bloginfo('name')?> - Affiliates system">
   <meta name="author" content="Affiliates Management">
