@@ -82,6 +82,8 @@ JSUtils.domReady(() => {
   if (afm_info.logged_in !== '1') return;
 
   let input = document.querySelector('#leads-month');
+  if (!input) return;
+
   var currentQuery = {
     year: input.getAttribute('year'),
     month: input.getAttribute('month'),
@@ -156,6 +158,8 @@ JSUtils.domReady(() => {
 
   let tabsContainer = document.querySelector('.nav-tabs');
 
+  if (!tabsContainer) return;
+
   links = tabsContainer.querySelectorAll('a');
   links.forEach(link =>
     link.addEventListener('click', e => {
@@ -190,10 +194,7 @@ JSUtils.domReady(() => {
       }
 
       JSUtils.fetch(afm_info.ajax_url, data).then(result => {
-        row.insertAdjacentHTML(
-          'afterend',
-          `<tr class='elaborated'><td colspan=6>No data</td></tr>`
-        );
+        row.insertAdjacentHTML('afterend', `<tr class='elaborated'><td colspan=6>No data</td></tr>`);
         if (!result.rows.length) return;
 
         let td = row.nextElementSibling.firstChild;
@@ -224,7 +225,7 @@ JSUtils.domReady(() => {
 JSUtils.domReady(() => {
   if (afm_info.logged_in !== '1') return;
 
-  document.querySelector('#new-link').addEventListener('click', ev => {
+  document.querySelector('#new-link')?.addEventListener('click', ev => {
     ev.preventDefault();
 
     if (afm_info.landing_pages.length > 0) {
@@ -290,7 +291,7 @@ JSUtils.domReady(() => {
 });
 
 JSUtils.domReady(() => {
-  document.querySelector('#chk_smoove').addEventListener('change', e => {
+  document.querySelector('#chk_smoove')?.addEventListener('change', e => {
     const inps = document.querySelectorAll('section#smoove input[type=text]');
 
     inps.forEach(inp => {
